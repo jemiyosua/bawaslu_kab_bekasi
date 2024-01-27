@@ -19,7 +19,6 @@ if (isset($_SESSION['nomor_ktp'])) {
     $Kelurahan = $row["kelurahan"];
     $NomorTPS = $row["no_tps"];
     $NomorTPS2 = "";
-    echo strlen($NomorTPS);
     if (strlen($NomorTPS) == 2) {
         $NomorTPS2 = "0" . $NomorTPS;
     } else {
@@ -29,7 +28,6 @@ if (isset($_SESSION['nomor_ktp'])) {
     $NIKSubString = substr($NomorKTP, 0, 6);
     $NIK = $NIKSubString . "**********";
 }
-
 
 ?>
 
@@ -67,7 +65,7 @@ if (isset($_SESSION['nomor_ktp'])) {
                             </div>
                             <br/>
                             <div class="card-body">
-                                <a href="index.php" class="btn btn-success w-100">Next</a>
+                                <a href="form-main.php" class="btn btn-success w-100">Next</a>
                             </div>
                         </div>
 
