@@ -5,13 +5,13 @@
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-    <title>Dashboard - NiceAdmin Bootstrap Template</title>
+    <title>Bawaslu Kabupaten Bekasi</title>
     <meta content="" name="description">
     <meta content="" name="keywords">
 
     <!-- Favicons -->
-    <link href="assets/img/favicon.png" rel="icon">
-    <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+    <link href="assets/img/bawaslu/logo-bawaslu.png" rel="icon">
+    <link href="assets/img/bawaslu/logo-bawaslu.png" rel="apple-touch-icon">
 
     <!-- Google Fonts -->
     <link href="https://fonts.gstatic.com" rel="preconnect">
@@ -35,6 +35,8 @@
 	<script src="https://cdn.jsdelivr.net/npm/promise-polyfill"></script>
 	<script src="assets/plugins/sweet-alert2/dist/sweetalert2.min.js"></script>
 	<link rel="stylesheet" href="assets/plugins/sweet-alert2/dist/sweetalert2.min.css">
+
+    <link rel="stylesheet" href="assets/plugins/fontawesome-free/css/all.min.css">
 
 </head>
 
