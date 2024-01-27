@@ -13,9 +13,9 @@ if (isset($_POST['cek-ktp'])) {
     $CountKTP = $row["cnt"];
 
     if ($CountKTP > 0) {
-        $_SESSION['pesan'] = "Nomor KTP Anda Terdaftar!";
+        // $_SESSION['pesan'] = "Nomor KTP Anda Terdaftar!";
         $_SESSION['nomor_ktp'] = $NomorKTP;
-        header('location: input-ktp.php');
+        header('location: detail-data-ptps.php');
     } else {
         $_SESSION['pesanError'] = "Nomor KTP Anda Tidak Terdaftar!";
         header('location: input-ktp.php');
