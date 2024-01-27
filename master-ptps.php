@@ -1,5 +1,15 @@
 <?php
 
+session_start();
+
+if (!isset($_SESSION['username']) && (!isset($_SESSION['password']))) {
+
+    header('location:login.php');
+}
+
+$_SESSION['nav'] = "master-data";
+$_SESSION['nav-page'] = "master-ptps";
+
 require_once('header.php');
 
 require_once('navbar.php');
@@ -16,6 +26,8 @@ require_once('koneksi.php');
 	<h1>Dashboard Master PTPS</h1>
 	</div>
 
+	<hr/>
+
 	<section class="section">
 	<div class="row">
 		<div class="col-lg-12">
@@ -23,15 +35,14 @@ require_once('koneksi.php');
 		<div class="card">
 			<div class="card-body">
 
-			<div class="d-flex justify-content-between">
+			<div class="d-flex justify-content-between align-items-center">
 				<div class="col-sm-6 mb-6 mb-sm-0">
 					<h5 class="card-title">Master PTPS</h5>
 				</div>
 				<div class="col-sm-3 mb-3 mb-sm-0">
 					<form>
 						<div class="input-group mt-3">
-							<input type="text" class="form-control" placeholder="Search Kelurahan" aria-describedby="button-addon2" name="cari">
-							<!-- <button class="btn btn-outline-primary" type="button" id="button-addon2">Search</button> -->
+							<input type="text" class="form-control" placeholder="Search ..." aria-describedby="button-addon2" name="cari">
 						</div>
 					</form>
 				</div>
@@ -74,7 +85,7 @@ require_once('koneksi.php');
 							$sql = mysqli_query($conn, $q);
 						}
 					} else {
-						$q = "SELECT id, kecamatan, kelurahan, no_tps, no_ktp, nama, status_ppwp FROM db_ptps ORDER BY id DESC LIMIT $limit_start, $limit";
+						$q = "SELECT id, kecamatan, kelurahan, no_tps, no_ktp, nama, status_ppwp FROM db_ptps ORDER BY id ASC LIMIT $limit_start, $limit";
 						$sql = mysqli_query($conn, $q);
 					}
 
@@ -104,17 +115,6 @@ require_once('koneksi.php');
 					}
 					?>
 				</tbody>
-				<thead>
-					<tr>
-						<th scope="col">No</th>
-						<th scope="col">Kecamatan</th>
-						<th scope="col">Kelurahan</th>
-						<th scope="col">Nomor TPS</th>
-						<th scope="col">Nomor KTP</th>
-						<th scope="col">Nama</th>
-						<th scope="col">Status</th>
-					</tr>
-				</thead>
 			</table>
 
 			<?php

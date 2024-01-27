@@ -1,4 +1,8 @@
-<!-- ======= Sidebar ======= -->
+<?php
+
+session_start();
+
+?>
 <aside id="sidebar" class="sidebar">
 
     <ul class="sidebar-nav" id="sidebar-nav">
@@ -15,9 +19,9 @@
                 <i class="bi bi-menu-button-wide"></i><span>Master Data</span><i class="bi bi-chevron-down ms-auto"></i>
             </a>
 
-            <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+            <ul id="components-nav" class="nav-content collapse <?= $_SESSION['nav'] == "master-data" ? 'show' : '' ?>" data-bs-parent="#sidebar-nav">
                 <li>
-                    <a href="master-partai.php">
+                    <a href="master-partai.php" class="<?= $_SESSION['nav-page'] == "master-partai" ? 'active' : '' ?>">
                         <i class="bi bi-circle"></i><span>Partai</span>
                     </a>
                 </li>
@@ -27,12 +31,12 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="master-dpr-ri.php" class="<?= $_SESSION['nav-page'] == "master-dpr-ri" ? 'active' : '' ?>">
                         <i class="bi bi-circle"></i><span>DPR - RI</span>
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="master-dpd-ri.php" class="<?= $_SESSION['nav-page'] == "master-dpd-ri" ? 'active' : '' ?>">
                         <i class="bi bi-circle"></i><span>DPD - RI</span>
                     </a>
                 </li>
@@ -42,12 +46,12 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="master-dprd-kab.php" class="<?= $_SESSION['nav-page'] == "master-dprd-kab" ? 'active' : '' ?>">
                         <i class="bi bi-circle"></i><span>DPRD - KAB</span>
                     </a>
                 </li>
                 <li>
-                    <a href="master-ptps.php">
+                    <a href="master-ptps.php" class="<?= $_SESSION['nav-page'] == "master-ptps" ? 'active' : '' ?>">
                         <i class="bi bi-circle"></i><span>PTPS</span>
                     </a>
                 </li>

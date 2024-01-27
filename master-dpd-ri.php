@@ -8,7 +8,7 @@ if (!isset($_SESSION['username']) && (!isset($_SESSION['password']))) {
 }
 
 $_SESSION['nav'] = "master-data";
-$_SESSION['nav-page'] = "master-partai";
+$_SESSION['nav-page'] = "master-dpd-ri";
 
 require_once('header.php');
 
@@ -23,10 +23,10 @@ require_once('koneksi.php');
 <main id="main" class="main">
 
 	<div class="pagetitle">
-	<h1>Dashboard Master Partai</h1>
+	<h1>Dashboard Master DPD - RI</h1>
 	</div>
 
-	<hr/>
+    <hr/>
 
 	<section class="section">
 	<div class="row">
@@ -37,7 +37,7 @@ require_once('koneksi.php');
 
 			<div class="d-flex justify-content-between align-items-center">
 				<div class="col-sm-6 mb-6 mb-sm-0">
-					<h5 class="card-title">Master Partai</h5>
+					<h5 class="card-title">Master DPD - RI</h5>
 				</div>
 				<div class="col-sm-3 mb-3 mb-sm-0">
 					<form>
@@ -54,9 +54,12 @@ require_once('koneksi.php');
 				<thead>
 					<tr>
 						<th scope="col">No</th>
-						<th scope="col">Nama Partai</th>
+						<th scope="col">Kategori Calon Pilihan</th>
 						<th scope="col">Kode Partai</th>
-						<th scope="col">Tahun Partai</th>
+						<th scope="col">Nomor Urut</th>
+						<th scope="col">Nama Calon Pilihan</th>
+						<th scope="col">Jenis Kelamin</th>
+						<th scope="col">Daerah Pilihan</th>
 						<th scope="col">Status</th>
 					</tr>
 				</thead>
@@ -76,36 +79,38 @@ require_once('koneksi.php');
 						$cari = $_GET['cari'];
 
 						if ($cari == "") {
-							$q = "SELECT nama_partai, kode_partai, tahun_partai, status FROM db_master_partai ORDER BY id ASC LIMIT $limit_start, $limit";
+							$q = "SELECT id, kategori_capil, kode_partai, no_urut, nama_capil, jenis_kelamin, dapil, status FROM db_master_capil WHERE kategori_capil = 'DPD-RI' ORDER BY id ASC LIMIT $limit_start, $limit";
 							$sql = mysqli_query($conn, $q);
 						} else {
-							$q = "SELECT nama_partai, kode_partai, tahun_partai, status FROM db_master_partai WHERE nama_partai LIKE '%" . $cari . "%' OR kode_partai LIKE '%" . $cari . "%' OR tahun_partai LIKE '%" . $cari . "%' ORDER BY id ASC LIMIT $limit_start, $limit";
+							$q = "SELECT id, kategori_capil, kode_partai, no_urut, nama_capil, jenis_kelamin, dapil, status FROM db_master_capil WHERE kategori_capil = 'DPD-RI' AND (kode_partai LIKE '%" . $cari . "%' OR nama_capil LIKE '%" . $cari . "%' OR dapil LIKE '%" . $cari . "%') ORDER BY id ASC LIMIT $limit_start, $limit";
 							$sql = mysqli_query($conn, $q);
 						}
 					} else {
-						$q = "SELECT nama_partai, kode_partai, tahun_partai, status FROM db_master_partai ORDER BY id ASC LIMIT $limit_start, $limit";
+						$q = "SELECT id, kategori_capil, kode_partai, no_urut, nama_capil, jenis_kelamin, dapil, status FROM db_master_capil WHERE kategori_capil = 'DPD-RI' ORDER BY id ASC LIMIT $limit_start, $limit";
 						$sql = mysqli_query($conn, $q);
 					}
 
 					while ($row = mysqli_fetch_assoc($sql)) {
 
 						$Id = $row['id'];
-						$NamaPartai = $row['nama_partai'];
+						$KategoriCapil = $row['kategori_capil'];
 						$KodePartai = $row['kode_partai'];
-						$TahunPartai = $row['tahun_partai'];
+						$NomorUrut = $row['no_urut'];
+						$NamaCapil = $row['nama_capil'];
+						$JenisKelamin = $row['jenis_kelamin'];
+						$Dapil = $row['dapil'];
 						$Status = $row['status'];
-						$vStatus = "Tidak Aktif";
-						if ($Status == "1") {
-							$vStatus = "Aktif";
-						}
 
 						echo "
 						<tr>
 							<td>$No</td>
-							<td>$NamaPartai</td>
+							<td>$KategoriCapil</td>
 							<td>$KodePartai</td>
-							<td>$TahunPartai</td>
-							<td>$vStatus</td>
+							<td>$NomorUrut</td>
+							<td>$NamaCapil</td>
+							<td>$JenisKelamin</td>
+							<td>$Dapil</td>
+							<td>$Status</td>
 						</tr>
 						";
 
@@ -117,7 +122,7 @@ require_once('koneksi.php');
 
 			<?php
 			
-			$q = "SELECT COUNT(1) AS cnt FROM db_master_partai WHERE nama_partai LIKE '%" . $cari . "%' OR kode_partai LIKE '%" . $cari . "%' OR tahun_partai LIKE '%" . $cari . "%' ORDER BY id ASC";
+			$q = "SELECT COUNT(1) AS cnt FROM db_master_capil WHERE kategori_capil = 'DPD-RI' AND (kode_partai LIKE '%" . $cari . "%' OR nama_capil LIKE '%" . $cari . "%' OR dapil LIKE '%" . $cari . "%') ORDER BY id ASC";
 			$sql = mysqli_query($conn, $q);
 			$row = mysqli_fetch_assoc($sql);
 			$total_data = $row['cnt'];
@@ -136,22 +141,22 @@ require_once('koneksi.php');
 						echo "<li class='page-item disbled'><a class='page-link' href='#'>&laquo;</a></li>";
 					} else { // Jika page bukan page ke 1
 						$link_prev = ($page > 1) ? $page - 1 : 1;
-						echo "<li class='page-item'><a class='page-link' href='master-partai.php?page=1'>First</a></li>";
-						echo "<li class='page-item'><a class='page-link' href='master-partai.php?page=$link_prev'>&laquo;</a></li>";
+						echo "<li class='page-item'><a class='page-link' href='master-dpd-ri.php?page=1'>First</a></li>";
+						echo "<li class='page-item'><a class='page-link' href='master-dpd-ri.php?page=$link_prev&cari=$cari'>&laquo;</a></li>";
 					}
 
 					if (isset($_GET['cari'])) {
 						$cari = $_GET['cari'];
 
 						if ($cari == "") {
-							$q = "SELECT COUNT(1) AS cnt FROM db_master_partai";
+							$q = "SELECT COUNT(1) AS cnt FROM db_master_capil WHERE kategori_capil = 'DPD-RI'";
 							$sql = mysqli_query($conn, $q);
 						} else {
-							$q = "SELECT COUNT(1) AS cnt FROM db_master_partai WHERE nama_partai LIKE '%" . $cari . "%' OR kode_partai LIKE '%" . $cari . "%' OR tahun_partai LIKE '%" . $cari . "%' ORDER BY id ASC";
+							$q = "SELECT COUNT(1) AS cnt FROM db_master_capil WHERE kategori_capil = 'DPD-RI' AND (kode_partai LIKE '%" . $cari . "%' OR nama_capil LIKE '%" . $cari . "%' OR dapil LIKE '%" . $cari . "%') ORDER BY id ASC";
 							$sql = mysqli_query($conn, $q);
 						}
 					} else {
-						$q = "SELECT COUNT(1) AS cnt FROM db_master_partai";
+						$q = "SELECT COUNT(1) AS cnt FROM db_master_capil WHERE kategori_capil = 'DPD-RI'";
 						$sql = mysqli_query($conn, $q);
 					}
 					$sql = mysqli_query($conn, $q);
@@ -167,7 +172,7 @@ require_once('koneksi.php');
 
 						$link_active = ($page == $i) ? ' class="page-item active"' : '';
 
-						echo "<li$link_active><a class='page-link' href='master-partai.php?page=$i'>$i</a></li>";
+						echo "<li$link_active><a class='page-link' href='master-dpd-ri.php?page=$i&cari=$cari'>$i</a></li>";
 					}
 
 					// LINK NEXT AND LAST
@@ -180,8 +185,8 @@ require_once('koneksi.php');
 					} else { // Jika Bukan page terakhir
 						$link_next = ($page < $jumlah_page) ? $page + 1 : $jumlah_page;
 
-						echo "<li class='page-item'><a class='page-link' href='master-partai.php?page=$link_next'>&raquo;</a></li>";
-						echo "<li class='page-item'><a class='page-link' href='master-partai.php?page=$jumlah_page'>Last</a></li>";
+						echo "<li class='page-item'><a class='page-link' href='master-dpd-ri.php?page=$link_next&cari=$cari'>&raquo;</a></li>";
+						echo "<li class='page-item'><a class='page-link' href='master-dpd-ri.php?page=$jumlah_page&cari=$cari'>Last</a></li>";
 					}
 
 					?>
