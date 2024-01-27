@@ -41,7 +41,7 @@ session_start();
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                <a href="master-dprd-prov.php" class="<?= $_SESSION['nav-page'] == "master-dprd-prov" ? 'active' : '' ?>">
                         <i class="bi bi-circle"></i><span>DPRD - PROV</span>
                     </a>
                 </li>
