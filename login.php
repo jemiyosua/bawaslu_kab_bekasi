@@ -2,10 +2,47 @@
 
 require_once('header.php');
 
+session_start();
+
+if (isset($_SESSION['username']) && (isset($_SESSION['password']))) {
+
+    header('location:main.php');
+}
+
 ?>
 
 <main>
     <div class="container">
+
+        <?php
+        if (isset($_SESSION['pesan'])) {
+            echo "<script>
+            Swal.fire({
+                allowEnterKey: false,
+                allowOutsideClick: false,
+                icon: 'success',
+                title: 'Good Job :)',
+                text: '" . $_SESSION['pesan'] . "'
+            }).then(function() {
+                window.location.href='login.php';
+            });
+            </script>";
+            unset($_SESSION['pesan']);
+        } else if (isset($_SESSION['pesanError'])) {
+            echo "<script>
+            Swal.fire({
+                allowEnterKey: false,
+                allowOutsideClick: false,
+                icon: 'error',
+                title: 'Sorry :(',
+                text: '" . $_SESSION['pesanError'] . "'
+            }).then(function() {
+                window.location.href='login.php';
+            });
+            </script>";
+            unset($_SESSION['pesanError']);
+        }
+        ?>
 
         <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
             <div class="container">
@@ -28,24 +65,22 @@ require_once('header.php');
                                 <p class="text-center small">Enter your username & password to login</p>
                             </div>
 
-                            <form class="row g-3 needs-validation" novalidate>
+                            <form class="row g-3 needs-validation" method="POST" action="proses.php">
 
                                 <div class="col-12">
                                 <label for="yourUsername" class="form-label">Username</label>
                                 <div class="input-group has-validation">
-                                    <input type="text" name="username" class="form-control" id="yourUsername" required>
-                                    <div class="invalid-feedback">Please enter your username.</div>
+                                    <input type="text" name="username" class="form-control" id="username" required>
                                 </div>
                                 </div>
 
                                 <div class="col-12">
                                     <label for="yourPassword" class="form-label">Password</label>
-                                    <input type="password" name="password" class="form-control" id="yourPassword" required>
-                                    <div class="invalid-feedback">Please enter your password!</div>
+                                    <input type="password" name="password" class="form-control" id="password" required>
                                 </div>
 
                                 <div class="col-12">
-                                    <button class="btn btn-primary w-100" type="submit">Login</button>
+                                    <button class="btn btn-primary w-100" type="submit" name="login-admin">Login</button>
                                 </div>
                             </form>
 
