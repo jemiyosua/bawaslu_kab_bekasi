@@ -26,7 +26,7 @@ session_start();
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="master-ppwp.php" class="<?= $_SESSION['nav-page'] == "master-ppwp" ? 'active' : '' ?>">
                         <i class="bi bi-circle"></i><span>PPWP</span>
                     </a>
                 </li>
