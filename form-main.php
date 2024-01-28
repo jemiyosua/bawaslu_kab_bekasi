@@ -36,7 +36,7 @@ if (isset($_SESSION['nomor_ktp'])) {
     } else {
         $IconPPWP = '<img src="assets/img/bawaslu/x-mark.png" class="card-img-top">';
         $width = "40px";
-        $ButtonPPWP = '<a href="form_ppwp.php" name ="btn-ppwp" class="btn btn-secondary"><i class="bi bi-pencil-fill"></i> Isi Form</a>';
+        $ButtonPPWP = '<a href="form_ppwp.php" name="btn-ppwp" class="btn btn-secondary"><i class="bi bi-pencil-fill"></i> Isi Form</a>';
     }
 
     if ($StatusDPRRI == "1") {
@@ -46,7 +46,7 @@ if (isset($_SESSION['nomor_ktp'])) {
     } else {
         $IconDPRRI = '<img src="assets/img/bawaslu/x-mark.png" class="card-img-top">';
         $width = "40px";
-        $ButtonDPRRI = '<a href="#" class="btn btn-warning"><i class="bi bi-pencil-fill"></i> Isi Form</a>';
+        $ButtonDPRRI = '<a href="form-partai.php?kc=DPR-RI" class="btn btn-warning"><i class="bi bi-pencil-fill"></i> Isi Form</a>';
     }
 
     if ($StatusDPDRI == "1") {

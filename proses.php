@@ -37,7 +37,7 @@ if (isset($_POST['login-admin'])) {
         $_SESSION['pesanError'] = "Nomor KTP Anda Tidak Terdaftar!";
         header('location: input-ktp.php');
     }
-}else if (isset($_POST['submit_ppwp'])) {
+} else if (isset($_POST['submit_ppwp'])) {
     //---------------------form ppwp-------------------------
     $NomorKTP = $_SESSION['nomor_ktp'];
     $KategoriCapil = ($_SESSION['kategori_capil']);
