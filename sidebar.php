@@ -12,7 +12,7 @@ session_start();
                 <i class="bi bi-grid"></i>
                 <span>Dashboard</span>
             </a>
-        </li><!-- End Dashboard Nav -->
+        </li>
 
         <li class="nav-item">
             <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
@@ -41,7 +41,7 @@ session_start();
                     </a>
                 </li>
                 <li>
-                <a href="master-dprd-prov.php" class="<?= $_SESSION['nav-page'] == "master-dprd-prov" ? 'active' : '' ?>">
+                    <a href="master-dprd-prov.php" class="<?= $_SESSION['nav-page'] == "master-dprd-prov" ? 'active' : '' ?>">
                         <i class="bi bi-circle"></i><span>DPRD - PROV</span>
                     </a>
                 </li>
