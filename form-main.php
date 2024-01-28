@@ -13,7 +13,7 @@ $Nama = '';
 
 if (isset($_SESSION['nomor_ktp'])) {
     $NomorKTP = $_SESSION['nomor_ktp'];
-    
+
     $sql = mysqli_query($conn, "SELECT status_ppwp, status_dpr_ri, status_dpd_ri, status_dprd_prov, status_dprd_kab, dapil_kab FROM db_ptps WHERE no_ktp = '$NomorKTP'");
     $row = mysqli_fetch_assoc($sql);
     $StatusPPWP = $row["status_ppwp"];
@@ -36,7 +36,7 @@ if (isset($_SESSION['nomor_ktp'])) {
     } else {
         $IconPPWP = '<img src="assets/img/bawaslu/x-mark.png" class="card-img-top">';
         $width = "40px";
-        $ButtonPPWP = '<a href="#" class="btn btn-secondary"><i class="bi bi-pencil-fill"></i> Isi Form</a>';
+        $ButtonPPWP = '<a href="form_ppwp.php" name ="btn-ppwp" class="btn btn-secondary"><i class="bi bi-pencil-fill"></i> Isi Form</a>';
     }
 
     if ($StatusDPRRI == "1") {
@@ -84,7 +84,6 @@ if (isset($_SESSION['nomor_ktp'])) {
 
 <main>
     <div class="container">
-
         <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
             <div class="container">
                 <div class="row justify-content-center">
@@ -96,7 +95,7 @@ if (isset($_SESSION['nomor_ktp'])) {
                                     <div class="card-body">
                                         <div class="d-flex justify-content-between align-items-center">
                                             <h5 class="card-title">PPWP</h5>
-                                            <div style="width:<?=$width?>">
+                                            <div style="width:<?= $width ?>">
                                                 <?= $IconPPWP ?>
                                             </div>
                                         </div>
@@ -111,7 +110,7 @@ if (isset($_SESSION['nomor_ktp'])) {
                                     <div class="card-body">
                                         <div class="d-flex justify-content-between align-items-center">
                                             <h5 class="card-title">DPR - RI</h5>
-                                            <div style="width:<?=$width?>">
+                                            <div style="width:<?= $width ?>">
                                                 <?= $IconDPRRI ?>
                                             </div>
                                         </div>
@@ -126,7 +125,7 @@ if (isset($_SESSION['nomor_ktp'])) {
                                     <div class="card-body">
                                         <div class="d-flex justify-content-between align-items-center">
                                             <h5 class="card-title">DPD - RI</h5>
-                                            <div style="width:<?=$width?>">
+                                            <div style="width:<?= $width ?>">
                                                 <?= $IconDPDRI ?>
                                             </div>
                                         </div>
@@ -141,7 +140,7 @@ if (isset($_SESSION['nomor_ktp'])) {
                                     <div class="card-body">
                                         <div class="d-flex justify-content-between align-items-center">
                                             <h5 class="card-title">DPRD - PROVINSI</h5>
-                                            <div style="width:<?=$width?>">
+                                            <div style="width:<?= $width ?>">
                                                 <?= $IconDPRDProv ?>
                                             </div>
                                         </div>
@@ -156,7 +155,7 @@ if (isset($_SESSION['nomor_ktp'])) {
                                     <div class="card-body">
                                         <div class="d-flex justify-content-between align-items-center">
                                             <h5 class="card-title">DAPIL BEKASI <?= $DapilKab ?></h5>
-                                            <div style="width:<?=$width?>">
+                                            <div style="width:<?= $width ?>">
                                                 <?= $IconDPRDKab ?>
                                             </div>
                                         </div>
@@ -168,10 +167,10 @@ if (isset($_SESSION['nomor_ktp'])) {
 
                             <div class="col-sm-4">
                                 <div class="card">
-                                <div class="card-body">
-                                    <h5 class="card-title">BACK</h5>
-                                    <a href="input-ktp.php" class="btn btn-danger"><i class="bi bi-arrow-left-circle-fill"></i> Back</a>
-                                </div>
+                                    <div class="card-body">
+                                        <h5 class="card-title">BACK</h5>
+                                        <a href="input-ktp.php" class="btn btn-danger"><i class="bi bi-arrow-left-circle-fill"></i> Back</a>
+                                    </div>
                                 </div>
                             </div>
 
