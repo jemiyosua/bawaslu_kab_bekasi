@@ -47,40 +47,6 @@ require_once('koneksi.php');
     };
 </script>
 
-<?php
-if (isset($_POST['submit_ppwp'])) {
-    if (count($_FILES) > 0) {
-        if (is_uploaded_file($_FILES['ifImage']['tmp_name'])) {
-            $imgData = addslashes(file_get_contents($_FILES['ifImage']['tmp_name']));
-            $imgType = $_FILES['ifImage']['type'];
-            // $sql = "INSERT INTO tbl_image(imageType ,imageData) VALUES(?, ?)";
-
-            echo $imgData;
-
-            echo "<script>
-            Swal.fire({
-                allowEnterKey: false,
-                allowOutsideClick: false,
-                icon: 'success',
-                title: 'OKEE:)',
-                text: '" . $_FILES['ifImage']['name'].$imgType."'
-            })
-            </script>";
-        } else {
-            echo "<script>
-            Swal.fire({
-                allowEnterKey: false,
-                allowOutsideClick: false,
-                icon: 'warning',
-                title: 'EMPTY:)',
-                text: 'File belum diupload'
-            })
-            </script>";
-        }
-    }
-}
-?>
-
 <main id="main" class="main">
 
     <section class="section dashboard">
@@ -97,7 +63,7 @@ if (isset($_POST['submit_ppwp'])) {
                             title: 'Good Job :)',
                             text: '" . $_SESSION['pesan'] . "'
                         }).then(function() {
-                            window.location.href='form-main.php';
+                            window.location.href='form-ppwp.php?kc=PPWP';
                         });
                         </script>";
                     unset($_SESSION['pesan']);
@@ -110,7 +76,7 @@ if (isset($_POST['submit_ppwp'])) {
                             title: 'Sorry :(',
                             text: '" . $_SESSION['pesanError'] . "'
                         }).then(function() {
-                            window.location.href='form_ppwp.php';
+                            window.location.href='form-ppwp.php?kc=PPWP';
                         });
                         </script>";
                     unset($_SESSION['pesanError']);
@@ -121,138 +87,99 @@ if (isset($_POST['submit_ppwp'])) {
                 <!-- <div class="col-sm-12 mb-6 mb-sm-0 mt-3">
                     <div class="card"> -->
 
-                        <form class="row g-3 needs-validation" method="POST" action="proses.php" enctype="multipart/form-data">
-                        <!-- <form class="row g-3 needs-validation" method="POST" action="form_ppwp.php" enctype="multipart/form-data"> -->
                             <div class="mb-3">
                                 <h6 class="card-title text-center pb-0 fs-4">FORM REKAP PERHITUNGAN SUARA PILPRES</h6>
                             </div>
-                            <div class="d-flex justify-content-between align-items-center">
+                            <!-- <div class="d-flex justify-content-between align-items-center"> -->
+                            <div class="row">
+
+                                <?php
+                                
+                                $sql = mysqli_query($conn, "SELECT id, no_urut, nama, status FROM db_master_capres_cawapres");
+                                while($row = mysqli_fetch_assoc($sql)) {
+
+                                    $Id = $row["id"];
+                                    $NomorUrut = $row["no_urut"];
+                                    $Nama = $row["nama"];
+                                    $Status = $row["status"];
+
+                                    $Src = "";
+                                    if ($NomorUrut == "1") {
+                                        $Src = "assets/img/bawaslu/capres01.jpg";
+                                    } else if ($NomorUrut == "2") {
+                                        $Src = "assets/img/bawaslu/capres02.jpg";
+                                    } else if ($NomorUrut == "3") {
+                                        $Src = "assets/img/bawaslu/capres03.jpg";
+                                    }
+
+                                    ?>
+
+                                    <div class="col-sm-4 mb-3 mb-sm-0">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <img src="<?= $Src ?>" style="display: block;margin: auto;margin-top: 30px;">
+                                                <?php
+
+                                                if ($NomorUrut == "1") {
+                                                    $KodePartai = "PPWP01";
+                                                } else if ($NomorUrut == "2") {
+                                                    $KodePartai = "PPWP02";
+                                                } else if ($NomorUrut == "3") {
+                                                    $KodePartai = "PPWP03";
+                                                }
+                                                                                                
+                                                $sql2 = mysqli_query($conn, "SELECT COUNT(*) AS cnt FROM db_hasil_rekap_hdr WHERE no_ktp = '$NomorKTP' AND kategori_capil = 'PPWP' AND kode_partai = '$KodePartai'");
+                                                $row2 = mysqli_fetch_assoc($sql2);
+                                                $CountIsi = $row2['cnt'];
+
+                                                if ($CountIsi > 0) {
+
+                                                    ?>
+                                                    
+                                                    <div class="alert alert-success" role="alert" style="margin-top: 30px;font-weight: bold;">
+                                                        Anda Sudah Mengisi Suara Untuk Pasangan Calon Nomor Urut <?= $NomorUrut ?>
+                                                    </div>
+
+                                                    <?php
+
+                                                } else {
+
+                                                    ?>
+                                                    
+                                                    <a href="form-ppwp-submit.php?id=<?=$Id?>&pc=<?=$NomorUrut?>&src=<?=$Src?>" type="button" class="btn btn-outline-primary" style="display: block;margin: auto;margin-top: 30px;width=50%">Input Suara</a>
+
+                                                    <?php
+                                                }
+                                                
+                                                ?>
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
                                     
-                                <div class="row">
-                                    <div class="col-sm-4">
+                                    <!-- <div class="col-sm-4">
                                         <div class="card">
                                             <div class="card-body">
                                                 <div class="mb-3 mt-3">
-                                                    <img src="assets/img/bawaslu/capres01.jpg" class="card-img-top">
+                                                    <img src="<?= $Src ?>">
                                                 </div>
                                                 <div class="mb_3">
-                                                    <input type="text" placeholder="0" style="text-align: center;font-weight: bold;height:75px;font-size: 30px;" name="it-paslon-01" class="form-control" onkeypress="return isNumberKey(event)" required>
+                                                    <a href="form-ppwp-submit.php?id=<?=$Id?>&pc=<?=$NomorUrut?>&src=<?=$Src?>" type="button" class="btn btn-outline-warning">Input Suara</a>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-
-                                    <div class="col-sm-4">
-                                        <div class="card">
-                                            <div class="card-body">
-                                                <div class="mb-3 mt-3">
-                                                    <img src="assets/img/bawaslu/capres02.jpg" class="card-img-top">
-                                                </div>
-                                                <div class="mb_3">
-                                                    <input type="text" placeholder="0" style="text-align: center;font-weight: bold;height:75px;font-size: 30px;" name="it-paslon-02" class="form-control" onkeypress="return isNumberKey(event)" required>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-sm-4">
-                                        <div class="card">
-                                            <div class="card-body">
-                                                <div class="mb-3 mt-3">
-                                                    <img src="assets/img/bawaslu/capres03.jpg" class="card-img-top">
-                                                </div>
-                                                <div class="mb_3">
-                                                    <input type="text" placeholder="0" style="text-align: center;font-weight: bold;height:75px;font-size: 30px;" name="it-paslon-03" class="form-control" onkeypress="return isNumberKey(event)" aria-rowspan="2" required>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- <hr/>
-
-                                    <div class="col-4 mb-3">
-                                        <button name="submit_ppwp" class="btn btn-success w-100" type="submit"><i class="bi bi-check-circle-fill"></i> Submit</button>
                                     </div> -->
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <div class="row">
-                                                <div class="col-sm-6 mb-6 mb-sm-0 mt-3">
-                                                    <div class="mb-3">
-                                                        <label for="jml_dpt_ppwp" class="form-label" style="font-weight: bold;">Jumlah DPT(Daftar Pemilih Tetap)</label>
-                                                        <input type="text" min=0 name="jml_dpt_ppwp" id="itDptPpwp" class="form-control" placeholder="0" onchange="jmlPemilih()" onkeypress="return isNumberKey(event)" required>
-                                                    </div>
-                                                </div>
 
-                                                <div class="col-sm-6 mb-6 mb-sm-0 mt-3">
-                                                    <div class="mb-3">
-                                                        <label for="itDptbPpwp" class="form-label" style="font-weight: bold;">Jumlah DPTb(Daftar Pemilih Tambahan)</label>
-                                                        <input id="itDptbPpwp" type="text" min=0 name="jml_dptb_ppwp" class="form-control" placeholder="0" onchange="jmlPemilih()" onkeypress="return isNumberKey(event)" required>
-                                                    </div>
-                                                </div>
+                                    <?php
 
-                                                <div class="col-sm-6 mb-6 mb-sm-0 mt-3">
-                                                    <div class="mb-3">
-                                                        <label for="itDpkPpwp" class="form-label" style="font-weight: bold;">Jumlah DPK(Daftar Pemilih Khusus)</label>
-                                                        <input id="itDpkPpwp" type="text" min=0 name="jml_dpk_ppwp" class="form-control" placeholder="0" onchange="jmlPemilih()" onkeypress="return isNumberKey(event)" required>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-sm-6 mb-6 mb-sm-0 mt-3">
-                                                    <div class="mb-3">
-                                                        <label for="itJmlPemilih" class="form-label" style="font-weight: bold;">Jumlah Pemilih</label>
-                                                        <input id="itJmlPemilih" type="text" min=0 name="jml_pemilih" class="form-control" placeholder="0" style="background-color: #d1d0cd;" readonly>
-                                                    </div>
-                                                </div>
-
-                                                <hr/>
-
-                                                <div class="col-sm-6 mb-6 mb-sm-0 mt-3">
-                                                    <div class="mb-3">
-                                                        <label for="itJmlSuaraSah" class="form-label" style="font-weight: bold;">Jumlah Suara Sah </label>
-                                                        <input id="itJmlSuaraSah" type="text" min=0 name="jml_suara_sah_ppwp" class="form-control" placeholder="0" onchange="jmlPenggunaHakPilih()" onkeypress="return isNumberKey(event)" required>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-sm-6 mb-6 mb-sm-0 mt-3">
-                                                    <div class="mb-3">
-                                                        <label for="itJmlSuaraTdkSah" class="form-label" style="font-weight: bold;">Jumlah Suara Tidak Sah</label>
-                                                        <input id="itJmlSuaraTdkSah" type="text" min=0 name="jml_suara_tdk_sah_ppwp" class="form-control" placeholder="0" onchange="jmlPenggunaHakPilih()" onkeypress="return isNumberKey(event)" required>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-sm-6 mb-6 mb-sm-0 mt-3">
-                                                    <div class="mb-3">
-                                                        <label for="itjmlPgnHakPilih" class="form-label" style="font-weight: bold;">Jumlah Pengguna Hak Pilih</label>
-                                                        <input id="itjmlPgnHakPilih" type="number" min=0 style="background-color: #d1d0cd;" name="jml_pgn_hak_pilih" class="form-control" placeholder="0" readonly>
-                                                    </div>
-                                                </div>
-
-                                                <hr/>
-
-                                                <div class="col-sm-6 mb-6 mb-sm-0 mt-3">
-                                                    <div>
-                                                        <label for="ifC1Ppwp" class="form-label" style="font-weight: bold;">C1-Hasil-PPWP</label>
-                                                        <input class="form-control form-control" name="ifImage" id="ifC1Ppwp" type="file" required>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <hr/>
-
-                                            <div class="col-3 mt-3">
-                                                <button name="submit_ppwp" class="btn btn-success w-100" type="submit"><i class="bi bi-check-circle-fill"></i> Submit</button>
-                                            </div>
-
-                                        </div>
-                                    </div>
-
-                                   
-
-                                </div>
+                                }
+                                
+                                
+                                ?> 
 
                             </div>
+                            <!-- </div> -->
 
-                        </form>
                     <!-- </div>
                 </div> -->
 

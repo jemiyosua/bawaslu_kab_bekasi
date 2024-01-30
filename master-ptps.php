@@ -60,6 +60,7 @@ require_once('koneksi.php');
 						<th scope="col">Nomor KTP</th>
 						<th scope="col">Nama</th>
 						<th scope="col">Status</th>
+						<th scope="col">Action</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -108,6 +109,7 @@ require_once('koneksi.php');
 							<td>$NomorKTP</td>
 							<td>$Nama</td>
 							<td>$Status</td>
+							<td><span class='badge text-bg-danger'>Delete</span></td>
 						</tr>
 						";
 

@@ -4,7 +4,6 @@ require_once('header.php');
 
 session_start();
 
-
 ?>
 
 <main>
@@ -49,27 +48,33 @@ session_start();
 
                             <div class="card-body">
 
-                            <div class="pt-4 pb-2">
-                                <h5 class="card-title text-center pb-0 fs-4">BAWASLU Kab. Bekasi</h5>
-                                <p class="text-center small">Enter your Identity Card (KTP)</p>
-                            </div>
-
-                            <form class="row g-3 needs-validation" method="POST" action="proses.php">
-
-                                <div class="col-12">
-                                    <div class="input-group">
-                                        <input type="text" name="no_ktp" class="form-control" required>
+                                <div class="pt-4 pb-2">
+                                    <h5 class="card-title text-center pb-0 fs-4">BAWASLU Kab. Bekasi</h5>
+                                    <div style="text-align: center;font-weight: bold;">Verifikasi Nomor KTP PTPS Kab. Bekasi</div>
+                                    <hr/>
+                                    <div class="alert alert-info" role="alert" style="font-weight: bold;">
+                                        Silahkan Input Nomor KTP Anda Untuk Melakukan Verifikasi
                                     </div>
                                 </div>
 
-                                <div class="col-12">
-                                    <button name="cek-ktp" class="btn btn-primary w-100" type="submit">Submit</button>
-                                </div>
-                            </form>
+                                <form class="row g-3 needs-validation" method="POST" action="proses.php">
 
-                            <hr/>
-                            
-                            <a href="index.php" class="btn btn-danger w-100">Back</a>
+                                    <div class="col-12">
+                                        <div class="input-group">
+                                            <input type="text" name="no_ktp" class="form-control" style="text-align: center;font-weight: bold;height:75px;font-size: 30px;" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <button name="cek-ktp" class="btn btn-primary w-100" type="submit">Submit</button>
+                                    </div>
+                                </form>
+
+                                <hr/>
+
+                                <div class="col-12">
+                                    <a href="index.php" name="cek-ktp" class="btn btn-danger w-100">Back</a>
+                                </div>
 
                             </div>
                         </div>

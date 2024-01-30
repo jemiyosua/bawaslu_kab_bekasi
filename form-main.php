@@ -14,13 +14,9 @@ $Nama = '';
 if (isset($_SESSION['nomor_ktp'])) {
     $NomorKTP = $_SESSION['nomor_ktp'];
 
-    $sql = mysqli_query($conn, "SELECT status_ppwp, status_dpr_ri, status_dpd_ri, status_dprd_prov, status_dprd_kab, dapil_kab FROM db_ptps WHERE no_ktp = '$NomorKTP'");
+    // query get dapil kab
+    $sql = mysqli_query($conn, "SELECT dapil_kab FROM db_ptps WHERE no_ktp = '$NomorKTP'");
     $row = mysqli_fetch_assoc($sql);
-    $StatusPPWP = $row["status_ppwp"];
-    $StatusDPRRI = $row["status_dpr_ri"];
-    $StatusDPDRI = $row["status_dpd_ri"];
-    $StatusDPRDProv = $row["status_dprd_prov"];
-    $StatusDPRDKab = $row["status_dprd_kab"];
     $DapilKab = $row["dapil_kab"];
 
     $IconPPWP = "";
@@ -29,55 +25,110 @@ if (isset($_SESSION['nomor_ktp'])) {
     $IconDPRDProv = "";
     $IconDPRDKab = "";
 
-    if ($StatusPPWP == "1") {
+    $width = "";
+    $ButtonPPWP = "";
+
+    // query get count PPWP form
+    $sql = mysqli_query($conn, "SELECT COUNT(*) AS cnt FROM db_hasil_rekap_hdr WHERE no_ktp = '$NomorKTP' AND kategori_capil = 'PPWP'");
+    $row = mysqli_fetch_assoc($sql);
+    $CountPPWP = $row["cnt"];
+
+    if ($CountPPWP == "3") {
         $IconPPWP = '<img src="assets/img/bawaslu/done.png" class="card-img-top">';
         $width = "37px";
-        $ButtonPPWP = "";
+        $ButtonPPWP = '<a href="form-ppwp.php?kc=PPWP" class="btn btn-secondary"><i class="bi bi-pencil-fill"></i> Isi Form</a>';
     } else {
         $IconPPWP = '<img src="assets/img/bawaslu/x-mark.png" class="card-img-top">';
         $width = "40px";
-        $ButtonPPWP = '<a href="form_ppwp.php" name="btn-ppwp" class="btn btn-secondary"><i class="bi bi-pencil-fill"></i> Isi Form</a>';
+        $ButtonPPWP = '<a href="form-ppwp.php?kc=PPWP" class="btn btn-secondary"><i class="bi bi-pencil-fill"></i> Isi Form</a>';
     }
 
-    if ($StatusDPRRI == "1") {
+    // query get count DPR-RI form
+    $sql = mysqli_query($conn, "SELECT COUNT(*) AS cnt FROM db_master_capil WHERE kategori_capil = 'DPR-RI'");
+    $row = mysqli_fetch_assoc($sql);
+    $CountDPRRIMaster = $row["cnt"];
+
+    $sql2 = mysqli_query($conn, "SELECT COUNT(*) AS cnt FROM db_hasil_rekap_hdr WHERE no_ktp = '$NomorKTP' AND kategori_capil = 'DPR-RI'");
+    $row2 = mysqli_fetch_assoc($sql2);
+    $CountDPRRI = $row2["cnt"];
+
+    if ($CountDPRRI == $CountDPRRIMaster) {
         $IconDPRRI = '<img src="assets/img/bawaslu/done.png" class="card-img-top">';
         $width = "37px";
-        $ButtonDPRRI = "";
+        $ButtonDPRRI = '<a href="form-partai.php?kc=DPR-RI" class="btn btn-warning"><i class="bi bi-pencil-fill"></i> Isi Form</a>';
     } else {
         $IconDPRRI = '<img src="assets/img/bawaslu/x-mark.png" class="card-img-top">';
         $width = "40px";
         $ButtonDPRRI = '<a href="form-partai.php?kc=DPR-RI" class="btn btn-warning"><i class="bi bi-pencil-fill"></i> Isi Form</a>';
     }
 
-    if ($StatusDPDRI == "1") {
+    // query get count DPD-RI form
+    $sql = mysqli_query($conn, "SELECT COUNT(*) AS cnt FROM db_master_capil WHERE kategori_capil = 'DPD-RI'");
+    $row = mysqli_fetch_assoc($sql);
+    $CountDPDRIMaster = $row["cnt"];
+
+    $sql2 = mysqli_query($conn, "SELECT COUNT(*) AS cnt FROM db_hasil_rekap_hdr WHERE no_ktp = '$NomorKTP' AND kategori_capil = 'DPD-RI'");
+    $row2 = mysqli_fetch_assoc($sql2);
+    $CountDPDRI = $row2["cnt"];
+
+    if ($CountDPDRI == $CountDPDRIMaster) {
         $IconDPDRI = '<img src="assets/img/bawaslu/done.png" class="card-img-top">';
         $width = "37px";
-        $ButtonDPDRI = "";
+        $ButtonDPDRI = '<a href="form-partai.php?kc=DPD-RI" class="btn btn-danger"><i class="bi bi-pencil-fill"></i> Isi Form</a>';
     } else {
         $IconDPDRI = '<img src="assets/img/bawaslu/x-mark.png" class="card-img-top">';
         $width = "40px";
-        $ButtonDPDRI = '<a href="#" class="btn btn-danger"><i class="bi bi-pencil-fill"></i> Isi Form</a>';
+        $ButtonDPDRI = '<a href="form-partai.php?kc=DPD-RI" class="btn btn-danger"><i class="bi bi-pencil-fill"></i> Isi Form</a>';
     }
+    
+    // query get count DPRD-PROV form
+    $sql = mysqli_query($conn, "SELECT COUNT(*) AS cnt FROM db_master_capil WHERE kategori_capil = 'DPRD-PROV'");
+    $row = mysqli_fetch_assoc($sql);
+    $CountDPRDProvMaster = $row["cnt"];
 
-    if ($StatusDPRDProv == "1") {
+    $sql2 = mysqli_query($conn, "SELECT COUNT(*) AS cnt FROM db_hasil_rekap_hdr WHERE no_ktp = '$NomorKTP' AND kategori_capil = 'DPRD-PROV'");
+    $row2 = mysqli_fetch_assoc($sql2);
+    $CountDPRDProv = $row2["cnt"];
+
+    if ($CountDPRDProv == $CountDPRDProvMaster) {
         $IconDPRDProv = '<img src="assets/img/bawaslu/done.png" class="card-img-top">';
         $width = "37px";
-        $ButtonDPRDProv = "";
+        $ButtonDPRDProv = '<a href="form-partai.php?kc=DPRD-PROV" class="btn btn-primary"><i class="bi bi-pencil-fill"></i> Isi Form</a>';
     } else {
         $IconDPRDProv = '<img src="assets/img/bawaslu/x-mark.png" class="card-img-top">';
         $width = "40px";
-        $ButtonDPRDProv = '<a href="#" class="btn btn-primary"><i class="bi bi-pencil-fill"></i> Isi Form</a>';
+        $ButtonDPRDProv = '<a href="form-partai.php?kc=DPRD-PROV" class="btn btn-primary"><i class="bi bi-pencil-fill"></i> Isi Form</a>';
     }
 
-    if ($StatusDPRDKab == "1") {
+    // query get count DPRD-KAB form
+    $Dapil = "BEKASI " . $DapilKab;
+    $sql = mysqli_query($conn, "SELECT COUNT(*) AS cnt FROM db_master_capil WHERE kategori_capil = 'DPRD-KAB' AND dapil = '$Dapil' ");
+    $row = mysqli_fetch_assoc($sql);
+    $CountDPRDKabMaster = $row["cnt"];
+
+    $sql2 = mysqli_query($conn, "SELECT COUNT(*) AS cnt FROM db_hasil_rekap_hdr WHERE no_ktp = '$NomorKTP' AND kategori_capil = 'DPRD-KAB'");
+    $row2 = mysqli_fetch_assoc($sql2);
+    $CountDPRDKab = $row2["cnt"];
+
+    if ($CountDPRDKab == $CountDPRDKabMaster) {
         $IconDPRDKab = '<img src="assets/img/bawaslu/done.png" class="card-img-top">';
         $width = "37px";
-        $ButtonDPRDKab = "";
+        $ButtonDPRDKab = '<a href="form-partai.php?kc=DPRD-KAB&dapil='.$Dapil.'" class="btn btn-success"><i class="bi bi-pencil-fill"></i> Isi Form</a>';
     } else {
         $IconDPRDKab = '<img src="assets/img/bawaslu/x-mark.png" class="card-img-top">';
         $width = "40px";
-        $ButtonDPRDKab = '<a href="#" class="btn btn-success"><i class="bi bi-pencil-fill"></i> Isi Form</a>';
+        $ButtonDPRDKab = '<a href="form-partai.php?kc=DPRD-KAB&dapil='.$Dapil.'" class="btn btn-success"><i class="bi bi-pencil-fill"></i> Isi Form</a>';
     }
+
+    // if ($StatusDPRDKab == "1") {
+    //     $IconDPRDKab = '<img src="assets/img/bawaslu/done.png" class="card-img-top">';
+    //     $width = "37px";
+    //     $ButtonDPRDKab = "";
+    // } else {
+    //     $IconDPRDKab = '<img src="assets/img/bawaslu/x-mark.png" class="card-img-top">';
+    //     $width = "40px";
+    //     $ButtonDPRDKab = '<a href="#" class="btn btn-success"><i class="bi bi-pencil-fill"></i> Isi Form</a>';
+    // }
 }
 
 ?>

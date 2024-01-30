@@ -38,7 +38,6 @@ if (isset($_POST['login-admin'])) {
         header('location: input-ktp.php');
     }
 } else if (isset($_POST['submit_ppwp'])) {
-    //---------------------form ppwp-------------------------
     $NomorKTP = $_SESSION['nomor_ktp'];
     $KategoriCapil = ($_SESSION['kategori_capil']);
 
@@ -73,15 +72,14 @@ if (isset($_POST['login-admin'])) {
 
     if ($CountData > 0) {
         $_SESSION['pesanError'] = "Data sudah pernah diinput dengan NIK dan Kategori Yang sama";
-        header('location: form_ppwp.php');
+        header('location: form-ppwp.php');
     } else {
-
         if ($jml_pemilih < $jml_pgn_hak_pilih) {
             $_SESSION['pesanError'] = "Pengguna hak pilih lebih banyak daripada jumlah pemilih";
-            header('location: form_ppwp.php');
+            header('location: form-ppwp.php');
         } else if ($jml_suara_sah_ppwp < $total_suara_paslon) {
             $_SESSION['pesanError'] = "Total suara paslon lebih banyak daripada jumlah suara sah";
-            header('location: form_ppwp.php');
+            header('location: form-ppwp.php');
         } else {
             $msNow = round(microtime(true)*1000);
             $imageId = $NomorKTP."_".$KategoriCapil."_".(String)$msNow;
@@ -106,7 +104,120 @@ if (isset($_POST['login-admin'])) {
             }
 
             $_SESSION['pesan'] = "Berhasil Input Data Rekap";
-            header('location: form_ppwp.php');
+            header('location: form-ppwp.php');
         }
     }
+} else if (isset($_POST['submit-input-suara'])) {
+
+    // $JumlahSuara = $_POST['jumlah_suara'];
+    // $NomorKTP = $_POST['no_ktp'];
+    // $KategoriCapil = $_POST['kategori_capil'];
+    // $IdCapil = $_POST['id_capil'];
+    // $KodePartai = $_POST['kode_partai'];
+
+    // $sql = mysqli_query($conn, "SELECT COUNT(*) AS cnt FROM db_hasil_rekap_dtl WHERE no_ktp = '$NomorKTP' AND kategori_capil = '$KategoriCapil' AND id_mst_capil = '$Id'");
+    // $row = mysqli_fetch_assoc($sql);
+    // $Count = $row["cnt"];
+
+    // if ($Count == 0) {
+
+    //     if ($KategoriCapil == "DPRD-PROV") {
+    //         $sql1 = mysqli_query($conn, "INSERT INTO db_hasil_rekap_dtl (no_ktp, kategori_capil, id_mst_capil, jumlah_suara, tgl_input) VALUES ('$NomorKTP', '$KategoriCapil', '$IdCapil', '$JumlahSuara', NOW())");
+
+    //         if ($sql1) {
+    //             $_SESSION['pesan'] = "Data Berhasil Tersimpan!";
+    //             header('location: form-partai.php?kc='.$KategoriCapil);
+    //         } else {
+    //             $_SESSION['pesanError'] = "Data Gagal Tersimpan!";
+    //             header('location: form-partai.php?kc='.$KategoriCapil);
+    //         }
+    //     } else {
+    //         $sql1 = mysqli_query($conn, "INSERT INTO db_hasil_rekap_dtl (no_ktp, kategori_capil, kode_partai, id_mst_capil, jumlah_suara, tgl_input) VALUES ('$NomorKTP', '$KategoriCapil', '$KodePartai', '$IdCapil', '$JumlahSuara', NOW())");
+
+    //         if ($sql1) {
+    //             $_SESSION['pesan'] = "Data Berhasil Tersimpan!";
+    //             header('location: form-partai.php?kp='.$KodePartai.'&kc='.$KategoriCapil);
+    //         } else {
+    //             $_SESSION['pesanError'] = "Data Gagal Tersimpan!";
+    //             header('location: form-partai.php?kp='.$KodePartai.'&kc='.$KategoriCapil);
+    //         }
+    //     }
+    // } else {
+    //     header('location: form-partai.php?kp='.$KodePartai.'&kc='.$KategoriCapil);
+    // }
+
+    $NomorKTP = $_POST['no_ktp'];
+    $KategoriCapil = $_POST['kategori_capil'];
+    $KodePartai = $_POST['kode_partai'];
+    $IdCapil = $_POST['id_capil'];
+    $JumlahDPT = $_POST['jumlah_dpt'];
+    $JumlahDPTB = $_POST['jumlah_dptb'];
+    $JumlahDPK = $_POST['jumlah_dpk'];
+    $JumlahPemilih = $_POST['jumlah_pemilih'];
+    $JumlahSuaraSah = $_POST['jumlah_suara_sah'];
+    $JumlahSuaraTidakSah = $_POST['jumlah_suara_tidak_sah'];
+    $JumlahPenggunaHakPilih = $_POST['jumlah_pengguna_hak_pilih'];
+    $PasanganCalon = $_POST['pc'];
+    $Src = $_POST['src'];
+    $Dapil = $_POST['dapil'];
+
+    $Gambar = $_POST['imagebase64'];
+
+    $msNow = round(microtime(true)*1000);
+    $imageId = $NomorKTP."_".$KategoriCapil."_".(String)$msNow;
+
+    if ($KategoriCapil == "DPRD-PROV") {
+        $sql = mysqli_query($conn, "SELECT COUNT(*) AS cnt FROM db_hasil_rekap_hdr WHERE no_ktp = '$NomorKTP' AND kategori_capil = '$KategoriCapil' AND id_mst_capil = '$IdCapil'");
+    } else {
+        $sql = mysqli_query($conn, "SELECT COUNT(*) AS cnt FROM db_hasil_rekap_hdr WHERE no_ktp = '$NomorKTP' AND kategori_capil = '$KategoriCapil' AND kode_partai = '$KodePartai' AND id_mst_capil = '$IdCapil'");
+    }
+    
+    $row = mysqli_fetch_assoc($sql);
+    $Count = $row["cnt"];
+
+    if ($Count == 0) {
+
+        $sql1 = mysqli_query($conn, "INSERT INTO db_hasil_rekap_hdr (no_ktp, kategori_capil, kode_partai, id_mst_capil, jumlah_dpt, jumlah_dptb, jumlah_dpk, jumlah_pemilih, jumlah_suara_sah, jumlah_suara_tidak_sah, jumlah_pengguna_hak_pilih, image_id, tgl_input) VALUES ('$NomorKTP', '$KategoriCapil', '$KodePartai', '$IdCapil', '$JumlahDPT', '$JumlahDPTB', '$JumlahDPK', '$JumlahPemilih', '$JumlahSuaraSah', '$JumlahSuaraTidakSah', '$JumlahPenggunaHakPilih', '$imageId', NOW())");
+
+        $sql2 = mysqli_query($conn, "INSERT INTO db_master_image (image_id, imagebase64) VALUES ('$imageId', '$Gambar')");
+
+        if ($sql1 && $sql2) {
+            $_SESSION['pesan'] = "Data Berhasil Tersimpan!";
+            if ($KategoriCapil == "PPWP") {
+                header('location: form-ppwp.php?kc='.$KategoriCapil);
+                exit;
+            } else if ($KategoriCapil == "DPRD-KAB") {
+                header('location: form-partai.php?kp='.$KodePartai.'&kc='.$KategoriCapil.'&dapil='.$Dapil);
+                exit;
+            } else {
+                header('location: form-partai.php?kp='.$KodePartai.'&kc='.$KategoriCapil);
+                exit;
+            }
+        } else {
+            $_SESSION['pesanError'] = "Data Gagal Tersimpan!";
+            if ($KategoriCapil == "PPWP") {
+                header('location: form-ppwp-submit.php?id='.$IdCapil.'&pc='.$PasanganCalon.'&src='.$Src);
+                exit;
+            } else if ($KategoriCapil == "DPRD-KAB") {
+                header('location: form-partai.php?kp='.$KodePartai.'&kc='.$KategoriCapil.'&dapil='.$Dapil);
+                exit;
+            } else {
+                header('location: form-partai-submit.php?kc='.$KategoriCapil.'&id='.$IdCapil.'&kp='.$KodePartai);
+                exit;
+            }
+            
+        }
+    } else {
+        if ($KategoriCapil == "PPWP") {
+            header('location: form-ppwp-submit.php?id='.$IdCapil.'&pc='.$PasanganCalon.'&src='.$Src);
+            exit;
+        } else if ($KategoriCapil == "DPRD-KAB") {
+            header('location: form-partai.php?kp='.$KodePartai.'&kc='.$KategoriCapil.'&dapil='.$Dapil);
+            exit;
+        } else {
+            header('location: form-partai-submit.php?kc='.$KategoriCapil.'&id='.$IdCapil.'&kp='.$KodePartai);
+            exit;
+        }
+    }
+
 }
