@@ -60,7 +60,7 @@ session_start();
             </ul>
         </li>
 
-        <li class="nav-item">
+        <!-- <li class="nav-item">
             <a class="nav-link collapsed" data-bs-target="#master-suara-nav" data-bs-toggle="collapse" href="#">
                 <i class="bi bi-megaphone"></i><span>Master Suara</span><i class="bi bi-chevron-down ms-auto"></i>
             </a>
@@ -90,12 +90,25 @@ session_start();
             ?>
 
             </ul>
-        </li>
+        </li> -->
 
         <li class="nav-item">
-            <a class="nav-link" href="main.php">
+        <a class="nav-link collapsed" data-bs-target="#rekap-suara-nav" data-bs-toggle="collapse" href="#">
+                <i class="bi bi-calculator"></i><span>Perhitungan Suara</span><i class="bi bi-chevron-down ms-auto"></i>
+            </a>
+            <!-- <a class="nav-link" href="#">
                 <i class="bi bi-calculator"></i>
-                <span>Perhitungan Suara</span>
+                <span>Perhitungan Suara</span><i class="bi bi-chevron-down ms-auto"></i>
+            </a>  -->
+
+            <ul id="rekap-suara-nav" class="nav-content collapse <?= $_SESSION['nav'] == "perhitungan-suara" ? 'show' : '' ?>" data-bs-parent="#sidebar-nav">
+                <li>
+                    <a href="hasil-rekap.php" class="<?= $_SESSION['nav-page'] == "hasil-rekap" ? 'active' : '' ?>">
+                        <i class="bi bi-circle"></i><span>Rekap Suara</span>
+                    </a>
+                </li>
+            </ul>
+        </li>
             </a>
         </li>
 
