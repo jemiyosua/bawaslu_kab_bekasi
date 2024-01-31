@@ -1,5 +1,7 @@
 <?php
 
+require_once('koneksi.php');
+
 session_start();
 
 ?>
@@ -12,7 +14,7 @@ session_start();
                 <i class="bi bi-grid"></i>
                 <span>Dashboard</span>
             </a>
-        </li><!-- End Dashboard Nav -->
+        </li>
 
         <li class="nav-item">
             <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
@@ -41,7 +43,7 @@ session_start();
                     </a>
                 </li>
                 <li>
-                <a href="master-dprd-prov.php" class="<?= $_SESSION['nav-page'] == "master-dprd-prov" ? 'active' : '' ?>">
+                    <a href="master-dprd-prov.php" class="<?= $_SESSION['nav-page'] == "master-dprd-prov" ? 'active' : '' ?>">
                         <i class="bi bi-circle"></i><span>DPRD - PROV</span>
                     </a>
                 </li>
@@ -56,6 +58,58 @@ session_start();
                     </a>
                 </li>
             </ul>
+        </li>
+
+        <!-- <li class="nav-item">
+            <a class="nav-link collapsed" data-bs-target="#master-suara-nav" data-bs-toggle="collapse" href="#">
+                <i class="bi bi-megaphone"></i><span>Master Suara</span><i class="bi bi-chevron-down ms-auto"></i>
+            </a>
+
+            <ul id="master-suara-nav" class="nav-content collapse <?= $_SESSION['nav'] == "master-suara" ? 'show' : '' ?>" data-bs-parent="#sidebar-nav">
+
+            <?php
+            
+            $q = "SELECT kecamatan FROM db_ptps GROUP BY kecamatan";
+            $sql = mysqli_query($conn, $q);
+            while ($row = mysqli_fetch_assoc($sql)) {
+
+                $Kecamatan = strtoupper($row['kecamatan']);
+
+                ?>
+                
+                <li>
+                    <a href="master-suara.php?nav-page=<?= $Kecamatan ?>" class="<?= $_SESSION['nav-page'] == $Kecamatan ? 'active' : '' ?>">
+                        <i class="bi bi-circle"></i><span><?= $Kecamatan ?></span>
+                    </a>
+                </li>
+
+                <?php
+            }
+
+
+            ?>
+
+            </ul>
+        </li> -->
+
+        <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#rekap-suara-nav" data-bs-toggle="collapse" href="#">
+                <i class="bi bi-calculator"></i><span>Perhitungan Suara</span><i class="bi bi-chevron-down ms-auto"></i>
+            </a>
+            <!-- <a class="nav-link" href="#">
+                <i class="bi bi-calculator"></i>
+                <span>Perhitungan Suara</span><i class="bi bi-chevron-down ms-auto"></i>
+            </a>  -->
+
+            <ul id="rekap-suara-nav" class="nav-content collapse <?= $_SESSION['nav'] == "perhitungan-suara" ? 'show' : '' ?>" data-bs-parent="#sidebar-nav">
+                <li>
+                    <a href="hasil-rekap.php" class="<?= $_SESSION['nav-page'] == "hasil-rekap" ? 'active' : '' ?>">
+                        <i class="bi bi-circle"></i><span>Rekap Suara</span>
+                    </a>
+                </li>
+            </ul>
+        </li>
+            </a>
         </li>
 
         <!-- <li class="nav-heading">Pages</li>

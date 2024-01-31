@@ -7,8 +7,15 @@ if (!isset($_SESSION['username']) && (!isset($_SESSION['password']))) {
     header('location:login.php');
 }
 
-$_SESSION['nav'] = "master-data";
-$_SESSION['nav-page'] = "master-dprd-prov";
+$_SESSION['nav'] = "master-suara";
+$_SESSION['nav-page'] = $_GET['nav-page'];
+$KecamatanPage = $_GET['nav-page'];
+
+if ($KecamatanPage == "") {
+	$KecamatanPage = $_SESSION['nav-page'];
+}
+
+// echo "before : " . $KecamatanPage;
 
 require_once('header.php');
 
@@ -23,10 +30,10 @@ require_once('koneksi.php');
 <main id="main" class="main">
 
 	<div class="pagetitle">
-	<h1>Dashboard Master DPRD - PROV</h1>
+		<h1>Dashboard Master Suara : <?= $KecamatanPage ?></h1>
 	</div>
 
-    <hr/>
+	<hr/>
 
 	<section class="section">
 	<div class="row">
@@ -37,15 +44,15 @@ require_once('koneksi.php');
 
 			<div class="d-flex justify-content-between align-items-center">
 				<div class="col-sm-6 mb-6 mb-sm-0">
-					<h5 class="card-title">Master DPRD - PROV</h5>
+					<h5 class="card-title">Tabel Riwayat Pengisian Suara</h5>
 				</div>
-				<div class="col-sm-3 mb-3 mb-sm-0">
-					<form>
+				<!-- <div class="col-sm-3 mb-3 mb-sm-0">
+					<form action="master-suara.php?nav-page=<?=$KecamatanPage?>">
 						<div class="input-group mt-3">
 							<input type="text" class="form-control" placeholder="Search ..." aria-describedby="button-addon2" name="cari">
 						</div>
 					</form>
-				</div>
+				</div> -->
 			</div>
 			
 			<hr/>
@@ -54,12 +61,11 @@ require_once('koneksi.php');
 				<thead>
 					<tr>
 						<th scope="col">No</th>
-						<th scope="col">Kategori Calon Pilihan</th>
-						<th scope="col">Nomor Urut</th>
-						<th scope="col">Nama Calon Pilihan</th>
-						<th scope="col">Jenis Kelamin</th>
-						<th scope="col">Daerah Pilihan</th>
-						<th scope="col">Status</th>
+						<th scope="col">Nama Kecamatan</th>
+						<th scope="col">Nama Kelurahan</th>
+						<th scope="col">Nomor TPS</th>
+						<th scope="col">Inputor</th>
+						<th scope="col">Action</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -73,42 +79,44 @@ require_once('koneksi.php');
 					$limit_start = ($page - 1) * $limit;
 
 					$No = $limit_start + 1;
-					$cari = null;
+
+					$cari = "";
 
 					if (isset($_GET['cari'])) {
 						$cari = $_GET['cari'];
 
 						if ($cari == "") {
-							$q = "SELECT id, kategori_capil, no_urut, nama_capil, jenis_kelamin, dapil, status FROM db_master_capil WHERE kategori_capil = 'DPRD-PROV' ORDER BY id ASC LIMIT $limit_start, $limit";
+							$q = "SELECT id, kecamatan, kelurahan, no_tps, no_ktp FROM db_ptps WHERE kecamatan = '$KecamatanPage' ORDER BY id ASC LIMIT $limit_start, $limit";
 							$sql = mysqli_query($conn, $q);
 						} else {
-							$q = "SELECT id, kategori_capil, no_urut, nama_capil, jenis_kelamin, dapil, status FROM db_master_capil WHERE kategori_capil = 'DPRD-PROV' AND ( nama_capil LIKE '%" . $cari . "%' OR dapil LIKE '%" . $cari . "%') ORDER BY id ASC LIMIT $limit_start, $limit";
+							$q = "SELECT id, kecamatan, kelurahan, no_tps, no_ktp FROM db_ptps WHERE kecamatan = '$KecamatanPage' AND (kelurahan LIKE '%" . $cari . "%' OR no_ktp LIKE '%" . $cari . "%') ORDER BY id ASC LIMIT $limit_start, $limit";
 							$sql = mysqli_query($conn, $q);
 						}
 					} else {
-						$q = "SELECT id, kategori_capil, no_urut, nama_capil, jenis_kelamin, dapil, status FROM db_master_capil WHERE kategori_capil = 'DPRD-PROV' ORDER BY id ASC LIMIT $limit_start, $limit";
+						$q = "SELECT id, kecamatan, kelurahan, no_tps, no_ktp FROM db_ptps WHERE kecamatan = '$KecamatanPage' ORDER BY id ASC LIMIT $limit_start, $limit";
 						$sql = mysqli_query($conn, $q);
 					}
+
+					// echo $q;
 
 					while ($row = mysqli_fetch_assoc($sql)) {
 
 						$Id = $row['id'];
-						$KategoriCapil = $row['kategori_capil'];
-						$NomorUrut = $row['no_urut'];
-						$NamaCapil = $row['nama_capil'];
-						$JenisKelamin = $row['jenis_kelamin'];
-						$Dapil = $row['dapil'];
-						$Status = $row['status'];
+						$Kecamatan = strtoupper($row['kecamatan']);
+						$Kelurahan = strtoupper($row['kelurahan']);
+						$NomorTPS = $row['no_tps'];
+						$NomorKTP = $row['no_ktp'];
 
 						echo "
 						<tr>
 							<td>$No</td>
-							<td>$KategoriCapil</td>
-							<td>$NomorUrut</td>
-							<td>$NamaCapil</td>
-							<td>$JenisKelamin</td>
-							<td>$Dapil</td>
-							<td>$Status</td>
+							<td>$Kecamatan</td>
+							<td>$Kelurahan</td>
+							<td>$NomorTPS</td>
+							<td>$NomorKTP</td>
+							<td>
+								<a href='master-suara-detail.php?id=$Id&nav=master-suara&nav-page=$Kecamatan&kel=$Kelurahan'><span class='badge rounded-pill text-bg-info'>Lihat Suara</span></a>
+							</td>
 						</tr>
 						";
 
@@ -120,7 +128,7 @@ require_once('koneksi.php');
 
 			<?php
 			
-			$q = "SELECT COUNT(1) AS cnt FROM db_master_capil WHERE kategori_capil = 'DPRD-PROV' AND (kode_partai LIKE '%" . $cari . "%' OR nama_capil LIKE '%" . $cari . "%' OR dapil LIKE '%" . $cari . "%') ORDER BY id ASC";
+			$q = "SELECT COUNT(*) AS cnt FROM db_ptps WHERE kecamatan = '$KecamatanPage' AND (kelurahan LIKE '%" . $cari . "%' OR no_ktp LIKE '%" . $cari . "%') ORDER BY id ASC";
 			$sql = mysqli_query($conn, $q);
 			$row = mysqli_fetch_assoc($sql);
 			$total_data = $row['cnt'];
@@ -139,22 +147,22 @@ require_once('koneksi.php');
 						echo "<li class='page-item disbled'><a class='page-link' href='#'>&laquo;</a></li>";
 					} else { // Jika page bukan page ke 1
 						$link_prev = ($page > 1) ? $page - 1 : 1;
-						echo "<li class='page-item'><a class='page-link' href='master-dprd-prov.php?page=1'>First</a></li>";
-						echo "<li class='page-item'><a class='page-link' href='master-dprd-prov.php?page=$link_prev&cari=$cari'>&laquo;</a></li>";
+						echo "<li class='page-item'><a class='page-link' href='master-suara.php?page=1&nav-page=$KecamatanPage&cari=$cari'>First</a></li>";
+						echo "<li class='page-item'><a class='page-link' href='master-suara.php?page=$link_prev&nav-page=$KecamatanPage&cari=$cari'>&laquo;</a></li>";
 					}
 
 					if (isset($_GET['cari'])) {
 						$cari = $_GET['cari'];
 
 						if ($cari == "") {
-							$q = "SELECT COUNT(1) AS cnt FROM db_master_capil WHERE kategori_capil = 'DPRD-PROV'";
+							$q = "SELECT COUNT(1) AS cnt FROM db_ptps WHERE kecamatan = '$KecamatanPage'";
 							$sql = mysqli_query($conn, $q);
 						} else {
-							$q = "SELECT COUNT(1) AS cnt FROM db_master_capil WHERE kategori_capil = 'DPRD-PROV' AND (kode_partai LIKE '%" . $cari . "%' OR nama_capil LIKE '%" . $cari . "%' OR dapil LIKE '%" . $cari . "%') ORDER BY id ASC";
+							$q = "SELECT COUNT(1) AS cnt FROM db_ptps WHERE kecamatan = '$KecamatanPage' AND (kelurahan LIKE '%" . $cari . "%' OR no_ktp LIKE '%" . $cari . "%') ORDER BY id ASC";
 							$sql = mysqli_query($conn, $q);
 						}
 					} else {
-						$q = "SELECT COUNT(1) AS cnt FROM db_master_capil WHERE kategori_capil = 'DPRD-PROV'";
+						$q = "SELECT COUNT(1) AS cnt FROM db_ptps WHERE kecamatan = '$KecamatanPage'";
 						$sql = mysqli_query($conn, $q);
 					}
 					$sql = mysqli_query($conn, $q);
@@ -170,7 +178,7 @@ require_once('koneksi.php');
 
 						$link_active = ($page == $i) ? ' class="page-item active"' : '';
 
-						echo "<li$link_active><a class='page-link' href='master-dprd-prov.php?page=$i&cari=$cari'>$i</a></li>";
+						echo "<li$link_active><a class='page-link' href='master-suara.php?page=$i&nav-page=$KecamatanPage&cari=$cari'>$i</a></li>";
 					}
 
 					// LINK NEXT AND LAST
@@ -183,8 +191,8 @@ require_once('koneksi.php');
 					} else { // Jika Bukan page terakhir
 						$link_next = ($page < $jumlah_page) ? $page + 1 : $jumlah_page;
 
-						echo "<li class='page-item'><a class='page-link' href='master-dprd-prov.php?page=$link_next&cari=$cari'>&raquo;</a></li>";
-						echo "<li class='page-item'><a class='page-link' href='master-dprd-prov.php?page=$jumlah_page&cari=$cari'>Last</a></li>";
+						echo "<li class='page-item'><a class='page-link' href='master-suara.php?page=$link_next&nav-page=$KecamatanPage&cari=$cari'>&raquo;</a></li>";
+						echo "<li class='page-item'><a class='page-link' href='master-suara.php?page=$jumlah_page&nav-page=$KecamatanPage&cari=$cari'>Last</a></li>";
 					}
 
 					?>
