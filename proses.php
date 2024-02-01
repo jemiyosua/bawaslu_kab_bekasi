@@ -219,5 +219,129 @@ if (isset($_POST['login-admin'])) {
             exit;
         }
     }
+} else if (isset($_POST['submit-form-ppwp'])) {
+    
+    $NomorKTP = $_POST['no_ktp'];
+    $KategoriCapil = $_POST['kategori_capil'];
+    $KodePartai = $_POST['kode_partai'];
 
+    $JumlahSuaraSah = $_POST['jumlah_suara_sah'];
+    $JumlahSuaraTidakSah = $_POST['jumlah_suara_tidak_sah'];
+    $JumlahPenggunaHakPilih = $_POST['jumlah_pengguna_hak_pilih'];
+
+    $PasanganCalon = $_POST['pc'];
+    $Src = $_POST['src'];
+    $Dapil = $_POST['dapil'];
+
+    $arr_data_paslon = [
+        [
+            "id_mst_capil" => 1,
+            "jumlah_suara" => $_POST['jumlah_suara_1'],
+            "gambar" => $_POST['imagebase64-1']
+        ],
+        [
+            "id_mst_capil" => 3,
+            "jumlah_suara" => $_POST['jumlah_suara_3'],
+            "gambar" => $_POST['imagebase64-2']
+        ],
+        [
+            "id_mst_capil" => 5,
+            "jumlah_suara" => $_POST['jumlah_suara_5'],
+            "gambar" => $_POST['imagebase64-3']
+        ]
+    ];
+
+    foreach ($arr_data_paslon as $data_paslon) {
+        $id_mst_capil = $data_paslon['id_mst_capil'];
+        $jumlah_suara = $data_paslon['jumlah_suara'];
+
+        $msNow = round(microtime(true)*1000);
+        $imageId = $NomorKTP."_".$KategoriCapil."_".(String)$msNow;
+        $Gambar = $data_paslon['gambar'];
+
+        $sql = mysqli_query($conn, "INSERT INTO db_hasil_rekap_dtl (no_ktp, kategori_capil, id_mst_capil, jumlah_suara, image_id) VALUES ('$NomorKTP', '$KategoriCapil', '$id_mst_capil', '$jumlah_suara', '$imageId')");
+
+        $sql3 = mysqli_query($conn, "INSERT INTO db_master_image (image_id, imagebase64) VALUES ('$imageId', '$Gambar')");
+    }
+
+    $sql2 = mysqli_query($conn, "INSERT INTO db_hasil_rekap_hdr (no_ktp, kategori_capil, jumlah_suara_sah, jumlah_suara_tidak_sah, jumlah_pengguna_hak_pilih) VALUES ('$NomorKTP','$KategoriCapil', '$JumlahSuaraSah', '$JumlahSuaraTidakSah', '$JumlahPenggunaHakPilih')");
+
+    if ($sql && $sql2 && $sql3) {
+        $_SESSION['pesan'] = "Berhasil Input Data PPWP";
+        header('location: form-ppwp.php?kc='.$KategoriCapil);
+    } else {
+        $_SESSION['pesan'] = "Gagal Input Data PPWP";
+        header('location: form-ppwp.php?kc='.$KategoriCapil);
+    }
+
+} else if (isset($_POST['submit-form-partai'])) {
+    
+    $NomorKTP = $_POST['no_ktp'];
+    $KategoriCapil = $_POST['kategori_capil'];
+    $KodePartai = $_POST['kode_partai'];
+    $Id = $_POST['id_mst_capil'];
+    $JumlahSuara = $_POST['jumlah_suara'];
+    $Dapil = $_POST['dapil'];
+    $Gambar = $_POST['imagebase64'];
+
+    $msNow = round(microtime(true)*1000);
+    $imageId = $NomorKTP."_".$KategoriCapil."_".(String)$msNow;
+    
+    $sql = mysqli_query($conn, "INSERT INTO db_hasil_rekap_dtl (no_ktp, kategori_capil, kode_partai, id_mst_capil, jumlah_suara, image_id) VALUES ('$NomorKTP', '$KategoriCapil', '$KodePartai', '$Id', '$JumlahSuara', '$imageId')");
+
+    $sql2 = mysqli_query($conn, "INSERT INTO db_master_image (image_id, imagebase64) VALUES ('$imageId', '$Gambar')");
+
+    if ($sql) {
+        if ($KategoriCapil == "DPRD-KAB") {
+            // $_SESSION['pesan'] = "Berhasil Input Data";
+            header('location: form-partai.php?kc='.$KategoriCapil.'&kp='.$KodePartai.'&dapil='.$Dapil);
+        } else {
+            // $_SESSION['pesan'] = "Berhasil Input Data";
+            header('location: form-partai.php?kc='.$KategoriCapil.'&kp='.$KodePartai);
+        }
+    } else {
+        if ($KategoriCapil == "DPRD-KAB") {
+            // $_SESSION['pesan'] = "Berhasil Input Data";
+            header('location: form-partai.php?kc='.$KategoriCapil.'&kp='.$KodePartai.'&dapil='.$Dapil);
+        } else {
+            // $_SESSION['pesan'] = "Berhasil Input Data";
+            header('location: form-partai.php?kc='.$KategoriCapil.'&kp='.$KodePartai);
+        }
+    }
+} else if (isset($_POST['submit-form-partai-2'])) {
+    
+    $NomorKTP = $_POST['no_ktp'];
+    $KategoriCapil = $_POST['kategori_capil'];
+    $JumlahSuaraSah = $_POST['jumlah_suara_sah'];
+    $JumlahSuaraTidakSah = $_POST['jumlah_suara_tidak_sah'];
+    $JumlahPenggunaHakPilih = $_POST['jumlah_pengguna_hak_pilih'];
+    
+    $sql = mysqli_query($conn, "INSERT INTO db_hasil_rekap_hdr (no_ktp, kategori_capil, jumlah_suara_sah, jumlah_suara_tidak_sah, jumlah_pengguna_hak_pilih) VALUES ('$NomorKTP', '$KategoriCapil', '$JumlahSuaraSah', '$JumlahSuaraTidakSah', '$JumlahPenggunaHakPilih')");
+
+    if ($sql) {
+        $_SESSION['pesan'] = "Berhasil Input Data";
+        header('location: form-partai-2.php?kc='.$KategoriCapil);
+    } else {
+        $_SESSION['pesan'] = "Gagal Input Data";
+        header('location: form-partai-2.php?kc='.$KategoriCapil);
+    }
+
+} else if (isset($_POST['submit-form-insert-ptps'])) {
+
+    $Kecamatan = $_POST['kecamatan'];
+    $Kelurahan = $_POST['kelurahan'];
+    $Nama = $_POST['nama'];
+    $NomorKTP = $_POST['nomor_ktp'];
+    $NomorTPS = $_POST['nomor_tps'];
+    $Dapil = $_POST['dapil'];
+
+    $sql = mysqli_query($conn, "INSERT INTO db_ptps (no_ktp, kategori_capil, jumlah_suara_sah, jumlah_suara_tidak_sah, jumlah_pengguna_hak_pilih) VALUES ('$NomorKTP', '$KategoriCapil', '$JumlahSuaraSah', '$JumlahSuaraTidakSah', '$JumlahPenggunaHakPilih')");
+
+    if ($sql) {
+        $_SESSION['pesan'] = "Berhasil Input Data";
+        header('location: form-partai-2.php?kc='.$KategoriCapil);
+    } else {
+        $_SESSION['pesan'] = "Gagal Input Data";
+        header('location: form-partai-2.php?kc='.$KategoriCapil);
+    }
 }
