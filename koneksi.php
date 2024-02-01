@@ -1,8 +1,8 @@
 <?php
 
-$servername = "srv1156.hstgr.io";
+$servername = "localhost";
 $database = "u189988533_bawaslu";
-$username = "u189988533_bawaslu";
-$password = "Bawaslu123!";
+$username = "root";
+$password = "";
 
 $conn = mysqli_connect($servername, $username, $password, $database);

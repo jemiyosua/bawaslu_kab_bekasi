@@ -76,10 +76,10 @@ require_once('koneksi.php');
 						$cari = $_GET['cari'];
 
 						if ($cari == "") {
-							$q = "SELECT id, no_urut, nama, status FROM db_master_capres_cawapres ORDER BY no_u ASC LIMIT $limit_start, $limit";
+							$q = "SELECT id, no_urut, nama, status FROM db_master_capres_cawapres ORDER BY id ASC LIMIT $limit_start, $limit";
 							$sql = mysqli_query($conn, $q);
 						} else {
-							$q = "SELECT id, no_urut, nama, status FROM db_master_capres_cawapres WHERE  nama LIKE '%" . $cari . "%' ORDER BY id ASC LIMIT $limit_start, $limit";
+							$q = "SELECT id, no_urut, nama, status FROM db_master_capres_cawapres WHERE nama LIKE '%" . $cari . "%' ORDER BY id ASC LIMIT $limit_start, $limit";
 							$sql = mysqli_query($conn, $q);
 						}
 					} else {

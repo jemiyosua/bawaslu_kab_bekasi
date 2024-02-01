@@ -1,5 +1,7 @@
 <?php
 
+require_once('koneksi.php');
+
 session_start();
 
 if (!isset($_SESSION['username']) && (!isset($_SESSION['password']))) {
@@ -8,7 +10,7 @@ if (!isset($_SESSION['username']) && (!isset($_SESSION['password']))) {
 }
 
 $_SESSION['nav'] = "master-data";
-$_SESSION['nav-page'] = "form-master-ptps";
+$_SESSION['nav-page'] = "master-ptps";
 
 require_once('header.php');
 
@@ -49,11 +51,28 @@ require_once('koneksi.php');
 		</script>";
 		unset($_SESSION['pesanError']);
 	}
+
+	$pilKecamatan = '';
+	$pilKelurahan = '';
+	$pilNoTPS = '';
+	$pilNoKTP = '';
+	$pilNama = '';
+	$pilDapil = '';
+
+	if (isset($_GET['update-ptps'])) {
+		$pilKecamatan = $_GET['Kecamatan'];
+		$pilKelurahan = $_GET['Kelurahan'];
+		$pilNoTPS = $_GET['NomorTPS'];
+		$pilNoKTP = $_GET['NomorKTP'];
+		$pilNama = $_GET['Nama'];
+		$pilDapil = $_GET['Dapil'];
+	}
 	?>
+
 	
 
 	<div class="pagetitle">
-		<h1>Dashboard Master PTPS</h1>
+		<h1><a href='master-ptps.php' style="text-decoration: none;"><i class="bi bi-arrow-left-circle-fill"></i></a> Dashboard Tambah PTPS</h1>
 	</div>
 
 	<hr />
@@ -67,161 +86,113 @@ require_once('koneksi.php');
 
 						<div class="d-flex justify-content-between align-items-center">
 							<div class="col-sm-6 mb-6 mb-sm-0">
-								<h5 class="card-title">Master PTPS</h5>
+								<h5 class="card-title">Tambah Data PTPS</h5>
 							</div>
 						</div>
 
-						<hr />
+						<hr/>
+
 						<div>
-							<?php
-	                           if (isset($_GET['Id'])) {
-								$Id = $_GET['Id'];
-							   }
-							   if (isset($_GET['Kecamatan'])) {
-								$Kecamatan = $_GET['Kecamatan'];
-							   }
-							   if (isset($_GET['Kelurahan'])) {
-								$Kelurahan = $_GET['Kelurahan'];
-							   }
-							   if (isset($_GET['NomorTPS'])) {
-								$NomorTPS = $_GET['NomorTPS'];
-							   }
-							   if (isset($_GET['NomorKTP'])) {
-								$NomorKTP = $_GET['NomorKTP'];
-							   }
-							   if (isset($_GET['Nama'])) {
-								$Nama = $_GET['Nama'];
-							   }
-							   if (isset($_GET['Dapil'])) {
-								$Dapil = $_GET['Dapil'];
-							   }
-							?>
-							<form class="row g-3 needs-validation" method="POST" action="proses.php">
+							<input id="pilKecamatan" value = '<?php echo $pilKecamatan?>' hidden></input>
+							<input id="pilKelurahan" value = '<?php echo $pilKelurahan?>' hidden></input>
+							<input id="pilDapil"  value = '<?php echo $pilDapil?>' hidden></input>
+
+							<form method="POST" action="proses.php" id="submit-form-insert-ptps" onsubmit="return disableButton()">
 								<div class="modal-body">
-									<div class="form-group" hidden>
-										<input type="text" name="vID" class="form-control"
-											value="<?php echo $Id ?>" />
+
+									<div class="row">
+
+										<div class="col-sm-4 mb-4 mb-sm-0">
+											<div class="mb-3">
+												<label class="form-label">Kecamatan</label>
+												<select class="form-select" name="kecamatan" id="kecamatan" onchange="getKelurahan()" required>
+													<?php
+													   if ($pilKecamatan != '') {
+														 
+														?>
+
+														<option value=<?php echo $pilKecamatan ?> selected hidden><?php echo $pilKecamatan ?></option>
+														<option value="">-- Pilih Kecamatan --</option>
+
+														<?php
+													   } else {
+														?>
+															<option value="" selected>-- Pilih Kecamatan --</option>
+														<?php
+													   }
+													
+													
+													$sql = mysqli_query($conn, "SELECT kecamatan FROM db_master_dapil ORDER BY kecamatan ASC");
+													while ($row = mysqli_fetch_assoc($sql)) {
+
+														$Kecamatan = strtoupper($row['kecamatan']);
+
+														?>
+
+														<option value="<?= $Kecamatan ?>"><?= $Kecamatan ?></option>
+		
+														<?php
+													}
+
+													?>
+												</select>
+											</div>
+										</div>
+
+										<div class="col-sm-4 mb-4 mb-sm-0">
+											<div class="mb-3">
+												<div id="dapil_div"></div>
+											</div>
+										</div>
+
+										<div class="col-sm-4 mb-4 mb-sm-0">
+											<div class="mb-3">
+												<div id="kelurahan_div"></div>
+											</div>
+										</div>
+
+										<hr/>
+
+										<div class="col-sm-4 mb-4 mb-sm-0" id="tps_form">
+											<div class="mb-3">
+												<label class="form-label">Nomor TPS</label>
+												<input type="text" name="nomor_tps" id="nomor_tps" class="form-control" onchange="return validasiTPS()" onkeypress="return isNumberKey(event)" value = '<?php echo $pilNoTPS?>' required/>
+												<div style="font-weight: bold;color: red;font-size: 12px;padding-top: 5px;" id="alert_tps"></div>
+												<div style="font-weight: bold;color: green;font-size: 12px;padding-top: 5px;" id="alert_tps_sukses"></div>
+											</div>
+										</div>
+
+										<div class="col-sm-4 mb-4 mb-sm-0">
+											<div class="mb-3">
+												<label class="form-label">Nama</label>
+												<input type="text" name="nama" class="form-control" value = '<?php echo $pilNama?>' required/>
+											</div>
+										</div>
+
+										<div class="col-sm-4 mb-4 mb-sm-0">
+											<div class="mb-3">
+												<label class="form-label">Nomor KTP</label>
+												<input type="text" name="nomor_ktp" id="nomor_ktp" class="form-control" onchange="return validasiKTP()" onkeypress="return isNumberKey(event)" value = '<?php echo $pilNoKTP?>' required/>
+												<div style="font-weight: bold;color: red;font-size: 12px;padding-top: 5px;" id="alert_ktp"></div>
+												<div style="font-weight: bold;color: green;font-size: 12px;padding-top: 5px;" id="alert_ktp_sukses"></div>
+											</div>
+										</div>
+
+										<input type="hidden" class="form-control" name="submit-form-insert-ptps" value="submit-form-ppwp">
+
 									</div>
 
-									<div class="form-group">
-										<label>Daerah Pilihan</label>
-										<select name="vDapil" class="form-select" id="dapil">
-											<?php
-											if (isset($Dapil)) {
-												$default_dapil = $Dapil;
-											}
-											if (isset($default_dapil)) {
-												?>
+									<hr/>
 
-												<option value="<?php echo $default_dapil ?>" selected='selected' hidden>
-													<?php echo $default_dapil ?>
-												</option>
-
-												<?php
-											}
-											$q_Dapil = mysqli_query($conn, "SELECT DISTINCT dapil from db_master_dapil");
-											while ($row_dapil = mysqli_fetch_array($q_Dapil)) {
-												?>
-												<option value="<?php echo $row_dapil['dapil'] ?>">
-													<?php echo $row_dapil['dapil'] ?>
-												</option>
-
-												<?php
-											}
-											?>
-										</select>
-									</div>
-									
-
-									<div class="form-group">
-										<label>Kecamatan</label>
-										<select name="vKecamatan" class="form-select" id = "kecamatan">
-											<?php
-
-											if (isset($_POST['pilihan-dapil'])) {
-												$pilihan_dapil = $_POST['pilihan-dapil'];
-											} else {
-												$pilihan_dapil = $Dapil;
-											}
-											if (isset($Kecamatan)) {
-												$default_kecamatan = $Kecamatan;
-											}
-											if (isset($default_kecamatan)) {
-												?>
-
-												<option value="<?php echo $default_kecamatan ?>" selected='selected' hidden>
-													<?php echo $default_kecamatan ?>
-												</option>
-
-												<?php
-											}
-											$q_Kecamatan = mysqli_query($conn, "SELECT kecamatan from db_master_dapil WHERE dapil like '%$pilihan_dapil%'");
-											while ($row_Kec = mysqli_fetch_array($q_Kecamatan)) {
-												?>
-												<option value="<?php echo strtoupper($row_Kec['kecamatan']) ?>">
-													<?php echo strtoupper($row_Kec['kecamatan']) ?>
-												</option>
-
-												<?php
-											}
-											?>
-										</select>
-									</div>
-
-									<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
-									<script>
-										$(document).ready(function(){
-											$('#dapil').on('change',function(){
-											var dapil = $(this).val();
-												if(dapil){
-													$.ajax({
-														type:'POST',
-														url:'load-kec-ptps.php',
-														data: {
-															dapil : dapil
-														},
-														success:function(html){
-															$('#kecamatan').html(html);
-														}
-													});
-
-												}else{
-													$('#kecamatan').html('<option></option>');
-												}
-											});
-										});
-									</script>
-
-									<div class="form-group">
-										<label>Kelurahan</label>
-										<input type="text" name="vKelurahan" class="form-control"
-											value="<?php echo $Kelurahan ?>" />
-									</div>
-
-									<div class="form-group">
-										<label>Nomor TPS</label>
-										<input type="text" name="vNoTPS" class="form-control"
-											value="<?php echo $NomorTPS ?>" />
-									</div>
-
-									<div class="form-group">
-										<label>Nomor KTP</label>
-										<input type="text" name="vNoKTP" class="form-control"
-											value="<?php echo $NomorKTP ?>" />
-									</div>
-
-									<div class="form-group">
-										<label>Nama</label>
-										<input type="text" name="vNama" class="form-control"
-											value="<?php echo $Nama ?>" />
-									</div>
-								</div>
-								<div class="modal-footer">
-									<button name="update-ptps" type="submit" class="btn btn-primary">Simpan</button>
-									<a type="button" class="btn btn-secondary" href="master-ptps.php">Kembali</a>
+									<div style="font-weight: bold;color: red;font-size: 12px;padding-bottom: 5px;" id="alert_button"></div>
+									<button type="submit" class="btn btn-success" id="button-submit"><i class="bi bi-check-circle-fill"></i> Submit</button>
 
 								</div>
+
+								</div>
+								
 							</form>
+							
 						</div>
 					</div>
 
@@ -236,3 +207,145 @@ require_once('koneksi.php');
 require_once('footer.php');
 
 ?>
+
+<script type="text/javascript">
+
+function isNumberKey(evt) {
+	var charCode = (evt.which) ? evt.which : event.keyCode
+	if (charCode > 31 && (charCode < 48 || charCode > 57))
+	return false;
+}
+
+function disableButton() {
+	var alert_tps = document.getElementById('alert_tps').innerHTML;
+	var alert_ktp = document.getElementById('alert_ktp').innerHTML;
+	var alert = "";
+
+	if (alert_tps != "") {
+		alert = alert + "Masih Terjadi Kesalahan : " + alert_tps;
+	}
+
+	if (alert_ktp != "") {
+		if (alert.length > 0) {
+			alert= alert + " " + alert_ktp;
+		} else {
+			alert= alert + "Masih Terjadi Kesalahan : " + alert_ktp;
+		} 
+	}
+
+	if (alert != "") {
+		document.getElementById('alert_button').innerHTML = alert;
+		return false
+	} else {
+		var form = document.getElementById('submit-form-insert-ptps');
+
+		if (form.checkValidity()) {
+			document.getElementById('button-submit').disabled = true;
+		}
+	}
+
+	return true
+	
+}
+
+function getKelurahan() {
+	var Kecamatan = document.getElementById('kecamatan').value;
+	var pilKelurahan = document.getElementById('pilKecamatan').value;
+	var pilDapil = document.getElementById('pilDapil').value;
+
+	var xhttp = new XMLHttpRequest();
+	xhttp.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) {
+			console.log(this.responseText)
+			var Response = this.responseText;
+			var ResponseSplit = Response.split("//");
+			var DataKelurahan = ResponseSplit[0];
+			var FormDapil = ResponseSplit[1];
+			document.getElementById("kelurahan_div").innerHTML = DataKelurahan;
+			document.getElementById("dapil_div").innerHTML = FormDapil;
+		}
+	};
+
+	var URL = 'http://localhost/bawaslu_kab_bekasi/get-kelurahan.php?kecamatan=' + Kecamatan + '&pilKelurahan' + pilKelurahan + '&pilDapil' + pilDapil;
+	console.log("URL : " + URL)
+	xhttp.open("GET", URL, true);
+	xhttp.send();
+}
+
+function validasiTPS() {
+	var Kecamatan = document.getElementById('kecamatan').value;
+	var Kelurahan = document.getElementById('kelurahan').value;
+	var NomorTPS = document.getElementById('nomor_tps').value;
+
+	if (NomorTPS == "") {
+		document.getElementById('alert_button').innerHTML = "";
+		document.getElementById("alert_tps").innerHTML = "";
+		document.getElementById("alert_tps_sukses").innerHTML = "";
+		return
+	} else {
+		if (Kecamatan == "") {
+			document.getElementById("alert_tps").innerHTML = "Kecamatan tidak boleh kosong!";
+			return
+		} else if (Kelurahan == "") {
+			document.getElementById("alert_tps").innerHTML = "Kelurahan tidak boleh kosong!";
+			return
+		}
+	}
+
+	var xhttp = new XMLHttpRequest();
+	xhttp.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) {
+			console.log(this.responseText)
+			var Response = this.responseText;
+
+			if (Response == "0") {
+				document.getElementById("alert_tps").innerHTML = "";
+				document.getElementById("alert_tps_sukses").innerHTML = "Nomor TPS Dapat Digunakan!";
+			} else {
+				document.getElementById("alert_tps").innerHTML = "Nomor TPS Sudah Digunakan!";
+				document.getElementById("alert_tps_sukses").innerHTML = "";
+			}
+		}
+	};
+
+	var URL = 'http://localhost/bawaslu_kab_bekasi/validasi-tps.php?kecamatan=' + Kecamatan + '&kelurahan=' + Kelurahan + '&nomor_tps=' + NomorTPS;
+	console.log("URL : " + URL)
+	xhttp.open("GET", URL, true);
+	xhttp.send();
+}
+
+function validasiKTP() {	
+	var NomorKTP = document.getElementById('nomor_ktp').value; 
+	if (NomorKTP.charAt(0) == "0") {
+		document.getElementById("alert_ktp").innerHTML = "Digit Pertama Nomor KTP tidak boleh 0 (Nol)!";
+		return
+	} 
+	if (NomorKTP.length > 16 || NomorKTP.length < 16) {
+		document.getElementById("alert_ktp").innerHTML = "Nomor KTP Terdiri Dari 16 Digit!";
+		return
+	} 
+
+	var xhttp = new XMLHttpRequest();
+	xhttp.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) {
+			console.log(this.responseText)
+			var Response = this.responseText;
+
+			if (Response == "0") {
+				document.getElementById("alert_ktp").innerHTML = "";
+				document.getElementById("alert_ktp_sukses").innerHTML = "Nomor KTP Dapat Digunakan!";
+			} else {
+				document.getElementById("alert_ktp").innerHTML = "Nomor KTP Sudah Digunakan!";
+				document.getElementById("alert_ktp_sukses").innerHTML = "";
+			}
+		}
+	};
+
+	var URL = 'http://localhost/bawaslu_kab_bekasi/validasi-ktp.php?nomor_ktp=' + NomorKTP ;
+	console.log("URL : " + URL)
+	xhttp.open("GET", URL, true);
+	xhttp.send();
+
+}
+
+</script>

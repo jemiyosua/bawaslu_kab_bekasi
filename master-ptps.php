@@ -127,8 +127,9 @@ require_once('koneksi.php');
 						$Kelurahan = strtoupper($row['kelurahan']);
 						$NomorTPS = $row['no_tps'];
 						$NomorKTP = $row['no_ktp'];
-						$Nama = $row['nama'];
-						$Dapil = "BEKASI " . $row['dapil_kab'];
+						$Nama = strtoupper($row['nama']);
+						$Dapil = $row['dapil_kab'];
+						$vDapil = 'BEKASI ' . $row['dapil_kab'];
 
 						echo "
 						<tr>
@@ -138,10 +139,10 @@ require_once('koneksi.php');
 							<td>$NomorTPS</td>
 							<td>$NomorKTP</td>
 							<td>$Nama</td>
-							<td>$Dapil</td>
+							<td>$vDapil</td>
 							<td style='padding-right:0;margin-right:0;'>
-								<a class='btn btn-warning' href='form-master-ptps.php?update-ptps=1&Id=$Id&Kecamatan=$Kecamatan&Kelurahan=$Kelurahan&NomorTPS=$NomorTPS&NomorKTP=$NomorKTP&Nama=$Nama&Dapil=$Dapil'> <i class='bi bi-pencil-square'></i></button>
-								<a class='btn btn-danger' href='proses.php?delete-ptps=1&deleteID=$Id>'><i class='bi bi-trash-fill'></i></a> 
+								<a class='btn btn-warning' href='form-master-ptps.php?update-ptps=1&Id=$Id&Kecamatan=$Kecamatan&Kelurahan=$Kelurahan&NomorTPS=$NomorTPS&NomorKTP=$NomorKTP&Nama=$Nama&Dapil=$Dapil'> <i class='bi bi-pencil-square'></i></a>
+								<button class='btn btn-danger' onclick='fnDeleteRow($Id)'><i class='bi bi-trash-fill'></i></button> 
 							</td>
 						</tr>
 						";
@@ -242,3 +243,47 @@ require_once('koneksi.php');
 require_once('footer.php');
 
 ?>
+
+<script type="text/javascript">
+	function fnDeleteRow(id){
+		Swal.fire({
+			title: 'Yakin menghapus?',
+			text: "Data yang sudhah dihapus tidak dapat dikembalikan!",
+			icon: 'warning',
+			showCancelButton: true,
+			cancelButtonText: 'Batal',
+			confirmButtonText: 'Ya, hapus sekarang!'
+		}).then((result) => {
+			if (result.value) {
+				var xhttp = new XMLHttpRequest();
+				xhttp.onreadystatechange = function() {
+					if (this.readyState == 4 && this.status == 200) {
+						console.log(this.responseText)
+						var Response = this.responseText;
+						if(Response == 200) {
+							Swal.fire({
+								title: 'Terhapus!',
+								text: 'Data berhasil dihapus.',
+								icon: 'success',
+								showConfirmButton: false
+							});
+							window.location.href='master-ptps.php';
+						}else {
+							Swal.fire({
+								title: 'Gagal!',
+								text: 'Data gagal dihapus.',
+								icon: 'Sorry',
+								showConfirmButton: false
+							});
+						}
+					}
+				};
+
+				var URL = 'http://localhost/bawaslu_kab_bekasi/proses.php?delete-ptps=1&deleteID=' + id;
+				console.log("URL : " + URL)
+				xhttp.open("GET", URL, true);
+				xhttp.send();
+			} 
+		})
+	}
+</script>
