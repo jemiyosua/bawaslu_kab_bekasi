@@ -76,12 +76,12 @@ require_once('koneksi.php');
 
 						<div>
 
-							<form method="POST" action="proses.php" id="submit-form-insert-ptps" onsubmit="disableButton()">
+							<form method="POST" action="proses.php" id="submit-form-insert-ptps" onsubmit="return disableButton()">
 								<div class="modal-body">
 
 									<div class="row">
 
-										<div class="col-sm-6 mb-6 mb-sm-0">
+										<div class="col-sm-4 mb-4 mb-sm-0">
 											<div class="mb-3">
 												<label class="form-label">Kecamatan</label>
 												<select class="form-select" name="kecamatan" id="kecamatan" onchange="getKelurahan()" required>
@@ -105,29 +105,21 @@ require_once('koneksi.php');
 											</div>
 										</div>
 
-										<div class="col-sm-6 mb-6 mb-sm-0">
+										<div class="col-sm-4 mb-4 mb-sm-0">
 											<div class="mb-3">
 												<div id="kelurahan_div"></div>
 											</div>
 										</div>
 
+										<div class="col-sm-4 mb-4 mb-sm-0">
+											<div class="mb-3">
+												<div id="dapil_div"></div>
+											</div>
+										</div>
+
 										<hr/>
 
-										<div class="col-sm-3 mb-3 mb-sm-0">
-											<div class="mb-3">
-												<label class="form-label">Nama</label>
-												<input type="text" name="nama" class="form-control" required/>
-											</div>
-										</div>
-
-										<div class="col-sm-3 mb-3 mb-sm-0">
-											<div class="mb-3">
-												<label class="form-label">Nomor KTP</label>
-												<input type="text" name="nomor_ktp" class="form-control" onkeypress="return isNumberKey(event)" required/>
-											</div>
-										</div>
-
-										<div class="col-sm-3 mb-3 mb-sm-0">
+										<div class="col-sm-4 mb-4 mb-sm-0" id="tps_form">
 											<div class="mb-3">
 												<label class="form-label">Nomor TPS</label>
 												<input type="text" name="nomor_tps" id="nomor_tps" class="form-control" onchange="return validasiTPS()" onkeypress="return isNumberKey(event)" required/>
@@ -136,10 +128,17 @@ require_once('koneksi.php');
 											</div>
 										</div>
 
-										<div class="col-sm-3 mb-3 mb-sm-0">
+										<div class="col-sm-4 mb-4 mb-sm-0">
 											<div class="mb-3">
-												<label class="form-label">Daerah Pilihan (DAPIL BEKASI)</label>
-												<input type="text" name="dapil" id="dapil" class="form-control" readonly required/>
+												<label class="form-label">Nama</label>
+												<input type="text" name="nama" class="form-control" required/>
+											</div>
+										</div>
+
+										<div class="col-sm-4 mb-4 mb-sm-0">
+											<div class="mb-3">
+												<label class="form-label">Nomor KTP</label>
+												<input type="text" name="nomor_ktp" class="form-control" onkeypress="return isNumberKey(event)" required/>
 											</div>
 										</div>
 
@@ -149,6 +148,7 @@ require_once('koneksi.php');
 
 									<hr/>
 
+									<div style="font-weight: bold;color: red;font-size: 12px;padding-bottom: 5px;" id="alert_button"></div>
 									<button type="submit" class="btn btn-success" id="button-submit"><i class="bi bi-check-circle-fill"></i> Submit</button>
 
 								</div>
@@ -181,11 +181,21 @@ function isNumberKey(evt) {
 }
 
 function disableButton() {
-	var form = document.getElementById('submit-form-insert-ptps');
+	var alert_tps = document.getElementById('alert_tps').innerHTML;
 
-	if (form.checkValidity()) {
-		document.getElementById('button-submit').disabled = true;
+	if (alert_tps != "") {
+		document.getElementById('alert_button').innerHTML = "Masih Terjadi Kesalahan : " + alert_tps;
+		return false
+	} else {
+		var form = document.getElementById('submit-form-insert-ptps');
+
+		if (form.checkValidity()) {
+			document.getElementById('button-submit').disabled = true;
+		}
 	}
+
+	return true
+	
 }
 
 function getKelurahan() {
@@ -197,10 +207,10 @@ function getKelurahan() {
 			console.log(this.responseText)
 			var Response = this.responseText;
 			var ResponseSplit = Response.split("//");
-			var DataDapil = ResponseSplit[0];
-			var DataKelurahan = ResponseSplit[1];
-			document.getElementById("dapil").value = DataDapil;
+			var DataKelurahan = ResponseSplit[0];
+			var FormDapil = ResponseSplit[1];
 			document.getElementById("kelurahan_div").innerHTML = DataKelurahan;
+			document.getElementById("dapil_div").innerHTML = FormDapil;
 		}
 	};
 
@@ -215,10 +225,10 @@ function validasiTPS() {
 	var Kelurahan = document.getElementById('kelurahan').value;
 	var NomorTPS = document.getElementById('nomor_tps').value;
 
-	console.log("Kelurahan : " + Kelurahan)
-
 	if (NomorTPS == "") {
+		document.getElementById('alert_button').innerHTML = "";
 		document.getElementById("alert_tps").innerHTML = "";
+		document.getElementById("alert_tps_sukses").innerHTML = "";
 		return
 	} else {
 		if (Kecamatan == "") {
