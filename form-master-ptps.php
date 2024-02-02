@@ -77,8 +77,6 @@ require_once('koneksi.php');
 	}
 	?>
 
-	
-
 	<div class="pagetitle">
 		<h1><a href='master-ptps.php' style="text-decoration: none;"><i class="bi bi-arrow-left-circle-fill"></i></a> Dashboard <?=$judul?> PTPS</h1>
 	</div>
@@ -102,7 +100,7 @@ require_once('koneksi.php');
 						<hr/>
 
 						<div>
-							<input id="pilKelurahan" value = '<?php echo $pilKelurahan?>' hidden></input>
+							<input id="pilKelurahan" value = '<?= $pilKelurahan?>' hidden></input>
 
 							<form method="POST" action="proses.php" id="submit-form-<?=$proses?>-ptps" onsubmit="return disableButton()">
 							 <input type="text" name="id" id="id" value= '<?= $id?>' hidden></input>
@@ -114,11 +112,11 @@ require_once('koneksi.php');
 											<div class="mb-3">
 												<label class="form-label">Kecamatan</label>
 												<select class="form-select" name="kecamatan" id="kecamatan" onchange="getKelurahan()" required>
-													
 														
 													<option value="" selected>-- Pilih Kecamatan --</option>
 													
 													<?php
+  
 													$sql = mysqli_query($conn, "SELECT kecamatan FROM db_master_dapil ORDER BY kecamatan ASC");
 													while ($row = mysqli_fetch_assoc($sql)) {
 
@@ -138,13 +136,13 @@ require_once('koneksi.php');
 
 										<div class="col-sm-4 mb-4 mb-sm-0">
 											<div class="mb-3">
-												<div id="dapil_div"></div>
+												<div id="kelurahan_div"></div>
 											</div>
 										</div>
 
 										<div class="col-sm-4 mb-4 mb-sm-0">
 											<div class="mb-3">
-												<div id="kelurahan_div"></div>
+												<div id="dapil_div"></div>
 											</div>
 										</div>
 
@@ -206,6 +204,7 @@ require_once('footer.php');
 ?>
 
 <script type="text/javascript">
+
 window.addEventListener("load",function(){
     getKelurahan();
 },false);
@@ -244,6 +243,7 @@ function disableButton() {
 		} else if (proses == 'update'){
 			var form = document.getElementById('submit-form-update-ptps');
 		}
+    
 		if (form.checkValidity()) {
 			document.getElementById('button-submit').disabled = true;
 		}
@@ -276,6 +276,7 @@ function getKelurahan() {
 	};
 
 	var URL = 'http://localhost/bawaslu_kab_bekasi/get-kelurahan.php?kecamatan=' + Kecamatan + '&kelurahan=' + pilKelurahan;
+
 	console.log("URL : " + URL)
 	xhttp.open("GET", URL, true);
 	xhttp.send();
@@ -316,8 +317,9 @@ function validasiTPS() {
 			}
 		}
 	};
-
+  
 	var URL = 'http://localhost/bawaslu_kab_bekasi/validasi-tps.php?kecamatan=' + Kecamatan + '&kelurahan=' + Kelurahan + '&nomor_tps=' + NomorTPS;
+
 	console.log("URL : " + URL)
 	xhttp.open("GET", URL, true);
 	xhttp.send();
@@ -371,5 +373,5 @@ function clearNoTPS() {
 	console.log('123');
 
 }
-
+  
 </script>
