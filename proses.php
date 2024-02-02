@@ -335,76 +335,13 @@ if (isset($_POST['login-admin'])) {
     $NomorTPS = $_POST['nomor_tps'];
     $Dapil = $_POST['dapil'];
 
-    $sql = mysqli_query($conn, "SELECT COUNT(1) cnt FROM db_ptps WHERE no_tps = '$NomorTPS' AND kecamatan = '$Kecamatan' AND kelurahan = '$Kelurahan'");
-    $row = mysqli_fetch_assoc($sql);
-    $Count = $row["cnt"];
-    if ($Count > 0 ) {
-        $_SESSION['pesanError'] = "Sudah Terdapat PTPS di TPS Kecamatan " . $Kecamatan . " Kelurahan " . $Kelurahan ." No. " . $NomorTPS;
-        header('location: master-ptps.php');
+    $sql = mysqli_query($conn, "INSERT INTO db_ptps (no_ktp, kategori_capil, jumlah_suara_sah, jumlah_suara_tidak_sah, jumlah_pengguna_hak_pilih) VALUES ('$NomorKTP', '$KategoriCapil', '$JumlahSuaraSah', '$JumlahSuaraTidakSah', '$JumlahPenggunaHakPilih')");
+
+    if ($sql) {
+        $_SESSION['pesan'] = "Berhasil Input Data";
+        header('location: form-partai-2.php?kc='.$KategoriCapil);
     } else {
-        $sql1 = mysqli_query($conn, "SELECT COUNT(1) cnt FROM db_ptps WHERE nama = '$Nama' AND no_ktp = '$NomorKTP'");
-        $row1 = mysqli_fetch_assoc($sql1);
-        $Count1 = $row1["cnt"];
-        if ($Count1 > 0) {
-            $_SESSION['pesanError'] = "PTPS sudah pernah didaftarkan";
-        header('location: master-ptps.php');
-        } else {
-            $sql2 = mysqli_query($conn, "INSERT INTO db_ptps (kecamatan, kelurahan, no_tps, no_ktp, nama, dapil_kab) VALUES ('$Kecamatan', '$Kelurahan', '$NomorTPS', '$NomorKTP', '$Nama' ,'$Dapil')");
-
-            if ($sql2) {
-                $_SESSION['pesan'] = "Berhasil Input Data";
-                header('location: master-ptps.php');
-            } else {
-                $_SESSION['pesanError'] = "Gagal Input Data";
-                header('location: master-ptps.php');
-            }
-        }
+        $_SESSION['pesan'] = "Gagal Input Data";
+        header('location: form-partai-2.php?kc='.$KategoriCapil);
     }
-    
-} else if (isset($_POST['submit-form-update-ptps'])) {
-    $id = $_POST['id'];
-    $Kecamatan = $_POST['kecamatan'];
-    $Kelurahan = $_POST['kelurahan'];
-    $Nama = $_POST['nama'];
-    $NomorKTP = $_POST['nomor_ktp'];
-    $NomorTPS = $_POST['nomor_tps'];
-    $Dapil = $_POST['dapil'];
-
-    $sql = mysqli_query($conn, "SELECT COUNT(1) cnt FROM db_ptps WHERE no_tps = '$NomorTPS' AND kecamatan = '$Kecamatan' AND kelurahan = '$Kelurahan' and id <> '$id'");
-    $row = mysqli_fetch_assoc($sql);
-    $Count = $row["cnt"];
-    if ($Count > 0 ) {
-        $_SESSION['pesanError'] = "Sudah Terdapat PTPS di TPS Kecamatan " . $Kecamatan . " Kelurahan " . $Kelurahan ." No. " . $NomorTPS;
-        header('location: master-ptps.php');
-    } else {
-        $sql1 = mysqli_query($conn, "SELECT COUNT(1) cnt FROM db_ptps WHERE nama = '$Nama' AND no_ktp = '$NomorKTP' AND id <> '$id'");
-        $row1 = mysqli_fetch_assoc($sql1);
-        $Count1 = $row1["cnt"];
-        if ($Count1 > 0) {
-            $_SESSION['pesanError'] = "PTPS sudah pernah didaftarkan";
-        header('location: master-ptps.php');
-        } else {
-            $sql2 = mysqli_query($conn, "UPDATE db_ptps SET kecamatan = '$Kecamatan', kelurahan = '$Kelurahan', no_tps = '$NomorTPS', no_ktp = '$NomorKTP', nama = '$Nama', dapil_kab = '$Dapil' WHERE id = '$id'");
-
-            if ($sql2) {
-                $_SESSION['pesan'] = "Berhasil Update Data";
-                header('location: master-ptps.php');
-            } else {
-                $_SESSION['pesanError'] = "Gagal Update Data";
-                header('location: master-ptps.php');
-            }
-        }
-    }
-    
-} else if (isset($_GET['delete-ptps'])) {
-    $IdDelete = $_GET['deleteID'];
-
-    $query = "DELETE FROM db_ptps WHERE id = '$IdDelete'";    
-    
-    if (!$results = mysqli_query($conn, $query)) {
-        echo 600;
-    } else {
-        echo 200;
-    }
-
-} 
+}
