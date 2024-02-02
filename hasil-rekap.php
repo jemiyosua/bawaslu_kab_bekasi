@@ -18,23 +18,15 @@ require_once('sidebar.php');
 
 require_once('koneksi.php');
 
-// resetSessionHasilRekap();
-
-?>
-
-<?php
-function resetSessionHasilRekap()
-{
-    unset($_SESSION['s_it_cari_kec']);
-    unset($_SESSION['it_cari_kel']);
-    unset($_SESSION['it_cari_no_tps']);
-    unset($_SESSION['it_cari_kategori']);
-    unset($_SESSION['it_cari_dapil']);
-    unset($_SESSION['it_cari_partai']);
-    unset($_SESSION['it_cari_no_urut']);
-    unset($_SESSION['it_cari_nama']);
-    unset($_SESSION['it_cari_kec']);
-};
+$ParamKecamatan = isset($_GET['it_cari_kec']) ? $_GET['it_cari_kec'] : '';
+$ParamKelurahan = isset($_GET['it_cari_kel']) ? $_GET['it_cari_kel'] : '';
+$ParamTps = isset($_GET['it_cari_no_tps']) ? $_GET['it_cari_no_tps'] : '';
+$ParamKategori = isset($_GET['it_cari_kategori']) ? $_GET['it_cari_kategori'] : '';
+$ParamKodePartai = isset($_GET['it_cari_partai']) ? $_GET['it_cari_partai'] : '';
+$ParamKtp = isset($_GET['it_cari_inputor']) ? $_GET['it_cari_inputor'] : '';
+$ParamNama = isset($_GET['it_cari_nama']) ? $_GET['it_cari_nama'] : '';
+$ParamDapil = isset($_GET['it_cari_dapil']) ? $_GET['it_cari_dapil'] : '';
+$ParamNoUrut = isset($_GET['it_cari_no_urut']) ? $_GET['it_cari_no_urut'] : '';
 
 ?>
 
@@ -55,44 +47,30 @@ function resetSessionHasilRekap()
                         <table class="table table-hover" style="display: block; overflow-x: auto;white-space: nowrap;">
                             <thead class="thead-grey">
                                 <tr>
-                                    <th scope="col"></th>
-                                    <!-- <form>
-                                        <th scope="col"><input type="text" class="form-control" placeholder="Kecamatan..." aria-describedby="button-addon2" name="it_cari_kec"></th>
-                                    </form> -->
-
-                                    <th scope="col"><input type="text" class="form-control" placeholder="Kecamatan..." aria-describedby="button-addon2" name="it_cari_kec" onchange="alert('TEST')"></th>
+                                <th scope="col"> <a class="btn btn-outline-secondary" href="hasil-rekap.php" ><i class="bi bi-arrow-clockwise"></i></a></th>
+                                    
                                     <form>
-                                        <th scope="col"><input type="text" class="form-control" placeholder="Kelurahan..." aria-describedby="button-addon2" name="it_cari_kel"></th>
-                                    </form>
+                                        <th scope="col"><input type="text" class="form-control" placeholder="Kecamatan..." aria-describedby="button-addon2" name="it_cari_kec" value="<?=$ParamKecamatan?>"></th>
 
-                                    <form>
-                                        <th scope="col"><input type="text" class="form-control" placeholder="No TPS..." aria-describedby="button-addon2" name="it_cari_no_tps"></th>
-                                    </form>
+                                        <th scope="col"><input type="text" class="form-control" placeholder="Kelurahan..." aria-describedby="button-addon2" name="it_cari_kel" value="<?=$ParamKelurahan?>"></th>
+                                    
+                                        <th scope="col"><input type="text" class="form-control" placeholder="No TPS..." aria-describedby="button-addon2" name="it_cari_no_tps" value="<?=$ParamTps?>"></th>
+                                    
+                                        <th scope="col"><input type="text" class="form-control" placeholder="Kategori..." aria-describedby="button-addon2" name="it_cari_kategori" value="<?=$ParamKategori?>"></th>
+                                   
+                                        <th scope="col"><input type="text" class="form-control" placeholder="Dapil..." aria-describedby="button-addon2" name="it_cari_dapil" value="<?=$ParamDapil?>"></th>
+                                    
+                                        <th scope="col"><input type="text" class="form-control" placeholder="Partai..." aria-describedby="button-addon2" name="it_cari_partai" value="<?=$ParamKodePartai?>"></th>
+                                    
+                                        <th scope="col"><input type="text" class="form-control" placeholder="No Urut..." aria-describedby="button-addon2" name="it_cari_no_urut" value="<?=$ParamNoUrut?>"></th>
+                                    
+                                        <th scope="col"><input type="text" class="form-control" placeholder="Nama..." aria-describedby="button-addon2" name="it_cari_nama" value="<?=$ParamNama?>"></th>
 
-                                    <form>
-                                        <th scope="col"><input type="text" class="form-control" placeholder="Kategori..." aria-describedby="button-addon2" name="it_cari_kategori"></th>
-                                    </form>
+                                        <th scope="col"></th>
 
-                                    <form>
-                                        <th scope="col"><input type="text" class="form-control" placeholder="Dapil..." aria-describedby="button-addon2" name="it_cari_dapil"></th>
-                                    </form>
-
-                                    <form>
-                                        <th scope="col"><input type="text" class="form-control" placeholder="Partai..." aria-describedby="button-addon2" name="it_cari_partai"></th>
-                                    </form>
-
-                                    <form>
-                                        <th scope="col"><input type="text" class="form-control" placeholder="No Urut..." aria-describedby="button-addon2" name="it_cari_no_urut"></th>
-                                    </form>
-
-                                    <form>
-                                        <th scope="col"><input type="text" class="form-control" placeholder="Nama..." aria-describedby="button-addon2" name="it_cari_nama"></th>
-                                    </form>
-
-                                    <th scope="col"></th>
-
-                                    <form>
                                         <th scope="col"><input type="text" class="form-control" placeholder="Inputor..." aria-describedby="button-addon2" name="it_cari_inputor"></th>
+
+                                        <button type="submit" style="display: none;"></button>
                                     </form>
 
                                     <th scope="col"></th>
@@ -127,183 +105,17 @@ function resetSessionHasilRekap()
 
                                 $No = $limit_start + 1;
 
-                                $ParamKecamatan = "ALL";
-                                $ParamKelurahan = "ALL";
-                                $ParamTps = "ALL";
-                                $ParamKategori = "ALL";
-                                $ParamKodePartai = "ALL";
-                                $ParamKtp = "ALL";
-                                $ParamNama = "ALL";
-                                $ParamDapil = "ALL";
-                                $ParamNoUrut = "ALL";
-
-                                if (isset($_GET['it_cari_kec'])) {
-                                    $ParamKecamatan = $_GET['it_cari_kec'] == "" ? "ALL" : $_GET['it_cari_kec'];
-                                }
-
-                                if (isset($_GET['it_cari_kel'])) {
-                                    $ParamKelurahan = $_GET['it_cari_kel'] == "" ? "ALL" : $_GET['it_cari_kel'];
-                                }
-
-                                if (isset($_GET['it_cari_kel'])) {
-                                    $ParamKelurahan = $_GET['it_cari_kel'] == "" ? "ALL" : $_GET['it_cari_kel'];
-                                }
-
-                                if (isset($_GET['it_cari_no_tps'])) {
-                                    $ParamTps = $_GET['it_cari_no_tps'] == "" ? "ALL" : $_GET['it_cari_no_tps'];
-                                }
-
-                                if (isset($_GET['it_cari_kategori'])) {
-                                    $ParamKategori = $_GET['it_cari_kategori'] == "" ? "ALL" : $_GET['it_cari_kategori'];
-                                }
-
-                                if (isset($_GET['it_cari_dapil'])) {
-                                    $ParamDapil = $_GET['it_cari_dapil'] == "" ? "ALL" : $_GET['it_cari_dapil'];
-                                } 
-
-                                if (isset($_GET['it_cari_partai'])) {
-                                    $ParamKodePartai = $_GET['it_cari_partai'] == "" ? "ALL" : $_GET['it_cari_partai'];
-                                }
-
-                                if (isset($_GET['it_cari_no_urut'])) {
-                                    $ParamNoUrut = $_GET['it_cari_no_urut'] == "" ? "ALL" : $_GET['it_cari_no_urut'];
-                                }
-                                
-                                if (isset($_GET['it_cari_nama'])) {
-                                    $ParamNama = $_GET['it_cari_nama'] == "" ? "ALL" : $_GET['it_cari_nama'];
-                                }
-
-                                if (isset($_GET['it_cari_inputor'])) {
-                                    $ParamKtp = $_GET['it_cari_inputor'] == "" ? "ALL" : $_GET['it_cari_inputor'];
-                                }
-                                
-                                // if (isset($_SESSION['s_it_cari_kec'])) {
-                                //     $ParamKecamatan = $_SESSION['s_it_cari_kec'];
-                                // } else {
-                                //     if (isset($_GET['it_cari_kec'])) {
-                                //         $ParamKecamatan = $_GET['it_cari_kec'] == "" ? "ALL" : $_GET['it_cari_kec'];
-                                //     } else {
-                                //         $ParamKecamatan = "ALL";
-                                //     }
-
-                                //     if($ParamKecamatan != "ALL"){
-                                //         $_SESSION['s_it_cari_kec'] = $ParamKecamatan;
-                                //     }
-                                // }
-
-                                // if (!isset($_SESSION['it_cari_kel'])) {
-                                //     if (isset($_GET['it_cari_kel'])) {
-                                //         $ParamKelurahan = $_GET['it_cari_kel'] == "" ? "ALL" : $_GET['it_cari_kel'];
-                                //     } else {
-                                //         $ParamKelurahan = "ALL";
-                                //     }
-                                //     if ($ParamKelurahan != "ALL") {
-                                //         $_SESSION['it_cari_kel'] = $ParamKelurahan;
-                                //     }
-                                // } else {
-                                //     if ($ParamKelurahan != "ALL"){
-                                //         $ParamKelurahan = $_SESSION['it_cari_kel'];
-                                //     }
-                                // }
-
-
-                                // if (!isset($_SESSION['it_cari_no_tps'])) {
-                                //     if (isset($_GET['it_cari_no_tps'])) {
-                                //         $ParamTps = $_GET['it_cari_no_tps'] == "" ? "ALL" : $_GET['it_cari_no_tps'];
-                                //     } else {
-                                //         $ParamTps = "ALL";
-                                //     }
-                                //     $_SESSION['it_cari_no_tps'] = $ParamTps;
-                                // } else {
-                                //     $ParamTps = $_SESSION['it_cari_no_tps'];
-                                // }
-
-
-                                // if (!isset($_SESSION['it_cari_kategori'])) {
-                                //     if (isset($_GET['it_cari_kategori'])) {
-                                //         $ParamKategori = $_GET['it_cari_kategori'] == "" ? "ALL" : $_GET['it_cari_kategori'];
-                                //     } else {
-                                //         $ParamKategori = "ALL";
-                                //     }
-                                //     $_SESSION['it_cari_kategori'] = $ParamKategori;
-                                // } else {
-                                //     $ParamKategori = $_SESSION['it_cari_kategori'];
-                                // }
-
-
-                                // if (!isset($_SESSION['it_cari_dapil'])) {
-                                //     if (isset($_GET['it_cari_dapil'])) {
-                                //         $ParamDapil = $_GET['it_cari_dapil'] == "" ? "ALL" : $_GET['it_cari_dapil'];
-                                //     } else {
-                                //         $ParamDapil = "ALL";
-                                //     }
-                                //     $_SESSION['it_cari_dapil'] = $ParamDapil;
-                                // } else {
-                                //     $ParamDapil = $_SESSION['it_cari_dapil'];
-                                // }
-
-
-
-                                // if (!isset($_SESSION['it_cari_partai'])) {
-                                //     if (isset($_GET['it_cari_partai'])) {
-                                //         $ParamKodePartai = $_GET['it_cari_partai'] == "" ? "ALL" : $_GET['it_cari_partai'];
-                                //     } else {
-                                //         $ParamKodePartai = "ALL";
-                                //     }
-
-                                //     $_SESSION['it_cari_partai'] = $ParamKodePartai;
-                                // } else {
-                                //     $ParamKodePartai = $_SESSION['it_cari_partai'];
-                                // }
-
-
-                                // if (!isset($_SESSION['it_cari_no_urut'])) {
-                                //     if (isset($_GET['it_cari_no_urut'])) {
-                                //         $ParamNoUrut = $_GET['it_cari_no_urut'] == "" ? "ALL" : $_GET['it_cari_no_urut'];
-                                //     } else {
-                                //         $ParamNoUrut = "ALL";
-                                //     }
-                                //     $_SESSION['it_cari_no_urut'] = $ParamNoUrut;
-                                // } else {
-                                //     $ParamNoUrut = $_SESSION['it_cari_no_urut'];
-                                // }
-
-
-                                // if (!isset($_SESSION['it_cari_nama'])) {
-                                //     if (isset($_GET['it_cari_nama'])) {
-                                //         $ParamNama = $_GET['it_cari_nama'] == "" ? "ALL" : $_GET['it_cari_nama'];
-                                //     } else {
-                                //         $ParamNama = "ALL";
-                                //     }
-                                //     $_SESSION['it_cari_nama'] = $ParamNama;
-                                // } else {
-                                //     $ParamNama = $_SESSION['it_cari_nama'];
-                                // }
-
-                                // if (!isset($_SESSION['it_cari_inputor'])) {
-                                //     if (isset($_GET['it_cari_inputor'])) {
-                                //         $ParamKtp = $_GET['it_cari_inputor'] == "" ? "ALL" : $_GET['it_cari_inputor'];
-                                //     } else {
-                                //         $ParamKtp = "ALL";
-                                //     }
-                                //     $_SESSION['it_cari_inputor'] = $ParamKtp;
-                                // } else {
-                                //     $ParamKtp = $_SESSION['it_cari_inputor'];
-                                // }
-
-                                // echo $ParamKecamatan . '-' . $ParamKelurahan . '-' . $ParamTps . '-' . $ParamKategori . '-' . $ParamKodePartai . '-' . $ParamKtp . '-' . $ParamNama . '-' . $ParamDapil . '-' . $ParamNoUrut;
-
-                                $q = "select * from v_rekap_final where 
-                                        (kategori_capil like '%$ParamKategori%' 
-                                        or 'ALL' = '$ParamKategori') 
-                                        and (kecamatan like '%$ParamKecamatan%'or 'ALL' = '$ParamKecamatan') 
-                                        and ( kelurahan like '%$ParamKelurahan%' or 'ALL' = '$ParamKelurahan') 
-                                        and (no_ktp like '%$ParamKtp%'or 'ALL' = '$ParamKtp')
-                                        and (no_tps = '%$ParamTps%'or 'ALL' = '$ParamTps')
-                                        and (no_urut = '$ParamNoUrut' or 'ALL' = '$ParamNoUrut' ) 
-                                        and (kode_partai like '%$ParamKodePartai%' or 'ALL' =  '$ParamKodePartai') 
-                                        and (nama_capil like '%$ParamNama%' or 'ALL' =  '$ParamNama') 
-                                        and (dapil like '%$ParamDapil%' or 'ALL' =  '$ParamDapil')
+                                $q = "SELECT * FROM v_rekap_final WHERE 
+                                        (kategori_capil LIKE '%$ParamKategori%' 
+                                        OR '' = '$ParamKategori') 
+                                        AND (kecamatan LIKE '%$ParamKecamatan%'OR '' = '$ParamKecamatan') 
+                                        AND ( kelurahan LIKE '%$ParamKelurahan%' OR '' = '$ParamKelurahan') 
+                                        AND (no_ktp LIKE '%$ParamKtp%'OR '' = '$ParamKtp')
+                                        AND (no_tps LIKE '%$ParamTps%'OR '' = '$ParamTps')
+                                        AND (no_urut = '$ParamNoUrut' OR '' = '$ParamNoUrut' ) 
+                                        AND (kode_partai LIKE '%$ParamKodePartai%' OR '' =  '$ParamKodePartai') 
+                                        AND (nama_capil LIKE '%$ParamNama%' OR '' =  '$ParamNama') 
+                                        AND (dapil LIKE '%$ParamDapil%' OR '' =  '$ParamDapil')
                                     order by 
                                         kecamatan, 
                                         kelurahan, 
@@ -316,62 +128,68 @@ function resetSessionHasilRekap()
 
                                 $sql = mysqli_query($conn, $q);
 
-                                while ($row = mysqli_fetch_assoc($sql)) {
+                                $sql2 = mysqli_query($conn, "SELECT COUNT(1) AS cnt FROM v_rekap_final WHERE 
+                                    (kategori_capil LIKE '%$ParamKategori%' 
+                                    OR '' = '$ParamKategori') 
+                                    AND (kecamatan LIKE '%$ParamKecamatan%'OR '' = '$ParamKecamatan') 
+                                    AND ( kelurahan LIKE '%$ParamKelurahan%' OR '' = '$ParamKelurahan') 
+                                    AND (no_ktp LIKE '%$ParamKtp%'OR '' = '$ParamKtp')
+                                    AND (no_tps LIKE '%$ParamTps%'OR '' = '$ParamTps')
+                                    AND (no_urut = '$ParamNoUrut' OR '' = '$ParamNoUrut' ) 
+                                    AND (kode_partai LIKE '%$ParamKodePartai%' OR '' =  '$ParamKodePartai') 
+                                    AND (nama_capil LIKE '%$ParamNama%' OR '' =  '$ParamNama') 
+                                    AND (dapil LIKE '%$ParamDapil%' OR '' =  '$ParamDapil')");
+                                $row2 = mysqli_fetch_assoc($sql2);
+                                $total_data = $row2['cnt'];
 
-                                    $Kecamatan = $row['kecamatan'];
-                                    $Kelurahan = $row['kelurahan'];
-                                    $NoTPS = $row['no_tps'];
-                                    $Kategori = $row['kategori_capil'];
-                                    $Dapil = $row['dapil'];
-                                    $Partai = $row['kode_partai'];
-                                    $NoUrut = $row['no_urut'];
-                                    $Nama = $row['nama_capil'];
-                                    $JumlahSuara = $row['jumlah_suara'];
-                                    $Inputor = $row['no_ktp'];
-                                    $TglInput = $row['tgl_input'];
+                                if ($total_data > 0) {
+                                    while ($row = mysqli_fetch_assoc($sql)) {
 
-                                    echo "
-						<tr>
-							<td>$No</td>
-							<td>$Kecamatan</td>
-							<td>$Kelurahan</td>
-							<td>$NoTPS</td>
-                            <td>$Kategori</td>
-                            <td>$Dapil</td>
-                            <td>$Partai</td>
-                            <td>$NoUrut</td>
-                            <td>$Nama</td>
-                            <td>$JumlahSuara</td>
-                            <td>$Inputor</td>
-                            <td>$TglInput</td>
-						</tr>
-						";
+                                        $Kecamatan = $row['kecamatan'];
+                                        $Kelurahan = $row['kelurahan'];
+                                        $NoTPS = $row['no_tps'];
+                                        $Kategori = $row['kategori_capil'];
+                                        $Dapil = $row['dapil'];
+                                        $Partai = $row['kode_partai'];
+                                        $NoUrut = $row['no_urut'];
+                                        $Nama = $row['nama_capil'];
+                                        $JumlahSuara = $row['jumlah_suara'];
+                                        $Inputor = $row['no_ktp'];
+                                        $TglInput = $row['tgl_input'];
+    
+                                        echo "
+                                            <tr>
+                                                <td>$No</td>
+                                                <td>$Kecamatan</td>
+                                                <td>$Kelurahan</td>
+                                                <td>$NoTPS</td>
+                                                <td>$Kategori</td>
+                                                <td>$Dapil</td>
+                                                <td>$Partai</td>
+                                                <td>$NoUrut</td>
+                                                <td>$Nama</td>
+                                                <td>$JumlahSuara</td>
+                                                <td>$Inputor</td>
+                                                <td>$TglInput</td>
+                                            </tr>
+                                            ";
+    
+                                        $No++;
+                                    }
 
-                                    $No++;
+                                } else {
+
+                                    ?>
+
+                                    <tr><td colspan="12"><div class="alert alert-danger" role="alert" style="text-align: center;font-weight: bold;">Data Tidak Ditemukan !</div></td></tr>
+
+                                    <?php
+
                                 }
+
                                 ?>
                             </tbody>
                         </table>
-
-                        <?php
-
-                        // $q = "SELECT COUNT(1) AS cnt FROM db_master_capres_cawapres WHERE nama LIKE '%" . $cari . "%' ORDER BY id ASC";
-                        $q = "select count(1) as cnt from v_rekap_final where 
-                                        (kategori_capil like '%$ParamKategori%' 
-                                        or 'ALL' = '$ParamKategori') 
-                                        and (kecamatan like '%$ParamKecamatan%'or 'ALL' = '$ParamKecamatan') 
-                                        and ( kelurahan like '%$ParamKelurahan%' or 'ALL' = '$ParamKelurahan') 
-                                        and (no_ktp like '%$ParamKtp%'or 'ALL' = '$ParamKtp')
-                                        and (no_tps = '%$ParamTps%'or 'ALL' = '$ParamTps')
-                                        and (no_urut = '$ParamNoUrut' or 'ALL' = '$ParamNoUrut' ) 
-                                        and (kode_partai like '%$ParamKodePartai%' or 'ALL' =  '$ParamKodePartai') 
-                                        and (nama_capil like '%$ParamNama%' or 'ALL' =  '$ParamNama') 
-                                        and (dapil like '%$ParamDapil%' or 'ALL' =  '$ParamDapil')";
-                        $sql = mysqli_query($conn, $q);
-                        $row = mysqli_fetch_assoc($sql);
-                        $total_data = $row['cnt'];
-
-                        ?>
 
                         <div style="font-weight: bold;color:red">Total Data : <?= $total_data ?></div>
 
@@ -389,66 +207,16 @@ function resetSessionHasilRekap()
                                     echo "<li class='page-item'><a class='page-link' href='hasil-rekap.php?page=$link_prev&it_cari_kec=$ParamKecamatan&it_cari_kategori=$ParamKategori&it_cari_kel=$ParamKelurahan&it_cari_inputor=$ParamKtp&it_cari_no_tps=$ParamTps&it_cari_no_urut=$ParamNoUrut&it_cari_partai=$ParamKodePartai&it_cari_nama=$ParamNama&it_cari_dapil=$ParamDapil'>&laquo;</a></li>";
                                 }
 
-                                $ParamKecamatan = "ALL";
-                                $ParamKelurahan = "ALL";
-                                $ParamTps = "ALL";
-                                $ParamKategori = "ALL";
-                                $ParamKodePartai = "ALL";
-                                $ParamKtp = "ALL";
-                                $ParamNama = "ALL";
-                                $ParamDapil = "ALL";
-                                $ParamNoUrut = "ALL";
-
-                                if (isset($_GET['it_cari_kec'])) {
-                                    $ParamKecamatan = $_GET['it_cari_kec'] == "" ? "ALL" : $_GET['it_cari_kec'];
-                                }
-
-                                if (isset($_GET['it_cari_kel'])) {
-                                    $ParamKelurahan = $_GET['it_cari_kel'] == "" ? "ALL" : $_GET['it_cari_kel'];
-                                }
-
-                                if (isset($_GET['it_cari_kel'])) {
-                                    $ParamKelurahan = $_GET['it_cari_kel'] == "" ? "ALL" : $_GET['it_cari_kel'];
-                                }
-
-                                if (isset($_GET['it_cari_no_tps'])) {
-                                    $ParamTps = $_GET['it_cari_no_tps'] == "" ? "ALL" : $_GET['it_cari_no_tps'];
-                                }
-
-                                if (isset($_GET['it_cari_kategori'])) {
-                                    $ParamKategori = $_GET['it_cari_kategori'] == "" ? "ALL" : $_GET['it_cari_kategori'];
-                                }
-
-                                if (isset($_GET['it_cari_dapil'])) {
-                                    $ParamDapil = $_GET['it_cari_dapil'] == "" ? "ALL" : $_GET['it_cari_dapil'];
-                                } 
-
-                                if (isset($_GET['it_cari_partai'])) {
-                                    $ParamKodePartai = $_GET['it_cari_partai'] == "" ? "ALL" : $_GET['it_cari_partai'];
-                                }
-
-                                if (isset($_GET['it_cari_no_urut'])) {
-                                    $ParamNoUrut = $_GET['it_cari_no_urut'] == "" ? "ALL" : $_GET['it_cari_no_urut'];
-                                }
-                                
-                                if (isset($_GET['it_cari_nama'])) {
-                                    $ParamNama = $_GET['it_cari_nama'] == "" ? "ALL" : $_GET['it_cari_nama'];
-                                }
-
-                                if (isset($_GET['it_cari_inputor'])) {
-                                    $ParamKtp = $_GET['it_cari_inputor'] == "" ? "ALL" : $_GET['it_cari_inputor'];
-                                }
-
-                                $q = "select count(1) as cnt from v_rekap_final where 
-                                        (kategori_capil like '%$ParamKategori%' or 'ALL' = '$ParamKategori') 
-                                        and (kecamatan like '%$ParamKecamatan%'or 'ALL' = '$ParamKecamatan') 
-                                        and ( kelurahan like '%$ParamKelurahan%' or 'ALL' = '$ParamKelurahan') 
-                                        and (no_ktp like '%$ParamKtp%'or 'ALL' = '$ParamKtp')
-                                        and (no_tps = '%$ParamTps%'or 'ALL' = '$ParamTps')
-                                        and (no_urut = '$ParamNoUrut' or 'ALL' = '$ParamNoUrut' ) 
-                                        and (kode_partai like '%$ParamKodePartai%' or 'ALL' =  '$ParamKodePartai') 
-                                        and (nama_capil like '%$ParamNama%' or 'ALL' =  '$ParamNama') 
-                                        and (dapil like '%$ParamDapil%' or 'ALL' =  '$ParamDapil')";
+                                $q = "SELECT count(1) AS cnt FROM v_rekap_final WHERE 
+                                        (kategori_capil LIKE '%$ParamKategori%' OR '' = '$ParamKategori') 
+                                        AND (kecamatan LIKE '%$ParamKecamatan%'OR '' = '$ParamKecamatan') 
+                                        AND ( kelurahan LIKE '%$ParamKelurahan%' OR '' = '$ParamKelurahan') 
+                                        AND (no_ktp LIKE '%$ParamKtp%'OR '' = '$ParamKtp')
+                                        AND (no_tps LIKE '%$ParamTps%'OR '' = '$ParamTps')
+                                        AND (no_urut = '$ParamNoUrut' OR '' = '$ParamNoUrut' ) 
+                                        AND (kode_partai LIKE '%$ParamKodePartai%' OR '' =  '$ParamKodePartai') 
+                                        AND (nama_capil LIKE '%$ParamNama%' OR '' =  '$ParamNama') 
+                                        AND (dapil LIKE '%$ParamDapil%' OR '' =  '$ParamDapil')";
                                 $sql = mysqli_query($conn, $q);
                                 $row = mysqli_fetch_assoc($sql);
                                 $jumlah = $row['cnt'];
