@@ -141,7 +141,7 @@ require_once('koneksi.php');
 							<td>$Nama</td>
 							<td>$vDapil</td>
 							<td style='padding-right:0;margin-right:0;'>
-								<a class='btn btn-warning' href='form-master-ptps.php?update-ptps=1&Id=$Id&Kecamatan=$Kecamatan&Kelurahan=$Kelurahan&NomorTPS=$NomorTPS&NomorKTP=$NomorKTP&Nama=$Nama&Dapil=$Dapil'> <i class='bi bi-pencil-square'></i></a>
+								<a class='btn btn-warning' href='form-master-ptps.php?ptps=update&id=$Id'> <i class='bi bi-pencil-square'></i></a>
 								<button class='btn btn-danger' onclick='fnDeleteRow($Id)'><i class='bi bi-trash-fill'></i></button> 
 							</td>
 						</tr>
@@ -163,7 +163,7 @@ require_once('koneksi.php');
 			
 			?>
 
-			<a class='btn btn-success' href='form-master-ptps.php?add-ptps=1'> <i class='bi bi-plus-square'> Tambah PTPS</i></a>
+			<a class='btn btn-success' href='form-master-ptps.php?ptps=insert'> <i class='bi bi-plus-square'> Tambah PTPS</i></a>
 
 			<div style="font-weight: bold;color:red">Total Data : <?= $total_data ?></div>
 
@@ -248,7 +248,7 @@ require_once('footer.php');
 	function fnDeleteRow(id){
 		Swal.fire({
 			title: 'Yakin menghapus?',
-			text: "Data yang sudhah dihapus tidak dapat dikembalikan!",
+			text: "Data yang sudah dihapus tidak dapat dikembalikan!",
 			icon: 'warning',
 			showCancelButton: true,
 			cancelButtonText: 'Batal',

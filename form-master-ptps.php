@@ -52,27 +52,35 @@ require_once('koneksi.php');
 		unset($_SESSION['pesanError']);
 	}
 
-	$pilKecamatan = '';
-	$pilKelurahan = '';
 	$pilNoTPS = '';
 	$pilNoKTP = '';
 	$pilNama = '';
-	$pilDapil = '';
+	$pilKecamatan = '';
+	$id = '';
+	if (isset($_GET['id'])) {
+		$id = $_GET['id'];
+	}
+	$proses = $_GET['ptps'];
+	$judul = 'Tambah ';
 
-	if (isset($_GET['update-ptps'])) {
-		$pilKecamatan = $_GET['Kecamatan'];
-		$pilKelurahan = $_GET['Kelurahan'];
-		$pilNoTPS = $_GET['NomorTPS'];
-		$pilNoKTP = $_GET['NomorKTP'];
-		$pilNama = $_GET['Nama'];
-		$pilDapil = $_GET['Dapil'];
+	if ($proses== 'update'){
+		$judul = 'Update ';
+		$sql = mysqli_query($conn, 'SELECT * FROM db_ptps WHERE id = ' .$id);
+		$row = mysqli_fetch_assoc($sql);
+
+		$pilKecamatan = strtoupper($row['kecamatan']);
+		$pilKelurahan = strtoupper($row['kelurahan']);
+		$pilNoTPS = $row['no_tps'];
+		$pilNoKTP = $row['no_ktp'];
+		$pilNama = strtoupper($row['nama']);
+		$pilDapil = $row['dapil_kab'];
 	}
 	?>
 
 	
 
 	<div class="pagetitle">
-		<h1><a href='master-ptps.php' style="text-decoration: none;"><i class="bi bi-arrow-left-circle-fill"></i></a> Dashboard Tambah PTPS</h1>
+		<h1><a href='master-ptps.php' style="text-decoration: none;"><i class="bi bi-arrow-left-circle-fill"></i></a> Dashboard <?=$judul?> PTPS</h1>
 	</div>
 
 	<hr />
@@ -86,18 +94,18 @@ require_once('koneksi.php');
 
 						<div class="d-flex justify-content-between align-items-center">
 							<div class="col-sm-6 mb-6 mb-sm-0">
-								<h5 class="card-title">Tambah Data PTPS</h5>
+								<h5 class="card-title"><?=$judul?> Data PTPS</h5>
+								<input type="text" name="proses" id="proses" value= '<?= $proses?>' hidden></input>
 							</div>
 						</div>
 
 						<hr/>
 
 						<div>
-							<input id="pilKecamatan" value = '<?php echo $pilKecamatan?>' hidden></input>
 							<input id="pilKelurahan" value = '<?php echo $pilKelurahan?>' hidden></input>
-							<input id="pilDapil"  value = '<?php echo $pilDapil?>' hidden></input>
 
-							<form method="POST" action="proses.php" id="submit-form-insert-ptps" onsubmit="return disableButton()">
+							<form method="POST" action="proses.php" id="submit-form-<?=$proses?>-ptps" onsubmit="return disableButton()">
+							 <input type="text" name="id" id="id" value= '<?= $id?>' hidden></input>
 								<div class="modal-body">
 
 									<div class="row">
@@ -106,22 +114,11 @@ require_once('koneksi.php');
 											<div class="mb-3">
 												<label class="form-label">Kecamatan</label>
 												<select class="form-select" name="kecamatan" id="kecamatan" onchange="getKelurahan()" required>
+													
+														
+													<option value="" selected>-- Pilih Kecamatan --</option>
+													
 													<?php
-													   if ($pilKecamatan != '') {
-														 
-														?>
-
-														<option value=<?php echo $pilKecamatan ?> selected hidden><?php echo $pilKecamatan ?></option>
-														<option value="">-- Pilih Kecamatan --</option>
-
-														<?php
-													   } else {
-														?>
-															<option value="" selected>-- Pilih Kecamatan --</option>
-														<?php
-													   }
-													
-													
 													$sql = mysqli_query($conn, "SELECT kecamatan FROM db_master_dapil ORDER BY kecamatan ASC");
 													while ($row = mysqli_fetch_assoc($sql)) {
 
@@ -129,7 +126,7 @@ require_once('koneksi.php');
 
 														?>
 
-														<option value="<?= $Kecamatan ?>"><?= $Kecamatan ?></option>
+														<option value="<?= $Kecamatan ?>" <?php if( $Kecamatan == $pilKecamatan ) echo 'selected'?>><?= $Kecamatan ?></option>
 		
 														<?php
 													}
@@ -178,7 +175,7 @@ require_once('koneksi.php');
 											</div>
 										</div>
 
-										<input type="hidden" class="form-control" name="submit-form-insert-ptps" value="submit-form-ppwp">
+										<input type="hidden" class="form-control" name="submit-form-<?=$proses?>-ptps" value="submit-form-ppwp">
 
 									</div>
 
@@ -209,6 +206,9 @@ require_once('footer.php');
 ?>
 
 <script type="text/javascript">
+window.addEventListener("load",function(){
+    getKelurahan();
+},false);
 
 function isNumberKey(evt) {
 	var charCode = (evt.which) ? evt.which : event.keyCode
@@ -237,8 +237,13 @@ function disableButton() {
 		document.getElementById('alert_button').innerHTML = alert;
 		return false
 	} else {
-		var form = document.getElementById('submit-form-insert-ptps');
-
+		var form;
+		var proses =  document.getElementById('proses').value;
+		if(proses == 'insert'){
+			var form = document.getElementById('submit-form-insert-ptps');
+		} else if (proses == 'update'){
+			var form = document.getElementById('submit-form-update-ptps');
+		}
 		if (form.checkValidity()) {
 			document.getElementById('button-submit').disabled = true;
 		}
@@ -250,8 +255,12 @@ function disableButton() {
 
 function getKelurahan() {
 	var Kecamatan = document.getElementById('kecamatan').value;
-	var pilKelurahan = document.getElementById('pilKecamatan').value;
-	var pilDapil = document.getElementById('pilDapil').value;
+	var pilKelurahan = document.getElementById('pilKelurahan').value;
+	var addParam = "";
+
+	if(Kecamatan == "") {
+		return
+	}
 
 	var xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = function() {
@@ -266,7 +275,7 @@ function getKelurahan() {
 		}
 	};
 
-	var URL = 'http://localhost/bawaslu_kab_bekasi/get-kelurahan.php?kecamatan=' + Kecamatan + '&pilKelurahan' + pilKelurahan + '&pilDapil' + pilDapil;
+	var URL = 'http://localhost/bawaslu_kab_bekasi/get-kelurahan.php?kecamatan=' + Kecamatan + '&kelurahan=' + pilKelurahan;
 	console.log("URL : " + URL)
 	xhttp.open("GET", URL, true);
 	xhttp.send();
@@ -316,14 +325,22 @@ function validasiTPS() {
 
 function validasiKTP() {	
 	var NomorKTP = document.getElementById('nomor_ktp').value; 
-	if (NomorKTP.charAt(0) == "0") {
-		document.getElementById("alert_ktp").innerHTML = "Digit Pertama Nomor KTP tidak boleh 0 (Nol)!";
+
+	if (NomorKTP == "") {
+		document.getElementById('alert_button').innerHTML = "";
+		document.getElementById("alert_ktp").innerHTML = "";
+		document.getElementById("alert_ktp_sukses").innerHTML = "";
 		return
-	} 
-	if (NomorKTP.length > 16 || NomorKTP.length < 16) {
-		document.getElementById("alert_ktp").innerHTML = "Nomor KTP Terdiri Dari 16 Digit!";
-		return
-	} 
+	} else {
+		if (NomorKTP.charAt(0) == "0") {
+			document.getElementById("alert_ktp").innerHTML = "Digit Pertama Nomor KTP tidak boleh 0 (Nol)!";
+			return
+		} 
+		if (NomorKTP.length > 16 || NomorKTP.length < 16) {
+			document.getElementById("alert_ktp").innerHTML = "Nomor KTP Terdiri Dari 16 Digit!";
+			return
+		} 
+	}
 
 	var xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = function() {
@@ -345,6 +362,13 @@ function validasiKTP() {
 	console.log("URL : " + URL)
 	xhttp.open("GET", URL, true);
 	xhttp.send();
+
+}
+
+function clearNoTPS() {
+	document.getElementById("nomor_tps").value = '';
+
+	console.log('123');
 
 }
 
