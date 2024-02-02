@@ -47,29 +47,27 @@ $ParamNoUrut = isset($_GET['it_cari_no_urut']) ? $_GET['it_cari_no_urut'] : '';
                         <div class="col-sm-3 mb-3 mb-sm-2 m-2">
                             <a class="btn btn-outline-success" target="_blank" href="export-excel.php">Export Excel <i class="bi bi-file-earmark-spreadsheet"></i></a>
                         </div>
-
                         <hr />
                         <table class="table table-hover" style="display: block; overflow-x: auto;white-space: nowrap;">
                             <thead class="thead-grey">
                                 <tr>
                                     <th scope="col"> <a class="btn btn-outline-secondary" href="hasil-rekap.php"><i class="bi bi-arrow-clockwise"></i></a></th>
-
                                     <form>
-                                        <th scope="col"><input type="text" class="form-control" placeholder="Kecamatan..." aria-describedby="button-addon2" name="it_cari_kec" value="<?= $ParamKecamatan ?>"></th>
+                                        <th scope="col"><input type="text" class="form-control" placeholder="Kecamatan..." aria-describedby="button-addon2" name="it_cari_kec" value="<?=$ParamKecamatan?>"></th>
 
-                                        <th scope="col"><input type="text" class="form-control" placeholder="Kelurahan..." aria-describedby="button-addon2" name="it_cari_kel" value="<?= $ParamKelurahan ?>"></th>
+                                        <th scope="col"><input type="text" class="form-control" placeholder="Kelurahan..." aria-describedby="button-addon2" name="it_cari_kel" value="<?=$ParamKelurahan?>"></th>
 
-                                        <th scope="col"><input type="text" class="form-control" placeholder="No TPS..." aria-describedby="button-addon2" name="it_cari_no_tps" value="<?= $ParamTps ?>"></th>
+                                        <th scope="col"><input type="text" class="form-control" placeholder="No TPS..." aria-describedby="button-addon2" name="it_cari_no_tps" value="<?=$ParamTps?>"></th>
 
-                                        <th scope="col"><input type="text" class="form-control" placeholder="Kategori..." aria-describedby="button-addon2" name="it_cari_kategori" value="<?= $ParamKategori ?>"></th>
+                                        <th scope="col"><input type="text" class="form-control" placeholder="Kategori..." aria-describedby="button-addon2" name="it_cari_kategori" value="<?=$ParamKategori?>"></th>
 
-                                        <th scope="col"><input type="text" class="form-control" placeholder="Dapil..." aria-describedby="button-addon2" name="it_cari_dapil" value="<?= $ParamDapil ?>"></th>
+                                        <th scope="col"><input type="text" class="form-control" placeholder="Dapil..." aria-describedby="button-addon2" name="it_cari_dapil" value="<?=$ParamDapil?>"></th>
 
-                                        <th scope="col"><input type="text" class="form-control" placeholder="Partai..." aria-describedby="button-addon2" name="it_cari_partai" value="<?= $ParamKodePartai ?>"></th>
+                                        <th scope="col"><input type="text" class="form-control" placeholder="Partai..." aria-describedby="button-addon2" name="it_cari_partai" value="<?=$ParamKodePartai?>"></th>
 
-                                        <th scope="col"><input type="text" class="form-control" placeholder="No Urut..." aria-describedby="button-addon2" name="it_cari_no_urut" value="<?= $ParamNoUrut ?>"></th>
+                                        <th scope="col"><input type="text" class="form-control" placeholder="No Urut..." aria-describedby="button-addon2" name="it_cari_no_urut" value="<?=$ParamNoUrut?>"></th>
 
-                                        <th scope="col"><input type="text" class="form-control" placeholder="Nama..." aria-describedby="button-addon2" name="it_cari_nama" value="<?= $ParamNama ?>"></th>
+                                        <th scope="col"><input type="text" class="form-control" placeholder="Nama..." aria-describedby="button-addon2" name="it_cari_nama" value="<?=$ParamNama?>"></th>
 
                                         <th scope="col"></th>
 
@@ -191,15 +189,15 @@ $ParamNoUrut = isset($_GET['it_cari_no_urut']) ? $_GET['it_cari_no_urut'] : '';
 
                                         $No++;
                                     }
+
                                 } else {
 
                                 ?>
-
-                                    <tr>
-                                        <td colspan="12">
-                                            <div class="alert alert-danger" role="alert" style="text-align: center;font-weight: bold;">Data Tidak Ditemukan !</div>
-                                        </td>
-                                    </tr>
+                                <tr>
+                                    <td colspan="12">
+                                        <div class="alert alert-danger" role="alert" style="text-align: center;font-weight: bold;">Data Tidak Ditemukan !</div>
+                                    </td>
+                                </tr>
 
                                 <?php
 

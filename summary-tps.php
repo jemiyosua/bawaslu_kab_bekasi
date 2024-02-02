@@ -63,6 +63,8 @@ $ParamTps = isset($_GET['it_cari_no_tps']) ? $_GET['it_cari_no_tps'] : '';
                                     <th scope="col">No</th>
                                     <th scope="col">Kecamatan</th>
                                     <th scope="col">Kelurahan</th>
+                                    <th scope="col">Kategori Capil</th>
+                                    <th scope="col">Nomor KTP</th>
                                     <th scope="col">No TPS</th>
                                     <th scope="col">Jumlah DPT(a)</th>
                                     <th scope="col">Jumlah DBTb(b)</th>
@@ -92,14 +94,13 @@ $ParamTps = isset($_GET['it_cari_no_tps']) ? $_GET['it_cari_no_tps'] : '';
                                 $_SESSION['summary-tps-kelurahan'] = $ParamKelurahan;
                                 $_SESSION['summary-tps-tps'] = $ParamTps;
 
-                                $q = "SELECT dp.kecamatan, dp.kelurahan , dp.no_tps , dhrh.jumlah_dpt, dhrh.jumlah_dptb, dhrh.jumlah_dpk, dhrh.jumlah_pemilih,
+                                $q = "SELECT dp.kecamatan, dp.kelurahan, dhrh.no_ktp, dhrh.kategori_capil , dp.no_tps , dhrh.jumlah_dpt, dhrh.jumlah_dptb, dhrh.jumlah_dpk, dhrh.jumlah_pemilih,
                                                 dhrh.jumlah_suara_sah , dhrh.jumlah_suara_tidak_sah , dhrh.jumlah_pengguna_hak_pilih, dhrh.tgl_input
-                                                from db_hasil_rekap_hdr dhrh join db_ptps dp 
+                                                FROM db_hasil_rekap_hdr dhrh join db_ptps dp 
                                                 ON dhrh.no_ktp = dp.no_ktp
                                                 AND (dp.kecamatan LIKE '%$ParamKecamatan%'OR '' = '$ParamKecamatan') 
                                                 AND ( dp.kelurahan LIKE '%$ParamKelurahan%' OR '' = '$ParamKelurahan') 
                                                 AND (dp.no_tps LIKE '%$ParamTps%'OR '' = '$ParamTps')
-                                                AND jumlah_dpt > 0
                                                 ORDER BY kecamatan, kelurahan, no_tps
                                                 LIMIT $limit_start, $limit";
 
@@ -110,8 +111,7 @@ $ParamTps = isset($_GET['it_cari_no_tps']) ? $_GET['it_cari_no_tps'] : '';
                                             ON dhrh.no_ktp = dp.no_ktp
                                             AND (kecamatan LIKE '%$ParamKecamatan%' OR '' = '$ParamKecamatan') 
                                             AND (kelurahan LIKE '%$ParamKelurahan%' OR '' = '$ParamKelurahan') 
-                                            AND (no_tps LIKE '%$ParamTps%' OR '' = '$ParamTps')
-                                            AND jumlah_dpt > 0";
+                                            AND (no_tps LIKE '%$ParamTps%' OR '' = '$ParamTps')";
                                 $sql2 = mysqli_query($conn, $q2);
                                 $row2 = mysqli_fetch_assoc($sql2);
                                 $total_data = $row2['cnt'];
@@ -121,14 +121,16 @@ $ParamTps = isset($_GET['it_cari_no_tps']) ? $_GET['it_cari_no_tps'] : '';
 
                                         $Kecamatan = $row['kecamatan'];
                                         $Kelurahan = $row['kelurahan'];
+                                        $KategoriCapil = $row['kategori_capil'];
+                                        $NomorKTP = $row['no_ktp'];
                                         $NoTPS = $row['no_tps'];
                                         $JmlDpt = $row['jumlah_dpt'];
                                         $JmlDptb = $row['jumlah_dptb'];
                                         $JmlDpk = $row['jumlah_dpk'];
-                                        $JmlPemilih = $row['jumlah_pemilih'];
+                                        $JmlPemilih = $JmlDpt + $JmlDptb + $JmlDpk;
                                         $JmlSuaraSah = $row['jumlah_suara_sah'];
                                         $JmlSuaraTdkSah = $row['jumlah_suara_tidak_sah'];
-                                        $JmlPgnHakPilih = $row['jumlah_pengguna_hak_pilih'];
+                                        $JmlPgnHakPilih = $JmlSuaraSah + $JmlSuaraTdkSah;
                                         $TglInput = $row['tgl_input'];
 
                                         echo "
@@ -136,14 +138,16 @@ $ParamTps = isset($_GET['it_cari_no_tps']) ? $_GET['it_cari_no_tps'] : '';
                                                 <td>$No</td>
                                                 <td>$Kecamatan</td>
                                                 <td>$Kelurahan</td>
+                                                <td>$KategoriCapil</td>
+                                                <td>$NomorKTP</td>
                                                 <td>$NoTPS</td>
                                                 <td>$JmlDpt</td>
                                                 <td>$JmlDptb</td>
                                                 <td>$JmlDpk</td>
-                                                <td>$JmlPemilih</td>
+                                                <td style='font-weight:bold'>$JmlPemilih</td>
                                                 <td>$JmlSuaraSah</td>
                                                 <td>$JmlSuaraTdkSah</td>
-                                                <td>$JmlPgnHakPilih</td>
+                                                <td style='font-weight:bold'>$JmlPgnHakPilih</td>
                                                 <td>$TglInput</td>
                                             </tr>
                                             ";
@@ -234,10 +238,6 @@ $ParamTps = isset($_GET['it_cari_no_tps']) ? $_GET['it_cari_no_tps'] : '';
     </section>
 
 </main>
-
-<?php
-
-?>
 
 <?php
 
