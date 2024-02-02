@@ -38,24 +38,16 @@ $ParamTps = isset($_GET['it_cari_no_tps']) ? $_GET['it_cari_no_tps'] : '';
 
                 <div class="card">
                     <div class="card-body">
-                        <!-- <div class="col-sm-3 mb-3 mb-sm-0">
-                            <form class="d-flex justify-content-between align-items-center m-2 p-2">
-                                <th scope="col"><input type="text" class="form-control" placeholder="Kecamatan..." aria-describedby="button-addon2" name="it_cari_kec" value="<?= $ParamKecamatan ?>"></th>
-
-                                <th scope="col"><input type="text" class="form-control" placeholder="Kelurahan..." aria-describedby="button-addon2" name="it_cari_kel" value="<?= $ParamKelurahan ?>"></th>
-
-                                <th scope="col"><input type="text" class="form-control" placeholder="No TPS..." aria-describedby="button-addon2" name="it_cari_no_tps" value="<?= $ParamTps ?>"></th>
-
-                                <button type="submit" style="display: none;"></button>
-                            </form>
+                        <div class="col-sm-3 mb-3 mb-sm-2 m-2">
+                            <a class="btn btn-outline-success" target="_blank" href="export-excel.php">Export Excel <i class="bi bi-file-earmark-spreadsheet"></i></a>
                         </div>
 
-                        <hr/> -->
+                        <hr />
 
                         <table class="table table-hover">
                             <thead>
                                 <tr>
-                                    <th scope="col"> <a class="btn btn-outline-secondary" href="summary-tps.php" ><i class="bi bi-arrow-clockwise"></i></a></th>
+                                    <th scope="col"> <a class="btn btn-outline-secondary" href="summary-tps.php"><i class="bi bi-arrow-clockwise"></i></a></th>
 
                                     <form>
                                         <th scope="col"><input type="text" class="form-control" placeholder="Kecamatan..." aria-describedby="button-addon2" name="it_cari_kec" value="<?= $ParamKecamatan ?>"></th>
@@ -96,6 +88,10 @@ $ParamTps = isset($_GET['it_cari_no_tps']) ? $_GET['it_cari_no_tps'] : '';
 
                                 $No = $limit_start + 1;
 
+                                $_SESSION['summary-tps-kecamatan'] = $ParamKecamatan;
+                                $_SESSION['summary-tps-kelurahan'] = $ParamKelurahan;
+                                $_SESSION['summary-tps-tps'] = $ParamTps;
+
                                 $q = "SELECT dp.kecamatan, dp.kelurahan , dp.no_tps , dhrh.jumlah_dpt, dhrh.jumlah_dptb, dhrh.jumlah_dpk, dhrh.jumlah_pemilih,
                                                 dhrh.jumlah_suara_sah , dhrh.jumlah_suara_tidak_sah , dhrh.jumlah_pengguna_hak_pilih, dhrh.tgl_input
                                                 from db_hasil_rekap_hdr dhrh join db_ptps dp 
@@ -105,7 +101,7 @@ $ParamTps = isset($_GET['it_cari_no_tps']) ? $_GET['it_cari_no_tps'] : '';
                                                 AND (dp.no_tps LIKE '%$ParamTps%'OR '' = '$ParamTps')
                                                 AND jumlah_dpt > 0
                                                 ORDER BY kecamatan, kelurahan, no_tps
-                                                LIMIT $limit_start, $limit ";
+                                                LIMIT $limit_start, $limit";
 
                                 $sql = mysqli_query($conn, $q);
 
@@ -238,6 +234,10 @@ $ParamTps = isset($_GET['it_cari_no_tps']) ? $_GET['it_cari_no_tps'] : '';
     </section>
 
 </main>
+
+<?php
+
+?>
 
 <?php
 

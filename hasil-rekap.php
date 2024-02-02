@@ -44,27 +44,32 @@ $ParamNoUrut = isset($_GET['it_cari_no_urut']) ? $_GET['it_cari_no_urut'] : '';
 
                 <div class="card">
                     <div class="card-body">
+                        <div class="col-sm-3 mb-3 mb-sm-2 m-2">
+                            <a class="btn btn-outline-success" target="_blank" href="export-excel.php">Export Excel <i class="bi bi-file-earmark-spreadsheet"></i></a>
+                        </div>
+
+                        <hr />
                         <table class="table table-hover" style="display: block; overflow-x: auto;white-space: nowrap;">
                             <thead class="thead-grey">
                                 <tr>
-                                <th scope="col"> <a class="btn btn-outline-secondary" href="hasil-rekap.php" ><i class="bi bi-arrow-clockwise"></i></a></th>
-                                    
-                                    <form>
-                                        <th scope="col"><input type="text" class="form-control" placeholder="Kecamatan..." aria-describedby="button-addon2" name="it_cari_kec" value="<?=$ParamKecamatan?>"></th>
+                                    <th scope="col"> <a class="btn btn-outline-secondary" href="hasil-rekap.php"><i class="bi bi-arrow-clockwise"></i></a></th>
 
-                                        <th scope="col"><input type="text" class="form-control" placeholder="Kelurahan..." aria-describedby="button-addon2" name="it_cari_kel" value="<?=$ParamKelurahan?>"></th>
-                                    
-                                        <th scope="col"><input type="text" class="form-control" placeholder="No TPS..." aria-describedby="button-addon2" name="it_cari_no_tps" value="<?=$ParamTps?>"></th>
-                                    
-                                        <th scope="col"><input type="text" class="form-control" placeholder="Kategori..." aria-describedby="button-addon2" name="it_cari_kategori" value="<?=$ParamKategori?>"></th>
-                                   
-                                        <th scope="col"><input type="text" class="form-control" placeholder="Dapil..." aria-describedby="button-addon2" name="it_cari_dapil" value="<?=$ParamDapil?>"></th>
-                                    
-                                        <th scope="col"><input type="text" class="form-control" placeholder="Partai..." aria-describedby="button-addon2" name="it_cari_partai" value="<?=$ParamKodePartai?>"></th>
-                                    
-                                        <th scope="col"><input type="text" class="form-control" placeholder="No Urut..." aria-describedby="button-addon2" name="it_cari_no_urut" value="<?=$ParamNoUrut?>"></th>
-                                    
-                                        <th scope="col"><input type="text" class="form-control" placeholder="Nama..." aria-describedby="button-addon2" name="it_cari_nama" value="<?=$ParamNama?>"></th>
+                                    <form>
+                                        <th scope="col"><input type="text" class="form-control" placeholder="Kecamatan..." aria-describedby="button-addon2" name="it_cari_kec" value="<?= $ParamKecamatan ?>"></th>
+
+                                        <th scope="col"><input type="text" class="form-control" placeholder="Kelurahan..." aria-describedby="button-addon2" name="it_cari_kel" value="<?= $ParamKelurahan ?>"></th>
+
+                                        <th scope="col"><input type="text" class="form-control" placeholder="No TPS..." aria-describedby="button-addon2" name="it_cari_no_tps" value="<?= $ParamTps ?>"></th>
+
+                                        <th scope="col"><input type="text" class="form-control" placeholder="Kategori..." aria-describedby="button-addon2" name="it_cari_kategori" value="<?= $ParamKategori ?>"></th>
+
+                                        <th scope="col"><input type="text" class="form-control" placeholder="Dapil..." aria-describedby="button-addon2" name="it_cari_dapil" value="<?= $ParamDapil ?>"></th>
+
+                                        <th scope="col"><input type="text" class="form-control" placeholder="Partai..." aria-describedby="button-addon2" name="it_cari_partai" value="<?= $ParamKodePartai ?>"></th>
+
+                                        <th scope="col"><input type="text" class="form-control" placeholder="No Urut..." aria-describedby="button-addon2" name="it_cari_no_urut" value="<?= $ParamNoUrut ?>"></th>
+
+                                        <th scope="col"><input type="text" class="form-control" placeholder="Nama..." aria-describedby="button-addon2" name="it_cari_nama" value="<?= $ParamNama ?>"></th>
 
                                         <th scope="col"></th>
 
@@ -104,6 +109,16 @@ $ParamNoUrut = isset($_GET['it_cari_no_urut']) ? $_GET['it_cari_no_urut'] : '';
                                 $limit_start = ($page - 1) * $limit;
 
                                 $No = $limit_start + 1;
+
+                                $_SESSION['hasil-rekap-kecamatan'] = $ParamKecamatan;
+                                $_SESSION['hasil-rekap-kelurahan'] = $ParamKelurahan;
+                                $_SESSION['hasil-rekap-tps'] = $ParamTps;
+                                $_SESSION['hasil-rekap-kategori'] = $ParamKategori;
+                                $_SESSION['hasil-rekap-partai'] = $ParamKodePartai;
+                                $_SESSION['hasil-rekap-ktp'] = $ParamKtp;
+                                $_SESSION['hasil-rekap-nama'] = $ParamNama;
+                                $_SESSION['hasil-rekap-dapil'] = $ParamDapil;
+                                $_SESSION['hasil-rekap-no-urut'] = $ParamNoUrut;
 
                                 $q = "SELECT * FROM v_rekap_final WHERE 
                                         (kategori_capil LIKE '%$ParamKategori%' 
@@ -156,7 +171,7 @@ $ParamNoUrut = isset($_GET['it_cari_no_urut']) ? $_GET['it_cari_no_urut'] : '';
                                         $JumlahSuara = $row['jumlah_suara'];
                                         $Inputor = $row['no_ktp'];
                                         $TglInput = $row['tgl_input'];
-    
+
                                         echo "
                                             <tr>
                                                 <td>$No</td>
@@ -173,17 +188,20 @@ $ParamNoUrut = isset($_GET['it_cari_no_urut']) ? $_GET['it_cari_no_urut'] : '';
                                                 <td>$TglInput</td>
                                             </tr>
                                             ";
-    
+
                                         $No++;
                                     }
-
                                 } else {
 
-                                    ?>
+                                ?>
 
-                                    <tr><td colspan="12"><div class="alert alert-danger" role="alert" style="text-align: center;font-weight: bold;">Data Tidak Ditemukan !</div></td></tr>
+                                    <tr>
+                                        <td colspan="12">
+                                            <div class="alert alert-danger" role="alert" style="text-align: center;font-weight: bold;">Data Tidak Ditemukan !</div>
+                                        </td>
+                                    </tr>
 
-                                    <?php
+                                <?php
 
                                 }
 
@@ -229,7 +247,7 @@ $ParamNoUrut = isset($_GET['it_cari_no_urut']) ? $_GET['it_cari_no_urut'] : '';
                                 for ($i = $start_number; $i <= $end_number; $i++) {
 
                                     $link_active = ($page == $i) ? ' class="page-item active"' : '';
-                                
+
                                     echo "<li$link_active><a class='page-link' href='hasil-rekap.php?page=$i&it_cari_kec=$ParamKecamatan&it_cari_kategori=$ParamKategori&it_cari_kel=$ParamKelurahan&it_cari_inputor=$ParamKtp&it_cari_no_tps=$ParamTps&it_cari_no_urut=$ParamNoUrut&it_cari_partai=$ParamKodePartai&it_cari_nama=$ParamNama&it_cari_dapil=$ParamDapil'>$i</a></li>";
                                 }
 
