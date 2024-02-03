@@ -49,8 +49,8 @@ $ParamNoUrut = isset($_GET['it_cari_no_urut']) ? $_GET['it_cari_no_urut'] : '';
                         </div>
 
                         <hr />
-                        <table class="table table-hover" style="display: block; overflow-x: auto;white-space: nowrap;">
-                            <thead class="thead-grey">
+                        <table class="table table-hover table-striped" style="display: block; overflow-x: auto;white-space: nowrap;">
+                            <thead>
                                 <tr>
                                     <th scope="col"> <a class="btn btn-outline-secondary" href="hasil-rekap.php"><i class="bi bi-arrow-clockwise"></i></a></th>
 
@@ -155,7 +155,15 @@ $ParamNoUrut = isset($_GET['it_cari_no_urut']) ? $_GET['it_cari_no_urut'] : '';
                                     AND (nama_capil LIKE '%$ParamNama%' OR '' =  '$ParamNama') 
                                     AND (dapil LIKE '%$ParamDapil%' OR '' =  '$ParamDapil')");
                                 $row2 = mysqli_fetch_assoc($sql2);
+                                
+
                                 $total_data = $row2['cnt'];
+
+                                // $first_row = mysqli_fetch_assoc($sql);  
+
+                                // $total_data = $first_row == null ? 0 : $first_row['cnt'];
+
+                                // echo $first_row['nama_capil'];
 
                                 if ($total_data > 0) {
                                     while ($row = mysqli_fetch_assoc($sql)) {

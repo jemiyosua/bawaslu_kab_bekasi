@@ -8,7 +8,7 @@ if (!isset($_SESSION['username']) && (!isset($_SESSION['password']))) {
 }
 
 $_SESSION['nav'] = "perhitungan-suara";
-$_SESSION['nav-page'] = "summary-tps";
+$_SESSION['nav-page'] = "hasil-rekap-partai";
 
 require_once('header.php');
 
@@ -21,13 +21,15 @@ require_once('koneksi.php');
 $ParamKecamatan = isset($_GET['it_cari_kec']) ? $_GET['it_cari_kec'] : '';
 $ParamKelurahan = isset($_GET['it_cari_kel']) ? $_GET['it_cari_kel'] : '';
 $ParamTps = isset($_GET['it_cari_no_tps']) ? $_GET['it_cari_no_tps'] : '';
-
+$ParamKategori = isset($_GET['it_cari_kategori']) ? $_GET['it_cari_kategori'] : '';
+$ParamPartai = isset($_GET['it_cari_partai']) ? $_GET['it_cari_partai'] : '';
+$ParamKtp = isset($_GET['it_cari_ktp']) ? $_GET['it_cari_ktp'] : '';
 ?>
 
 <main id="main" class="main">
 
     <div class="pagetitle">
-        <h1>Rekap Pemilih Per-TPS</h1>
+        <h1>Rekap Hasil Suara Partai</h1>
     </div>
 
     <hr />
@@ -47,7 +49,7 @@ $ParamTps = isset($_GET['it_cari_no_tps']) ? $_GET['it_cari_no_tps'] : '';
                         <table class="table table-hover table-striped">
                             <thead class="table-grey">
                                 <tr>
-                                    <th scope="col"> <a class="btn btn-outline-secondary" href="summary-tps.php"><i class="bi bi-arrow-clockwise"></i></a></th>
+                                    <th scope="col"> <a class="btn btn-outline-secondary" href="hasil-rekap-partai.php"><i class="bi bi-arrow-clockwise"></i></a></th>
 
                                     <form>
                                         <th scope="col"><input type="text" class="form-control" placeholder="Kecamatan..." aria-describedby="button-addon2" name="it_cari_kec" value="<?= $ParamKecamatan ?>"></th>
@@ -55,6 +57,14 @@ $ParamTps = isset($_GET['it_cari_no_tps']) ? $_GET['it_cari_no_tps'] : '';
                                         <th scope="col"><input type="text" class="form-control" placeholder="Kelurahan..." aria-describedby="button-addon2" name="it_cari_kel" value="<?= $ParamKelurahan ?>"></th>
 
                                         <th scope="col"><input type="text" class="form-control" placeholder="No TPS..." aria-describedby="button-addon2" name="it_cari_no_tps" value="<?= $ParamTps ?>"></th>
+
+                                        <th scope="col"><input type="text" class="form-control" placeholder="Kategori..." aria-describedby="button-addon2" name="it_cari_kategori" value="<?= $ParamKategori ?>"></th>
+
+                                        <th scope="col"><input type="text" class="form-control" placeholder="Partai..." aria-describedby="button-addon2" name="it_cari_partai" value="<?= $ParamPartai ?>"></th>
+
+                                        <th scope="col"></th>
+
+                                        <th scope="col"><input type="text" class="form-control" placeholder="Inputor..." aria-describedby="button-addon2" name="it_cari_ktp" value="<?= $ParamKtp ?>"></th>
 
                                         <button type="submit" style="display: none;"></button>
                                     </form>
@@ -64,14 +74,10 @@ $ParamTps = isset($_GET['it_cari_no_tps']) ? $_GET['it_cari_no_tps'] : '';
                                     <th scope="col">Kecamatan</th>
                                     <th scope="col">Kelurahan</th>
                                     <th scope="col">No TPS</th>
-                                    <th scope="col">Jumlah DPT(a)</th>
-                                    <th scope="col">Jumlah DBTb(b)</th>
-                                    <th scope="col">Jumlah DPK(c)</th>
-                                    <th scope="col">Jumlah Pemilih(a+b+c)</th>
-                                    <th scope="col">Jumlah Suara Sah(d)</th>
-                                    <th scope="col">Jumlah Suara Tidak Sah(e)</th>
-                                    <th scope="col">Jumlah Pengguna Hak Pilih(d+e)</th>
-                                    <th scope="col">Tgl Input</th>
+                                    <th scope="col">Kategori</th>
+                                    <th scope="col">Partai</th>
+                                    <th scope="col">Jumlah Suara</th>
+                                    <th scope="col">Inputor(NIK)</th>
 
                                 </tr>
 
@@ -88,30 +94,42 @@ $ParamTps = isset($_GET['it_cari_no_tps']) ? $_GET['it_cari_no_tps'] : '';
 
                                 $No = $limit_start + 1;
 
-                                $_SESSION['summary-tps-kecamatan'] = $ParamKecamatan;
-                                $_SESSION['summary-tps-kelurahan'] = $ParamKelurahan;
-                                $_SESSION['summary-tps-tps'] = $ParamTps;
+                                $_SESSION['rekap-partai-kecamatan'] = $ParamKecamatan;
+                                $_SESSION['rekap-partai-kelurahan'] = $ParamKelurahan;
+                                $_SESSION['rekap-partai-tps'] = $ParamTps;
+                                $_SESSION['rekap-partai-kategori'] = $ParamKategori;
+                                $_SESSION['rekap-partai-partai'] = $ParamPartai;
+                                $_SESSION['rekap-partai-ktp'] = $ParamKtp;
 
-                                $q = "SELECT dp.kecamatan, dp.kelurahan , dp.no_tps , dhrh.jumlah_dpt, dhrh.jumlah_dptb, dhrh.jumlah_dpk, dhrh.jumlah_pemilih,
-                                                dhrh.jumlah_suara_sah , dhrh.jumlah_suara_tidak_sah , dhrh.jumlah_pengguna_hak_pilih, dhrh.tgl_input
-                                                from db_hasil_rekap_hdr dhrh join db_ptps dp 
-                                                ON dhrh.no_ktp = dp.no_ktp
-                                                AND (dp.kecamatan LIKE '%$ParamKecamatan%'OR '' = '$ParamKecamatan') 
-                                                AND ( dp.kelurahan LIKE '%$ParamKelurahan%' OR '' = '$ParamKelurahan') 
-                                                AND (dp.no_tps LIKE '%$ParamTps%'OR '' = '$ParamTps')
-                                                AND jumlah_dpt > 0
-                                                ORDER BY kecamatan, kelurahan, no_tps
-                                                LIMIT $limit_start, $limit";
+                                $q = "SELECT x.* from(
+                                        SELECT dp.kecamatan, dp.kelurahan, dp.no_tps ,dhrsp.kategori_capil ,dhrsp.kode_partai, 
+                                        (SELECT id from db_master_partai dmp  WHERE dmp.kode_partai = dhrsp.kode_partai)no_partai,
+                                        dhrsp.jumlah_suara, dhrsp.no_ktp
+                                        from db_hasil_rekap_suara_partai dhrsp, 
+                                        db_ptps dp
+                                        WHERE dhrsp.no_ktp  = dp.no_ktp 
+                                      )x WHERE (kecamatan LIKE '%$ParamKecamatan%'OR '' = '$ParamKecamatan')
+                                      AND ( kelurahan LIKE '%$ParamKelurahan%' OR '' = '$ParamKelurahan') 
+                                      AND (no_tps LIKE '%$ParamTps%'OR '' = '$ParamTps')
+                                      AND (kategori_capil LIKE '%$ParamKategori%'OR '' = '$ParamKategori')
+                                      AND (kode_partai LIKE '%$ParamPartai%'OR '' = '$ParamPartai')
+                                      AND (no_ktp LIKE '%$ParamKtp%'OR '' = '$ParamKtp')
+                                      ORDER BY kecamatan, kelurahan, no_tps, kategori_capil, no_partai
+                                      LIMIT $limit_start, $limit";
 
                                 $sql = mysqli_query($conn, $q);
 
-                                $q2 = "SELECT COUNT(1) as cnt
-                                            FROM db_hasil_rekap_hdr dhrh join db_ptps dp 
-                                            ON dhrh.no_ktp = dp.no_ktp
-                                            AND (kecamatan LIKE '%$ParamKecamatan%' OR '' = '$ParamKecamatan') 
-                                            AND (kelurahan LIKE '%$ParamKelurahan%' OR '' = '$ParamKelurahan') 
-                                            AND (no_tps LIKE '%$ParamTps%' OR '' = '$ParamTps')
-                                            AND jumlah_dpt > 0";
+                                $q2 = "SELECT count(1) as cnt from(
+                                            SELECT dp.kecamatan, dp.kelurahan, dp.no_tps ,dhrsp.kategori_capil ,dhrsp.kode_partai, 
+                                                    dhrsp.jumlah_suara, dhrsp.no_ktp from db_hasil_rekap_suara_partai dhrsp, db_ptps dp
+                                            WHERE dhrsp.no_ktp  = dp.no_ktp 
+                                        )x WHERE (kecamatan LIKE '%$ParamKecamatan%'OR '' = '$ParamKecamatan')
+                                        AND ( kelurahan LIKE '%$ParamKelurahan%' OR '' = '$ParamKelurahan') 
+                                        AND (no_tps LIKE '%$ParamTps%'OR '' = '$ParamTps')
+                                        AND (kategori_capil LIKE '%$ParamKategori%'OR '' = '$ParamKategori')
+                                        AND (kode_partai LIKE '%$ParamPartai%'OR '' = '$ParamPartai')
+                                        AND (no_ktp LIKE '%$ParamKtp%'OR '' = '$ParamKtp')";
+
                                 $sql2 = mysqli_query($conn, $q2);
                                 $row2 = mysqli_fetch_assoc($sql2);
                                 $total_data = $row2['cnt'];
@@ -122,14 +140,10 @@ $ParamTps = isset($_GET['it_cari_no_tps']) ? $_GET['it_cari_no_tps'] : '';
                                         $Kecamatan = $row['kecamatan'];
                                         $Kelurahan = $row['kelurahan'];
                                         $NoTPS = $row['no_tps'];
-                                        $JmlDpt = $row['jumlah_dpt'];
-                                        $JmlDptb = $row['jumlah_dptb'];
-                                        $JmlDpk = $row['jumlah_dpk'];
-                                        $JmlPemilih = $row['jumlah_pemilih'];
-                                        $JmlSuaraSah = $row['jumlah_suara_sah'];
-                                        $JmlSuaraTdkSah = $row['jumlah_suara_tidak_sah'];
-                                        $JmlPgnHakPilih = $row['jumlah_pengguna_hak_pilih'];
-                                        $TglInput = $row['tgl_input'];
+                                        $Kategori = $row['kategori_capil'];
+                                        $Partai = $row['kode_partai'];
+                                        $JmlSuara = $row['jumlah_suara'];
+                                        $NoKtp = $row['no_ktp'];
 
                                         echo "
                                             <tr>
@@ -137,14 +151,10 @@ $ParamTps = isset($_GET['it_cari_no_tps']) ? $_GET['it_cari_no_tps'] : '';
                                                 <td>$Kecamatan</td>
                                                 <td>$Kelurahan</td>
                                                 <td>$NoTPS</td>
-                                                <td>$JmlDpt</td>
-                                                <td>$JmlDptb</td>
-                                                <td>$JmlDpk</td>
-                                                <td>$JmlPemilih</td>
-                                                <td>$JmlSuaraSah</td>
-                                                <td>$JmlSuaraTdkSah</td>
-                                                <td>$JmlPgnHakPilih</td>
-                                                <td>$TglInput</td>
+                                                <td>$Kategori</td>
+                                                <td>$Partai</td>
+                                                <td>$JmlSuara</td>
+                                                <td>$NoKtp</td>
                                             </tr>
                                             ";
 
@@ -181,18 +191,21 @@ $ParamTps = isset($_GET['it_cari_no_tps']) ? $_GET['it_cari_no_tps'] : '';
                                     echo "<li class='page-item disbled'><a class='page-link' href='#'>&laquo;</a></li>";
                                 } else { // Jika page bukan page ke 1
                                     $link_prev = ($page > 1) ? $page - 1 : 1;
-                                    echo "<li class='page-item'><a class='page-link' href='summary-tps.php?page=1'>First</a></li>";
-                                    echo "<li class='page-item'><a class='page-link' href='summary-tps.php?page=$link_prev&it_cari_kec=$ParamKecamatan&it_cari_kel=$ParamKelurahan&it_cari_no_tps=$ParamTps'>&laquo;</a></li>";
+                                    echo "<li class='page-item'><a class='page-link' href='hasil-rekap-partai.php?page=1'>First</a></li>";
+                                    echo "<li class='page-item'><a class='page-link' href='hasil-rekap-partai.php?page=$link_prev&it_cari_kec=$ParamKecamatan&it_cari_kel=$ParamKelurahan&it_cari_no_tps=$ParamTps&it_cari_kategori=$ParamKategori&it_cari_partai=$ParamPartai&it_cari_ktp=$ParamKtp'>&laquo;</a></li>";
                                 }
 
-                                $q = "SELECT COUNT(1) as cnt
-                                        FROM db_hasil_rekap_hdr dhrh join db_ptps dp 
-                                        ON dhrh.no_ktp = dp.no_ktp
-                                        AND (dp.kecamatan LIKE '%$ParamKecamatan%' OR '' = '$ParamKecamatan') 
-                                        AND ( dp.kelurahan LIKE '%$ParamKelurahan%' OR '' = '$ParamKelurahan') 
-                                        AND (dp.no_tps LIKE '%$ParamTps%' OR '' = '$ParamTps')
-                                        AND jumlah_dpt > 0
-                                        ORDER BY kecamatan, kelurahan, no_tps;";
+                                $q = "SELECT count(1) as cnt from(
+                                    SELECT dp.kecamatan, dp.kelurahan, dp.no_tps ,dhrsp.kategori_capil ,dhrsp.kode_partai, 
+                                            dhrsp.jumlah_suara, dhrsp.no_ktp from db_hasil_rekap_suara_partai dhrsp, db_ptps dp
+                                    WHERE dhrsp.no_ktp  = dp.no_ktp 
+                                )x WHERE (kecamatan LIKE '%$ParamKecamatan%'OR '' = '$ParamKecamatan')
+                                AND ( kelurahan LIKE '%$ParamKelurahan%' OR '' = '$ParamKelurahan') 
+                                AND (no_tps LIKE '%$ParamTps%'OR '' = '$ParamTps')
+                                AND (kategori_capil LIKE '%$ParamKategori%'OR '' = '$ParamKategori')
+                                AND (kode_partai LIKE '%$ParamPartai%'OR '' = '$ParamPartai')
+                                AND (no_ktp LIKE '%$ParamKtp%'OR '' = '$ParamKtp')";
+                                    
                                 $sql = mysqli_query($conn, $q);
                                 $row = mysqli_fetch_assoc($sql);
                                 $jumlah = $row['cnt'];
@@ -206,7 +219,7 @@ $ParamTps = isset($_GET['it_cari_no_tps']) ? $_GET['it_cari_no_tps'] : '';
 
                                     $link_active = ($page == $i) ? ' class="page-item active"' : '';
 
-                                    echo "<li$link_active><a class='page-link' href='summary-tps.php?page=$i&it_cari_kec=$ParamKecamatan&it_cari_kel=$ParamKelurahan&it_cari_no_tps=$ParamTps'>$i</a></li>";
+                                    echo "<li$link_active><a class='page-link' href='hasil-rekap-partai.php?page=$i&it_cari_kec=$ParamKecamatan&it_cari_kel=$ParamKelurahan&it_cari_no_tps=$ParamTps&it_cari_kategori=$ParamKategori&it_cari_partai=$ParamPartai&it_cari_ktp=$ParamKtp'>$i</a></li>";
                                 }
 
                                 // LINK NEXT AND LAST
@@ -219,8 +232,8 @@ $ParamTps = isset($_GET['it_cari_no_tps']) ? $_GET['it_cari_no_tps'] : '';
                                 } else { // Jika Bukan page terakhir
                                     $link_next = ($page < $jumlah_page) ? $page + 1 : $jumlah_page;
 
-                                    echo "<li class='page-item'><a class='page-link' href='summary-tps.php?page=$link_next&it_cari_kec=$ParamKecamatan&it_cari_kel=$ParamKelurahan&it_cari_no_tps=$ParamTps'>&raquo;</a></li>";
-                                    echo "<li class='page-item'><a class='page-link' href='summary-tps.php?page=$jumlah_page&it_cari_kec=$ParamKecamatan&it_cari_kel=$ParamKelurahan&it_cari_no_tps=$ParamTps'>Last</a></li>";
+                                    echo "<li class='page-item'><a class='page-link' href='hasil-rekap-partai.php?page=$link_next&it_cari_kec=$ParamKecamatan&it_cari_kel=$ParamKelurahan&it_cari_no_tps=$ParamTps&it_cari_kategori=$ParamKategori&it_cari_partai=$ParamPartai&it_cari_ktp=$ParamKtp'>&raquo;</a></li>";
+                                    echo "<li class='page-item'><a class='page-link' href='hasil-rekap-partai.php?page=$jumlah_page&it_cari_kec=$ParamKecamatan&it_cari_kel=$ParamKelurahan&it_cari_no_tps=$ParamTps&it_cari_kategori=$ParamKategori&it_cari_partai=$ParamPartai&it_cari_ktp=$ParamKtp'>Last</a></li>";
                                 }
 
                                 ?>
