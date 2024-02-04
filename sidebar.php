@@ -93,10 +93,9 @@ session_start();
         </li> -->
 
         <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#rekap-suara-nav" data-bs-toggle="collapse" href="#">
+            <a class="nav-link collapsed" data-bs-target="#rekap-suara-nav" data-bs-toggle="collapse" href="#">
                 <i class="bi bi-calculator"></i><span>Perhitungan Suara</span><i class="bi bi-chevron-down ms-auto"></i>
             </a>
-
             <ul id="rekap-suara-nav" class="nav-content collapse <?= $_SESSION['nav'] == "perhitungan-suara" ? 'show' : '' ?>" data-bs-parent="#sidebar-nav">
                 <li>
                     <a href="summary-tps.php" class="<?= $_SESSION['nav-page'] == "summary-tps" ? 'active' : '' ?>">
@@ -120,8 +119,16 @@ session_start();
                     </a>
                 </li>
             </ul>
-
         </li>
+            </a>
+        </li>
+
+        <li class="nav-heading">Logout</li>
+
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="logout.php">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Logout</span>
             </a>
         </li>
 

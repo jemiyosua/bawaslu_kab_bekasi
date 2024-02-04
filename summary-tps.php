@@ -170,7 +170,6 @@ $ParamTps = isset($_GET['it_cari_no_tps']) ? $_GET['it_cari_no_tps'] : '';
 
                                 ?>
                             </tbody>
-                            
                         </table>
 
                         <div style="font-weight: bold;color:red">Total Data : <?= $total_data ?></div>

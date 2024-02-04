@@ -1,10 +1,10 @@
 <?php
 
+session_start();
+
 require_once('header.php');
 
 require_once('koneksi.php');
-
-session_start();
 
 $Kecamatan = '';
 $Kelurahan = '';
@@ -28,6 +28,14 @@ if (isset($_SESSION['nomor_ktp'])) {
     $NIKSubString = substr($NomorKTP, 0, 6);
     $NIK = $NIKSubString . "**********";
 }
+
+function filterData(&$str) { 
+    $str = preg_replace("/\t/", "\\t", $str); 
+    $str = preg_replace("/\r?\n/", "\\n", $str); 
+    if(strstr($str, '"')) $str = '"' . str_replace('"', '""', $str) . '"'; 
+}
+
+$NavPage = $_SESSION['nav-page'];
 
 ?>
 

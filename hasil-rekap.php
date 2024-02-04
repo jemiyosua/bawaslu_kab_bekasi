@@ -153,15 +153,7 @@ $ParamNoUrut = isset($_GET['it_cari_no_urut']) ? $_GET['it_cari_no_urut'] : '';
                                     AND (nama_capil LIKE '%$ParamNama%' OR '' =  '$ParamNama') 
                                     AND (dapil LIKE '%$ParamDapil%' OR '' =  '$ParamDapil')");
                                 $row2 = mysqli_fetch_assoc($sql2);
-                                
-
                                 $total_data = $row2['cnt'];
-
-                                // $first_row = mysqli_fetch_assoc($sql);  
-
-                                // $total_data = $first_row == null ? 0 : $first_row['cnt'];
-
-                                // echo $first_row['nama_capil'];
 
                                 if ($total_data > 0) {
                                     while ($row = mysqli_fetch_assoc($sql)) {
