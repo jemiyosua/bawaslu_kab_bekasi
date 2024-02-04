@@ -31,10 +31,6 @@ header("Content-Disposition: attachment; filename=Export File.xlsx");
                     <th>Tgl Input</th>
                 </tr>
                 <?php
-                // koneksi database
-                // $koneksi = mysqli_connect("localhost","root","","pegawai");
-
-                // menampilkan data pegawai
 
                 $ParamKecamatan = $_SESSION['ParamKecamatan'];
                 $ParamKelurahan = $_SESSION['ParamKelurahan'];
@@ -95,10 +91,6 @@ header("Content-Disposition: attachment; filename=Export File.xlsx");
                     <th scope="col">Tgl Input</th>
                 </tr>
                 <?php
-                // koneksi database
-                // $koneksi = mysqli_connect("localhost","root","","pegawai");
-
-                // menampilkan data pegawai
 
                 $ParamKecamatan = $_SESSION['hasil-rekap-kecamatan'];
                 $ParamKelurahan = $_SESSION['hasil-rekap-kelurahan'];
@@ -144,7 +136,7 @@ header("Content-Disposition: attachment; filename=Export File.xlsx");
                         <td><?php echo $d['no_urut']; ?></td>
                         <td><?php echo $d['nama_capil']; ?></td>
                         <td><?php echo $d['jumlah_suara']; ?></td>
-                        <td><?php echo "'".$d['no_ktp']; ?></td>
+                        <td><?php echo "'" . $d['no_ktp']; ?></td>
                         <td><?php echo $d['tgl_input']; ?></td>
                     </tr>
                 <?php
@@ -155,6 +147,65 @@ header("Content-Disposition: attachment; filename=Export File.xlsx");
 
     <?php
 
+    } else if ($NavPage == 'hasil-rekap-partai') {
+    ?>
+        <div>
+
+            <table>
+                <tr>
+                    <th scope="col">No</th>
+                    <th scope="col">Kecamatan</th>
+                    <th scope="col">Kelurahan</th>
+                    <th scope="col">No TPS</th>
+                    <th scope="col">Kategori</th>
+                    <th scope="col">Partai</th>
+                    <th scope="col">Jumlah Suara</th>
+                    <th scope="col">Inputor(NIK)</th>
+                </tr>
+                <?php
+
+                $ParamKecamatan = $_SESSION['rekap-partai-kecamatan'];
+                $ParamKelurahan = $_SESSION['rekap-partai-kelurahan'];
+                $ParamTps = $_SESSION['rekap-partai-tps'];
+                $ParamKategori =  $_SESSION['rekap-partai-kategori'];
+                $ParamPartai = $_SESSION['rekap-partai-partai'];
+                $ParamKtp = $_SESSION['rekap-partai-ktp'];
+
+                $q = "SELECT x.* from(
+                    SELECT dp.kecamatan, dp.kelurahan, dp.no_tps ,dhrsp.kategori_capil ,dhrsp.kode_partai, 
+                    (SELECT id from db_master_partai dmp  WHERE dmp.kode_partai = dhrsp.kode_partai)no_partai,
+                    dhrsp.jumlah_suara, dhrsp.no_ktp
+                    from db_hasil_rekap_suara_partai dhrsp, 
+                    db_ptps dp
+                    WHERE dhrsp.no_ktp  = dp.no_ktp 
+                  )x WHERE (kecamatan LIKE '%$ParamKecamatan%'OR '' = '$ParamKecamatan')
+                  AND ( kelurahan LIKE '%$ParamKelurahan%' OR '' = '$ParamKelurahan') 
+                  AND (no_tps LIKE '%$ParamTps%'OR '' = '$ParamTps')
+                  AND (kategori_capil LIKE '%$ParamKategori%'OR '' = '$ParamKategori')
+                  AND (kode_partai LIKE '%$ParamPartai%'OR '' = '$ParamPartai')
+                  AND (no_ktp LIKE '%$ParamKtp%'OR '' = '$ParamKtp')
+                  ORDER BY kecamatan, kelurahan, no_tps, kategori_capil, no_partai";
+                $data = mysqli_query($conn, $q);
+                $no = 1;
+                while ($d = mysqli_fetch_array($data)) {
+                ?>
+                    <tr>
+                        <td><?php echo $no++; ?></td>
+                        <td><?php echo $d['kecamatan']; ?></td>
+                        <td><?php echo $d['kelurahan']; ?></td>
+                        <td><?php echo $d['no_tps']; ?></td>
+                        <td><?php echo $d['kategori_capil']; ?></td>
+                        <td><?php echo $d['kode_partai']; ?></td>
+                        <td><?php echo $d['jumlah_suara']; ?></td>
+                        <td><?php echo "'" . $d['no_ktp']; ?></td>
+                    </tr>
+                <?php
+                }
+                ?>
+            </table>
+        </div>
+
+    <?php
     }
     ?>
 
