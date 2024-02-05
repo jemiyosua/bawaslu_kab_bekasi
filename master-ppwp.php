@@ -18,6 +18,8 @@ require_once('sidebar.php');
 
 require_once('koneksi.php');
 
+$cari = $_GET['cari'];
+
 ?>
 
 <main id="main" class="main">
@@ -42,7 +44,7 @@ require_once('koneksi.php');
 				<div class="col-sm-3 mb-3 mb-sm-0">
 					<form>
 						<div class="input-group mt-3">
-							<input type="text" class="form-control" placeholder="Search ..." aria-describedby="button-addon2" name="cari">
+							<input type="text" class="form-control" placeholder="Search ..." aria-describedby="button-addon2" name="cari" value="<?=$cari?>">
 						</div>
 					</form>
 				</div>
@@ -70,20 +72,17 @@ require_once('koneksi.php');
 					$limit_start = ($page - 1) * $limit;
 
 					$No = $limit_start + 1;
-					$cari = null;
 
 					if (isset($_GET['cari'])) {
-						$cari = $_GET['cari'];
-
 						if ($cari == "") {
-							$q = "SELECT id, no_urut, nama, status FROM db_master_capres_cawapres ORDER BY id ASC LIMIT $limit_start, $limit";
+							$q = "SELECT id, no_urut, nama, status FROM db_master_capres_cawapres ORDER BY no_urut ASC LIMIT $limit_start, $limit";
 							$sql = mysqli_query($conn, $q);
 						} else {
-							$q = "SELECT id, no_urut, nama, status FROM db_master_capres_cawapres WHERE nama LIKE '%" . $cari . "%' ORDER BY id ASC LIMIT $limit_start, $limit";
+							$q = "SELECT id, no_urut, nama, status FROM db_master_capres_cawapres WHERE nama LIKE '%" . $cari . "%' ORDER BY no_urut ASC LIMIT $limit_start, $limit";
 							$sql = mysqli_query($conn, $q);
 						}
 					} else {
-						$q = "SELECT id, no_urut, nama, status FROM db_master_capres_cawapres ORDER BY id ASC LIMIT $limit_start, $limit";
+						$q = "SELECT id, no_urut, nama, status FROM db_master_capres_cawapres ORDER BY no_urut ASC LIMIT $limit_start, $limit";
 						$sql = mysqli_query($conn, $q);
 					}
 

@@ -18,6 +18,8 @@ require_once('sidebar.php');
 
 require_once('koneksi.php');
 
+$cari = $_GET['cari'];
+
 ?>
 
 <main id="main" class="main">
@@ -42,7 +44,7 @@ require_once('koneksi.php');
 				<div class="col-sm-3 mb-3 mb-sm-0">
 					<form>
 						<div class="input-group mt-3">
-							<input type="text" class="form-control" placeholder="Search ..." aria-describedby="button-addon2" name="cari">
+							<input type="text" class="form-control" placeholder="Search ..." aria-describedby="button-addon2" name="cari" value="<?=$cari?>">
 						</div>
 					</form>
 				</div>
@@ -55,7 +57,6 @@ require_once('koneksi.php');
 					<tr>
 						<th scope="col">No</th>
 						<th scope="col">Kategori Calon Pilihan</th>
-						<th scope="col">Kode Partai</th>
 						<th scope="col">Nomor Urut</th>
 						<th scope="col">Nama Calon Pilihan</th>
 						<th scope="col">Jenis Kelamin</th>
@@ -76,17 +77,15 @@ require_once('koneksi.php');
 					$No = $limit_start + 1;
 
 					if (isset($_GET['cari'])) {
-						$cari = $_GET['cari'];
-
 						if ($cari == "") {
-							$q = "SELECT id, kategori_capil, kode_partai, no_urut, nama_capil, jenis_kelamin, dapil, status FROM db_master_capil WHERE kategori_capil = 'DPD-RI' ORDER BY id ASC LIMIT $limit_start, $limit";
+							$q = "SELECT id, kategori_capil, no_urut, nama_capil, jenis_kelamin, dapil, status FROM db_master_capil WHERE kategori_capil = 'DPD-RI' ORDER BY id ASC LIMIT $limit_start, $limit";
 							$sql = mysqli_query($conn, $q);
 						} else {
-							$q = "SELECT id, kategori_capil, kode_partai, no_urut, nama_capil, jenis_kelamin, dapil, status FROM db_master_capil WHERE kategori_capil = 'DPD-RI' AND (kode_partai LIKE '%" . $cari . "%' OR nama_capil LIKE '%" . $cari . "%' OR dapil LIKE '%" . $cari . "%') ORDER BY id ASC LIMIT $limit_start, $limit";
+							$q = "SELECT id, kategori_capil, no_urut, nama_capil, jenis_kelamin, dapil, status FROM db_master_capil WHERE kategori_capil = 'DPD-RI' AND (nama_capil LIKE '%" . $cari . "%' OR dapil LIKE '%" . $cari . "%') ORDER BY id ASC LIMIT $limit_start, $limit";
 							$sql = mysqli_query($conn, $q);
 						}
 					} else {
-						$q = "SELECT id, kategori_capil, kode_partai, no_urut, nama_capil, jenis_kelamin, dapil, status FROM db_master_capil WHERE kategori_capil = 'DPD-RI' ORDER BY id ASC LIMIT $limit_start, $limit";
+						$q = "SELECT id, kategori_capil, no_urut, nama_capil, jenis_kelamin, dapil, status FROM db_master_capil WHERE kategori_capil = 'DPD-RI' ORDER BY id ASC LIMIT $limit_start, $limit";
 						$sql = mysqli_query($conn, $q);
 					}
 
@@ -94,7 +93,6 @@ require_once('koneksi.php');
 
 						$Id = $row['id'];
 						$KategoriCapil = $row['kategori_capil'];
-						$KodePartai = $row['kode_partai'];
 						$NomorUrut = $row['no_urut'];
 						$NamaCapil = $row['nama_capil'];
 						$JenisKelamin = $row['jenis_kelamin'];
@@ -105,7 +103,6 @@ require_once('koneksi.php');
 						<tr>
 							<td>$No</td>
 							<td>$KategoriCapil</td>
-							<td>$KodePartai</td>
 							<td>$NomorUrut</td>
 							<td>$NamaCapil</td>
 							<td>$JenisKelamin</td>
@@ -122,7 +119,7 @@ require_once('koneksi.php');
 
 			<?php
 			
-			$q = "SELECT COUNT(1) AS cnt FROM db_master_capil WHERE kategori_capil = 'DPD-RI' AND (kode_partai LIKE '%" . $cari . "%' OR nama_capil LIKE '%" . $cari . "%' OR dapil LIKE '%" . $cari . "%') ORDER BY id ASC";
+			$q = "SELECT COUNT(1) AS cnt FROM db_master_capil WHERE kategori_capil = 'DPD-RI' AND (nama_capil LIKE '%" . $cari . "%' OR dapil LIKE '%" . $cari . "%') ORDER BY id ASC";
 			$sql = mysqli_query($conn, $q);
 			$row = mysqli_fetch_assoc($sql);
 			$total_data = $row['cnt'];
@@ -152,7 +149,7 @@ require_once('koneksi.php');
 							$q = "SELECT COUNT(1) AS cnt FROM db_master_capil WHERE kategori_capil = 'DPD-RI'";
 							$sql = mysqli_query($conn, $q);
 						} else {
-							$q = "SELECT COUNT(1) AS cnt FROM db_master_capil WHERE kategori_capil = 'DPD-RI' AND (kode_partai LIKE '%" . $cari . "%' OR nama_capil LIKE '%" . $cari . "%' OR dapil LIKE '%" . $cari . "%') ORDER BY id ASC";
+							$q = "SELECT COUNT(1) AS cnt FROM db_master_capil WHERE kategori_capil = 'DPD-RI' AND (nama_capil LIKE '%" . $cari . "%' OR dapil LIKE '%" . $cari . "%') ORDER BY id ASC";
 							$sql = mysqli_query($conn, $q);
 						}
 					} else {

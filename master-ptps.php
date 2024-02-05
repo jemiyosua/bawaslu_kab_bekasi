@@ -18,6 +18,8 @@ require_once('sidebar.php');
 
 require_once('koneksi.php');
 
+$cari = $_GET['cari'];
+
 ?>
 
 <main id="main" class="main">
@@ -38,11 +40,12 @@ require_once('koneksi.php');
 			<div class="d-flex justify-content-between align-items-center">
 				<div class="col-sm-6 mb-6 mb-sm-0">
 					<h5 class="card-title">Master PTPS</h5>
+					<a class='btn btn-success' href='form-master-ptps.php?ptps=insert'> <i class='bi bi-plus-square'></i> Tambah PTPS</a>
 				</div>
 				<div class="col-sm-3 mb-3 mb-sm-0">
 					<form>
 						<div class="input-group mt-3">
-							<input type="text" class="form-control" placeholder="Search ..." aria-describedby="button-addon2" name="cari">
+							<input type="text" class="form-control" placeholder="Search ..." aria-describedby="button-addon2" name="cari" value="<?=$cari?>">
 						</div>
 					</form>
 				</div>
@@ -103,20 +106,18 @@ require_once('koneksi.php');
 					$limit_start = ($page - 1) * $limit;
 
 					$No = $limit_start + 1;
-					$cari ='';
 
 					if (isset($_GET['cari'])) {
-						$cari = $_GET['cari'];
 
 						if ($cari == "") {
-							$q = "SELECT id, kecamatan, kelurahan, no_tps, no_ktp, nama, dapil_kab FROM db_ptps ORDER BY id ASC LIMIT $limit_start, $limit";
+							$q = "SELECT id, kecamatan, kelurahan, no_tps, no_ktp, nama, dapil_kab FROM db_ptps ORDER BY tgl_input DESC LIMIT $limit_start, $limit";
 							$sql = mysqli_query($conn, $q);
 						} else {
-							$q = "SELECT id, kecamatan, kelurahan, no_tps, no_ktp, nama, dapil_kab FROM db_ptps WHERE kecamatan LIKE '%" . $cari . "%' OR kelurahan LIKE '%" . $cari . "%' OR no_ktp LIKE '%" . $cari . "%' OR nama LIKE '%" . $cari . "%' OR concat('BEKASI ',dapil_kab) LIKE '%" . $cari . "%' ORDER BY id ASC LIMIT $limit_start, $limit";
+							$q = "SELECT id, kecamatan, kelurahan, no_tps, no_ktp, nama, dapil_kab FROM db_ptps WHERE kecamatan LIKE '%" . $cari . "%' OR kelurahan LIKE '%" . $cari . "%' OR no_ktp LIKE '%" . $cari . "%' OR nama LIKE '%" . $cari . "%' OR concat('BEKASI ',dapil_kab) LIKE '%" . $cari . "%' ORDER BY tgl_input DESC LIMIT $limit_start, $limit";
 							$sql = mysqli_query($conn, $q);
 						}
 					} else {
-						$q = "SELECT id, kecamatan, kelurahan, no_tps, no_ktp, nama, dapil_kab FROM db_ptps ORDER BY id ASC LIMIT $limit_start, $limit";
+						$q = "SELECT id, kecamatan, kelurahan, no_tps, no_ktp, nama, dapil_kab FROM db_ptps ORDER BY tgl_input DESC LIMIT $limit_start, $limit";
 						$sql = mysqli_query($conn, $q);
 					}
 
@@ -142,7 +143,6 @@ require_once('koneksi.php');
 							<td>$vDapil</td>
 							<td style='padding-right:0;margin-right:0;'>
 								<a class='btn btn-warning' href='form-master-ptps.php?ptps=update&id=$Id'> <i class='bi bi-pencil-square'></i></a>
-								<button class='btn btn-danger' onclick='fnDeleteRow($Id)'><i class='bi bi-trash-fill'></i></button> 
 							</td>
 						</tr>
 						";
@@ -156,14 +156,12 @@ require_once('koneksi.php');
 
 			<?php
 			
-			$q = "SELECT COUNT(1) AS cnt FROM db_ptps WHERE kecamatan LIKE '%" . $cari . "%' OR kelurahan LIKE '%" . $cari . "%' OR no_ktp LIKE '%" . $cari . "%' OR nama LIKE '%" . $cari . "%' OR concat('BEKASI ',dapil_kab) LIKE '%" . $cari . "%' ORDER BY id ASC";
+			$q = "SELECT COUNT(1) AS cnt FROM db_ptps WHERE kecamatan LIKE '%" . $cari . "%' OR kelurahan LIKE '%" . $cari . "%' OR no_ktp LIKE '%" . $cari . "%' OR nama LIKE '%" . $cari . "%' OR concat('BEKASI ',dapil_kab) LIKE '%" . $cari . "%'";
 			$sql = mysqli_query($conn, $q);
 			$row = mysqli_fetch_assoc($sql);
 			$total_data = $row['cnt'];
 			
 			?>
-
-			<a class='btn btn-success' href='form-master-ptps.php?ptps=insert'> <i class='bi bi-plus-square'> Tambah PTPS</i></a>
 
 			<div style="font-weight: bold;color:red">Total Data : <?= $total_data ?></div>
 
@@ -188,7 +186,7 @@ require_once('koneksi.php');
 							$q = "SELECT COUNT(1) AS cnt FROM db_ptps";
 							$sql = mysqli_query($conn, $q);
 						} else {
-							$q = "SELECT COUNT(1) AS cnt FROM db_ptps WHERE kecamatan LIKE '%" . $cari . "%' OR kelurahan LIKE '%" . $cari . "%' OR no_ktp LIKE '%" . $cari . "%' OR nama LIKE '%" . $cari . "%' OR concat('BEKASI ',dapil_kab) LIKE '%" . $cari . "%' ORDER BY id ASC";
+							$q = "SELECT COUNT(1) AS cnt FROM db_ptps WHERE kecamatan LIKE '%" . $cari . "%' OR kelurahan LIKE '%" . $cari . "%' OR no_ktp LIKE '%" . $cari . "%' OR nama LIKE '%" . $cari . "%' OR concat('BEKASI ',dapil_kab) LIKE '%" . $cari . "%'";
 							$sql = mysqli_query($conn, $q);
 						}
 					} else {
