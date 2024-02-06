@@ -168,6 +168,7 @@ $ParamNoUrut = isset($_GET['it_cari_no_urut']) ? $_GET['it_cari_no_urut'] : '';
                                         $JumlahSuara = $row['jumlah_suara'];
                                         $Inputor = $row['no_ktp'];
                                         $TglInput = $row['tgl_input'];
+
                                         echo "
                                             <tr>
                                                 <td>$No</td>
@@ -184,6 +185,7 @@ $ParamNoUrut = isset($_GET['it_cari_no_urut']) ? $_GET['it_cari_no_urut'] : '';
                                                 <td>$TglInput</td>
                                             </tr>
                                             ";
+
                                         $No++;
                                     }
 
