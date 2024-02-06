@@ -441,6 +441,41 @@ if (isset($_POST['login-admin'])) {
         }
     }
     
+} else if (isset($_POST['submit-form-update-ptps'])) {
+    $id = $_POST['id'];
+    $Kecamatan = $_POST['kecamatan'];
+    $Kelurahan = $_POST['kelurahan'];
+    $Nama = $_POST['nama'];
+    $NomorKTP = $_POST['nomor_ktp'];
+    $NomorTPS = $_POST['nomor_tps'];
+    $Dapil = $_POST['dapil'];
+
+    $sql = mysqli_query($conn, "SELECT COUNT(1) cnt FROM db_ptps WHERE no_tps = '$NomorTPS' AND kecamatan = '$Kecamatan' AND kelurahan = '$Kelurahan' and id <> '$id'");
+    $row = mysqli_fetch_assoc($sql);
+    $Count = $row["cnt"];
+    if ($Count > 0 ) {
+        $_SESSION['pesanError'] = "Sudah Terdapat PTPS di TPS Kecamatan " . $Kecamatan . " Kelurahan " . $Kelurahan ." No. " . $NomorTPS;
+        header('location: master-ptps.php');
+    } else {
+        $sql1 = mysqli_query($conn, "SELECT COUNT(1) cnt FROM db_ptps WHERE nama = '$Nama' AND no_ktp = '$NomorKTP' AND id <> '$id'");
+        $row1 = mysqli_fetch_assoc($sql1);
+        $Count1 = $row1["cnt"];
+        if ($Count1 > 0) {
+            $_SESSION['pesanError'] = "PTPS sudah pernah didaftarkan";
+        header('location: master-ptps.php');
+        } else {
+            $sql2 = mysqli_query($conn, "UPDATE db_ptps SET kecamatan = '$Kecamatan', kelurahan = '$Kelurahan', no_tps = '$NomorTPS', no_ktp = '$NomorKTP', nama = '$Nama', dapil_kab = '$Dapil' WHERE id = '$id'");
+
+            if ($sql2) {
+                $_SESSION['pesan'] = "Berhasil Update Data";
+                header('location: master-ptps.php');
+            } else {
+                $_SESSION['pesanError'] = "Gagal Update Data";
+                header('location: master-ptps.php');
+            }
+        }
+    }
+    
 } else if (isset($_GET['delete-ptps'])) {
     $IdDelete = $_GET['deleteID'];
 
