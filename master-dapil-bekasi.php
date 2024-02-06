@@ -115,7 +115,6 @@ $ParamStatus = isset($_GET['cari_status']) ? $_GET['cari_status'] : '';
 
 					$No = $limit_start + 1;
 
-					
 					$q = "SELECT id, kategori_capil, kode_partai, no_urut, nama_capil, jenis_kelamin, dapil, status FROM db_master_capil 
 						WHERE kategori_capil = 'DPRD-KAB' 
 						AND dapil = '$Dapil' 
@@ -140,9 +139,7 @@ $ParamStatus = isset($_GET['cari_status']) ? $_GET['cari_status'] : '';
 					$total_data = $row2['cnt'];
 
 					if ( $total_data > 0 ) {
-
 						while ($row = mysqli_fetch_assoc($sql)) {
-
 							$Id = $row['id'];
 							$KategoriCapil = $row['kategori_capil'];
 							$KodePartai = $row['kode_partai'];
@@ -201,7 +198,6 @@ $ParamStatus = isset($_GET['cari_status']) ? $_GET['cari_status'] : '';
 						echo "<li class='page-item'><a class='page-link' href='master-dapil-bekasi.php?page=$link_prev&id=$Dapil&cari_kode_partai=$ParamKodePartai&cari_no_urut=$ParamNoUrut&cari_nama_calon=$ParamNamaCalon&cari_jenis_kelamin=$ParamJenisKelamin&cari_status=$ParamStatus'>&laquo;</a></li>";
 					}
 
-					
 					$q = "SELECT COUNT(1) AS cnt FROM db_master_capil 
 						WHERE kategori_capil = 'DPRD-KAB' 
 						AND dapil = '$Dapil' 
@@ -210,7 +206,6 @@ $ParamStatus = isset($_GET['cari_status']) ? $_GET['cari_status'] : '';
 						AND (nama_capil LIKE '%$ParamNamaCalon%'  OR '' = '$ParamNamaCalon') 
 						AND (jenis_kelamin LIKE '%$ParamJenisKelamin%'  OR '' = '$ParamJenisKelamin')
 						AND (status LIKE '%$ParamStatus%'  OR '' = '$ParamStatus')";
-					
 					$sql = mysqli_query($conn, $q);
 					$row = mysqli_fetch_assoc($sql);
 					$jumlah = $row['cnt'];
