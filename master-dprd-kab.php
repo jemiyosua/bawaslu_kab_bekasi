@@ -89,4 +89,6 @@ require_once('koneksi.php');
 
 require_once('footer.php');
 
+mysqli_close($conn);
+
 ?>

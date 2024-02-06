@@ -9,7 +9,6 @@ if (isset($_GET['id'])) {
     $queryID = "AND id <> '" . $Id . "' ";
 }
 
-
 $query = "SELECT COUNT(1) AS cnt FROM db_ptps WHERE no_ktp = '$NomorKTP' " .$queryID;
 $sql = mysqli_query($conn, $query);
 $row = mysqli_fetch_assoc($sql);
@@ -20,3 +19,5 @@ if ($CountKTP > 0) {
 } else {
     echo "0";
 }
+
+mysqli_close($conn);

@@ -15,3 +15,5 @@ if ($CountTPS > 0) {
 } else {
     echo "0";
 }
+
+mysqli_close($conn);

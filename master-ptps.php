@@ -18,6 +18,13 @@ require_once('sidebar.php');
 
 require_once('koneksi.php');
 
+$ParamKecamatan = isset($_GET['cari_kecamatan']) ? $_GET['cari_kecamatan'] : '';
+$ParamKelurahan = isset($_GET['cari_kelurahan']) ? $_GET['cari_kelurahan'] : '';
+$ParamNoTPS = isset($_GET['cari_no_tps']) ? $_GET['cari_no_tps'] : '';
+$ParamNoKTP = isset($_GET['cari_no_ktp']) ? $_GET['cari_no_ktp'] : '';
+$ParamNama = isset($_GET['cari_nama']) ? $_GET['cari_nama'] : '';
+$ParamDapil = isset($_GET['cari_dapil']) ? $_GET['cari_dapil'] : '';
+
 ?>
 
 <main id="main" class="main">
@@ -38,13 +45,7 @@ require_once('koneksi.php');
 			<div class="d-flex justify-content-between align-items-center">
 				<div class="col-sm-6 mb-6 mb-sm-0">
 					<h5 class="card-title">Master PTPS</h5>
-				</div>
-				<div class="col-sm-3 mb-3 mb-sm-0">
-					<form>
-						<div class="input-group mt-3">
-							<input type="text" class="form-control" placeholder="Search ..." aria-describedby="button-addon2" name="cari">
-						</div>
-					</form>
+					<a class='btn btn-success' href='form-master-ptps.php?ptps=insert'> <i class='bi bi-plus-square'></i> Tambah PTPS</a>
 				</div>
 			</div>
 
@@ -52,6 +53,40 @@ require_once('koneksi.php');
 
 			<table class="table table-hover">
 				<thead>
+					<tr>
+						<th scope="col"> <a class="btn btn-outline-secondary" href="master-ptps.php"><i
+									class="bi bi-arrow-clockwise"></i></a></th>
+						<form>
+							<th scope="col"><input type="text" class="form-control"
+									placeholder="Kecamatan..." aria-describedby="button-addon2"
+									name="cari_kecamatan" value="<?= $ParamKecamatan ?>"></th>
+
+							<th scope="col"><input type="text" class="form-control"
+									placeholder="Kelurahan..." aria-describedby="button-addon2"
+									name="cari_kelurahan" value="<?= $ParamKelurahan ?>"></th>
+
+							<th scope="col"><input type="text" class="form-control"
+									placeholder="Nomor TPS..." aria-describedby="button-addon2"
+									name="cari_no_tps" value="<?= $ParamNoTPS ?>"></th>
+
+							<th scope="col"><input type="text" class="form-control"
+									placeholder="Nomor KTP..." aria-describedby="button-addon2"
+									name="cari_no_ktp" value="<?= $ParamNoKTP ?>"></th>
+
+							<th scope="col"><input type="text" class="form-control"
+									placeholder="Nama..." aria-describedby="button-addon2"
+									name="cari_nama" value="<?= $ParamNama ?>"></th>
+
+							<th scope="col"><input type="text" class="form-control"
+									placeholder="Daerah Pilihan..." aria-describedby="button-addon2"
+									name="cari_dapil" value="<?= $ParamDapil ?>"></th>
+							
+							<th scope="col"></th>
+							<button type="submit" style="display: none;"></button>
+						</form>
+
+						<th scope="col"></th>
+					</tr>
 					<tr>
 						<th scope="col">No</th>
 						<th scope="col">Kecamatan</th>
@@ -103,67 +138,71 @@ require_once('koneksi.php');
 					$limit_start = ($page - 1) * $limit;
 
 					$No = $limit_start + 1;
-					$cari ='';
 
-					if (isset($_GET['cari'])) {
-						$cari = $_GET['cari'];
+					
+					$q = "SELECT id, kecamatan, kelurahan, no_tps, no_ktp, nama, dapil_kab FROM db_ptps 
+						WHERE (kecamatan LIKE '%$ParamKecamatan%'  OR '' = '$ParamKecamatan')
+						AND (kelurahan LIKE '%$ParamKelurahan%'  OR '' = '$ParamKelurahan')
+						AND (no_tps LIKE '%$ParamNoTPS%'  OR '' = '$ParamNoTPS') 
+						AND (no_ktp LIKE '%$ParamNoKTP%'  OR '' = '$ParamNoKTP')
+						AND (nama LIKE '%$ParamNama%'  OR '' = '$ParamNama')
+						AND (dapil_kab LIKE '%$ParamDapil%'  OR '' = '$ParamDapil' OR CONCAT('BEKASI ', dapil_kab) like '%$ParamDapil%')
+						ORDER BY tgl_input DESC LIMIT $limit_start, $limit";
+					$sql = mysqli_query($conn, $q);
+					
+					$q2 = "SELECT COUNT(1) AS cnt FROM db_ptps 
+						WHERE (kecamatan LIKE '%$ParamKecamatan%'  OR '' = '$ParamKecamatan')
+						AND (kelurahan LIKE '%$ParamKelurahan%'  OR '' = '$ParamKelurahan')
+						AND (no_tps LIKE '%$ParamNoTPS%'  OR '' = '$ParamNoTPS') 
+						AND (no_ktp LIKE '%$ParamNoKTP%'  OR '' = '$ParamNoKTP')
+						AND (nama LIKE '%$ParamNama%'  OR '' = '$ParamNama')
+						AND (dapil_kab LIKE '%$ParamDapil%'  OR '' = '$ParamDapil' OR CONCAT('BEKASI ', dapil_kab) like '%$ParamDapil%') ";
+					$sql2 = mysqli_query($conn, $q2);
+					$row2 = mysqli_fetch_assoc($sql2);
+					$total_data = $row2['cnt'];
 
-						if ($cari == "") {
-							$q = "SELECT id, kecamatan, kelurahan, no_tps, no_ktp, nama, dapil_kab FROM db_ptps ORDER BY id ASC LIMIT $limit_start, $limit";
-							$sql = mysqli_query($conn, $q);
-						} else {
-							$q = "SELECT id, kecamatan, kelurahan, no_tps, no_ktp, nama, dapil_kab FROM db_ptps WHERE kecamatan LIKE '%" . $cari . "%' OR kelurahan LIKE '%" . $cari . "%' OR no_ktp LIKE '%" . $cari . "%' OR nama LIKE '%" . $cari . "%' OR concat('BEKASI ',dapil_kab) LIKE '%" . $cari . "%' ORDER BY id ASC LIMIT $limit_start, $limit";
-							$sql = mysqli_query($conn, $q);
+					if ( $total_data > 0 ) {
+						while ($row = mysqli_fetch_assoc($sql)) {
+
+							$Id = $row['id'];
+							$Kecamatan = strtoupper($row['kecamatan']);
+							$Kelurahan = strtoupper($row['kelurahan']);
+							$NomorTPS = $row['no_tps'];
+							$NomorKTP = $row['no_ktp'];
+							$Nama = strtoupper($row['nama']);
+							$Dapil = $row['dapil_kab'];
+							$vDapil = 'BEKASI ' . $row['dapil_kab'];
+
+							echo "
+							<tr>
+								<td>$No</td>
+								<td>$Kecamatan</td>
+								<td>$Kelurahan</td>
+								<td>$NomorTPS</td>
+								<td>$NomorKTP</td>
+								<td>$Nama</td>
+								<td>$vDapil</td>
+								<td style='padding-right:0;margin-right:0;'>
+									<a class='btn btn-warning' href='form-master-ptps.php?ptps=update&id=$Id'> <i class='bi bi-pencil-square'></i></a>
+								</td>
+							</tr>
+							";
+
+							$No++;
 						}
 					} else {
-						$q = "SELECT id, kecamatan, kelurahan, no_tps, no_ktp, nama, dapil_kab FROM db_ptps ORDER BY id ASC LIMIT $limit_start, $limit";
-						$sql = mysqli_query($conn, $q);
-					}
-
-					while ($row = mysqli_fetch_assoc($sql)) {
-
-						$Id = $row['id'];
-						$Kecamatan = strtoupper($row['kecamatan']);
-						$Kelurahan = strtoupper($row['kelurahan']);
-						$NomorTPS = $row['no_tps'];
-						$NomorKTP = $row['no_ktp'];
-						$Nama = strtoupper($row['nama']);
-						$Dapil = $row['dapil_kab'];
-						$vDapil = 'BEKASI ' . $row['dapil_kab'];
-
-						echo "
-						<tr>
-							<td>$No</td>
-							<td>$Kecamatan</td>
-							<td>$Kelurahan</td>
-							<td>$NomorTPS</td>
-							<td>$NomorKTP</td>
-							<td>$Nama</td>
-							<td>$vDapil</td>
-							<td style='padding-right:0;margin-right:0;'>
-								<a class='btn btn-warning' href='form-master-ptps.php?update-ptps=1&Id=$Id&Kecamatan=$Kecamatan&Kelurahan=$Kelurahan&NomorTPS=$NomorTPS&NomorKTP=$NomorKTP&Nama=$Nama&Dapil=$Dapil'> <i class='bi bi-pencil-square'></i></a>
-								<button class='btn btn-danger' onclick='fnDeleteRow($Id)'><i class='bi bi-trash-fill'></i></button> 
-							</td>
-						</tr>
-						";
-
-						$No++;
+						?>
+							<tr>
+								<td colspan="12">
+									<div class="alert alert-danger" role="alert" style="text-align: center;font-weight: bold;">Data Tidak Ditemukan !</div>
+								</td>
+							</tr>
+						<?php
 					}
 					?>
 					
 				</tbody>
 			</table>
-
-			<?php
-			
-			$q = "SELECT COUNT(1) AS cnt FROM db_ptps WHERE kecamatan LIKE '%" . $cari . "%' OR kelurahan LIKE '%" . $cari . "%' OR no_ktp LIKE '%" . $cari . "%' OR nama LIKE '%" . $cari . "%' OR concat('BEKASI ',dapil_kab) LIKE '%" . $cari . "%' ORDER BY id ASC";
-			$sql = mysqli_query($conn, $q);
-			$row = mysqli_fetch_assoc($sql);
-			$total_data = $row['cnt'];
-			
-			?>
-
-			<a class='btn btn-success' href='form-master-ptps.php?add-ptps=1'> <i class='bi bi-plus-square'> Tambah PTPS</i></a>
 
 			<div style="font-weight: bold;color:red">Total Data : <?= $total_data ?></div>
 
@@ -177,24 +216,18 @@ require_once('koneksi.php');
 						echo "<li class='page-item disbled'><a class='page-link' href='#'>&laquo;</a></li>";
 					} else { // Jika page bukan page ke 1
 						$link_prev = ($page > 1) ? $page - 1 : 1;
-						echo "<li class='page-item'><a class='page-link' href='master-ptps.php?page=1'>First</a></li>";
-						echo "<li class='page-item'><a class='page-link' href='master-ptps.php?page=$link_prev&cari=$cari'>&laquo;</a></li>";
+						echo "<li class='page-item'><a class='page-link' href='master-ptps.php?page=1&cari_kecamatan=$ParamKecamatan&cari_kelurahan=$ParamKelurahan&cari_no_tps=$ParamNoTPS&cari_no_ktp=$ParamNoKTP&cari_nama=$ParamNama&cari_dapil=$ParamDapil'>First</a></li>";
+						echo "<li class='page-item'><a class='page-link' href='master-ptps.php?page=$link_prev&cari_kecamatan=$ParamKecamatan&cari_kelurahan=$ParamKelurahan&cari_no_tps=$ParamNoTPS&cari_no_ktp=$ParamNoKTP&cari_nama=$ParamNama&cari_dapil=$ParamDapil'>&laquo;</a></li>";
 					}
 
-					if (isset($_GET['cari'])) {
-						$cari = $_GET['cari'];
-
-						if ($cari == "") {
-							$q = "SELECT COUNT(1) AS cnt FROM db_ptps";
-							$sql = mysqli_query($conn, $q);
-						} else {
-							$q = "SELECT COUNT(1) AS cnt FROM db_ptps WHERE kecamatan LIKE '%" . $cari . "%' OR kelurahan LIKE '%" . $cari . "%' OR no_ktp LIKE '%" . $cari . "%' OR nama LIKE '%" . $cari . "%' OR concat('BEKASI ',dapil_kab) LIKE '%" . $cari . "%' ORDER BY id ASC";
-							$sql = mysqli_query($conn, $q);
-						}
-					} else {
-						$q = "SELECT COUNT(1) AS cnt FROM db_ptps";
-						$sql = mysqli_query($conn, $q);
-					}
+					
+					$q = "SELECT COUNT(1) AS cnt FROM db_ptps 
+						WHERE (kecamatan LIKE '%$ParamKecamatan%'  OR '' = '$ParamKecamatan')
+						AND (kelurahan LIKE '%$ParamKelurahan%'  OR '' = '$ParamKelurahan')
+						AND (no_tps LIKE '%$ParamNoTPS%'  OR '' = '$ParamNoTPS') 
+						AND (no_ktp LIKE '%$ParamNoKTP%'  OR '' = '$ParamNoKTP')
+						AND (nama LIKE '%$ParamNama%'  OR '' = '$ParamNama')
+						AND (dapil_kab LIKE '%$ParamDapil%'  OR '' = '$ParamDapil'  OR CONCAT('BEKASI ', dapil_kab) like '%$ParamDapil%') ";
 					$sql = mysqli_query($conn, $q);
 					$row = mysqli_fetch_assoc($sql);
 					$jumlah = $row['cnt'];
@@ -208,7 +241,7 @@ require_once('koneksi.php');
 
 						$link_active = ($page == $i) ? ' class="page-item active"' : '';
 
-						echo "<li$link_active><a class='page-link' href='master-ptps.php?page=$i&cari=$cari'>$i</a></li>";
+						echo "<li$link_active><a class='page-link' href='master-ptps.php?page=$i&cari_kecamatan=$ParamKecamatan&cari_kelurahan=$ParamKelurahan&cari_no_tps=$ParamNoTPS&cari_no_ktp=$ParamNoKTP&cari_nama=$ParamNama&cari_dapil=$ParamDapil'>$i</a></li>";
 					}
 
 					// LINK NEXT AND LAST
@@ -221,8 +254,8 @@ require_once('koneksi.php');
 					} else { // Jika Bukan page terakhir
 						$link_next = ($page < $jumlah_page) ? $page + 1 : $jumlah_page;
 
-						echo "<li class='page-item'><a class='page-link' href='master-ptps.php?page=$link_next&cari=$cari'>&raquo;</a></li>";
-						echo "<li class='page-item'><a class='page-link' href='master-ptps.php?page=$jumlah_page&cari=$cari'>Last</a></li>";
+						echo "<li class='page-item'><a class='page-link' href='master-ptps.php?page=$link_next&cari_kecamatan=$ParamKecamatan&cari_kelurahan=$ParamKelurahan&cari_no_tps=$ParamNoTPS&cari_no_ktp=$ParamNoKTP&cari_nama=$ParamNama&cari_dapil=$ParamDapil'>&raquo;</a></li>";
+						echo "<li class='page-item'><a class='page-link' href='master-ptps.php?page=$jumlah_page&cari_kecamatan=$ParamKecamatan&cari_kelurahan=$ParamKelurahan&cari_no_tps=$ParamNoTPS&cari_no_ktp=$ParamNoKTP&cari_nama=$ParamNama&cari_dapil=$ParamDapil'>Last</a></li>";
 					}
 
 					?>
@@ -242,13 +275,15 @@ require_once('koneksi.php');
 
 require_once('footer.php');
 
+mysqli_close($conn);
+
 ?>
 
 <script type="text/javascript">
 	function fnDeleteRow(id){
 		Swal.fire({
 			title: 'Yakin menghapus?',
-			text: "Data yang sudhah dihapus tidak dapat dikembalikan!",
+			text: "Data yang sudah dihapus tidak dapat dikembalikan!",
 			icon: 'warning',
 			showCancelButton: true,
 			cancelButtonText: 'Batal',

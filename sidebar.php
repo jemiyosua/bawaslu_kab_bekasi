@@ -93,13 +93,16 @@ session_start();
         </li> -->
 
         <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#rekap-suara-nav" data-bs-toggle="collapse" href="#">
+            <a class="nav-link collapsed" data-bs-target="#rekap-suara-nav" data-bs-toggle="collapse" href="#">
                 <i class="bi bi-calculator"></i><span>Perhitungan Suara</span><i class="bi bi-chevron-down ms-auto"></i>
             </a>
-            <!-- <a class="nav-link" href="#">
-                <i class="bi bi-calculator"></i>
-                <span>Perhitungan Suara</span><i class="bi bi-chevron-down ms-auto"></i>
-            </a>  -->
+            <ul id="rekap-suara-nav" class="nav-content collapse <?= $_SESSION['nav'] == "perhitungan-suara" ? 'show' : '' ?>" data-bs-parent="#sidebar-nav">
+                <li>
+                    <a href="summary-tps.php" class="<?= $_SESSION['nav-page'] == "summary-tps" ? 'active' : '' ?>">
+                        <i class="bi bi-circle"></i><span>Summary TPS</span>
+                    </a>
+                </li>
+            </ul>
 
             <ul id="rekap-suara-nav" class="nav-content collapse <?= $_SESSION['nav'] == "perhitungan-suara" ? 'show' : '' ?>" data-bs-parent="#sidebar-nav">
                 <li>
@@ -108,60 +111,26 @@ session_start();
                     </a>
                 </li>
             </ul>
+
+            <ul id="rekap-suara-nav" class="nav-content collapse <?= $_SESSION['nav'] == "perhitungan-suara" ? 'show' : '' ?>" data-bs-parent="#sidebar-nav">
+                <li>
+                    <a href="hasil-rekap-partai.php" class="<?= $_SESSION['nav-page'] == "hasil-rekap-partai" ? 'active' : '' ?>">
+                        <i class="bi bi-circle"></i><span>Rekap Suara Partai</span>
+                    </a>
+                </li>
+            </ul>
         </li>
             </a>
         </li>
 
-        <!-- <li class="nav-heading">Pages</li>
+        <li class="nav-heading">Logout</li>
 
         <li class="nav-item">
-        <a class="nav-link collapsed" href="users-profile.html">
-            <i class="bi bi-person"></i>
-            <span>Profile</span>
-        </a>
+            <a class="nav-link collapsed" href="logout.php">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Logout</span>
+            </a>
         </li>
-
-        <li class="nav-item">
-        <a class="nav-link collapsed" href="pages-faq.html">
-            <i class="bi bi-question-circle"></i>
-            <span>F.A.Q</span>
-        </a>
-        </li>
-
-        <li class="nav-item">
-        <a class="nav-link collapsed" href="pages-contact.html">
-            <i class="bi bi-envelope"></i>
-            <span>Contact</span>
-        </a>
-        </li>
-
-        <li class="nav-item">
-        <a class="nav-link collapsed" href="pages-register.html">
-            <i class="bi bi-card-list"></i>
-            <span>Register</span>
-        </a>
-        </li>
-
-        <li class="nav-item">
-        <a class="nav-link collapsed" href="pages-login.html">
-            <i class="bi bi-box-arrow-in-right"></i>
-            <span>Login</span>
-        </a>
-        </li>
-
-        <li class="nav-item">
-        <a class="nav-link collapsed" href="pages-error-404.html">
-            <i class="bi bi-dash-circle"></i>
-            <span>Error 404</span>
-        </a>
-        </li>
-
-        <li class="nav-item">
-        <a class="nav-link collapsed" href="pages-blank.html">
-            <i class="bi bi-file-earmark"></i>
-            <span>Blank</span>
-        </a>
-        </li> -->
 
     </ul>
 

@@ -18,6 +18,11 @@ require_once('sidebar.php');
 
 require_once('koneksi.php');
 
+$ParamNoUrut = isset($_GET['cari_no_urut']) ? $_GET['cari_no_urut'] : '';
+$ParamNamaCalon = isset($_GET['cari_nama_calon']) ? $_GET['cari_nama_calon'] : '';
+$ParamJenisKelamin = isset($_GET['cari_jenis_kelamin']) ? $_GET['cari_jenis_kelamin'] : '';
+$ParamStatus = isset($_GET['cari_status']) ? $_GET['cari_status'] : '';
+
 ?>
 
 <main id="main" class="main">
@@ -39,13 +44,6 @@ require_once('koneksi.php');
 				<div class="col-sm-6 mb-6 mb-sm-0">
 					<h5 class="card-title">Master DPD - RI</h5>
 				</div>
-				<div class="col-sm-3 mb-3 mb-sm-0">
-					<form>
-						<div class="input-group mt-3">
-							<input type="text" class="form-control" placeholder="Search ..." aria-describedby="button-addon2" name="cari">
-						</div>
-					</form>
-				</div>
 			</div>
 			
 			<hr/>
@@ -53,9 +51,42 @@ require_once('koneksi.php');
 			<table class="table table-hover">
 				<thead>
 					<tr>
+						<th scope="col"> <a class="btn btn-outline-secondary" href="master-dpd-ri.php"><i
+									class="bi bi-arrow-clockwise"></i></a></th>
+						<form>
+							<th scope="col"></th>
+
+							<th scope="col"><input type="text" class="form-control"
+									placeholder="Nomor Urut..." aria-describedby="button-addon2"
+									name="cari_no_urut" value="<?= $ParamNoUrut ?>"></th>
+
+							<th scope="col"><input type="text" class="form-control"
+									placeholder="Nama..." aria-describedby="button-addon2"
+									name="cari_nama_calon" value="<?= $ParamNamaCalon ?>"></th>
+
+							<th scope="col"><input type="text" class="form-control"
+									placeholder="Jenis Kelamin..." aria-describedby="button-addon2"
+									name="cari_jenis_kelamin" value="<?= $ParamJenisKelamin ?>"></th>
+
+							<th scope="col"></th>
+						
+							<th scope="col">
+								<select type="text" class="form-select" aria-describedby="button-addon2"
+									name="cari_status" value="<?= $ParamStatus ?>" onchange="this.form.submit()"> 
+									<option value='' <?php if ($ParamStatus == '') { echo 'selected';}  else {echo '';}?>>-- Pilih Status --</option>
+									<option value ='1' <?php if ($ParamStatus == '1') { echo 'selected';}  else {echo '';}?>>Aktif</option>
+									<option value ='0' <?php if ($ParamStatus == '0') { echo 'selected';}  else {echo '';}?>>Non-Aktif</option>
+								</select>
+							</th>
+
+							<button type="submit" style="display: none;"></button>
+						</form>
+
+						<th scope="col"></th>
+					</tr>
+					<tr>
 						<th scope="col">No</th>
 						<th scope="col">Kategori Calon Pilihan</th>
-						<th scope="col">Kode Partai</th>
 						<th scope="col">Nomor Urut</th>
 						<th scope="col">Nama Calon Pilihan</th>
 						<th scope="col">Jenis Kelamin</th>
@@ -75,59 +106,68 @@ require_once('koneksi.php');
 
 					$No = $limit_start + 1;
 
-					if (isset($_GET['cari'])) {
-						$cari = $_GET['cari'];
+					
+					$q = "SELECT id, kategori_capil, no_urut, nama_capil, jenis_kelamin, dapil, status FROM db_master_capil 
+						WHERE kategori_capil = 'DPD-RI' 
+						AND (no_urut LIKE '%$ParamNoUrut%'  OR '' = '$ParamNoUrut')
+						AND (nama_capil LIKE '%$ParamNamaCalon%'  OR '' = '$ParamNamaCalon') 
+						AND (jenis_kelamin LIKE '%$ParamJenisKelamin%'  OR '' = '$ParamJenisKelamin')
+						AND (status LIKE '%$ParamStatus%'  OR '' = '$ParamStatus') 
+						ORDER BY id ASC LIMIT $limit_start, $limit";
+					$sql = mysqli_query($conn, $q);
 
-						if ($cari == "") {
-							$q = "SELECT id, kategori_capil, kode_partai, no_urut, nama_capil, jenis_kelamin, dapil, status FROM db_master_capil WHERE kategori_capil = 'DPD-RI' ORDER BY id ASC LIMIT $limit_start, $limit";
-							$sql = mysqli_query($conn, $q);
-						} else {
-							$q = "SELECT id, kategori_capil, kode_partai, no_urut, nama_capil, jenis_kelamin, dapil, status FROM db_master_capil WHERE kategori_capil = 'DPD-RI' AND (kode_partai LIKE '%" . $cari . "%' OR nama_capil LIKE '%" . $cari . "%' OR dapil LIKE '%" . $cari . "%') ORDER BY id ASC LIMIT $limit_start, $limit";
-							$sql = mysqli_query($conn, $q);
+					$q2 = "SELECT COUNT(1) AS cnt FROM db_master_capil 
+						WHERE kategori_capil = 'DPD-RI' 
+						AND (no_urut LIKE '%$ParamNoUrut%'  OR '' = '$ParamNoUrut')
+						AND (nama_capil LIKE '%$ParamNamaCalon%'  OR '' = '$ParamNamaCalon') 
+						AND (jenis_kelamin LIKE '%$ParamJenisKelamin%'  OR '' = '$ParamJenisKelamin')
+						AND (status LIKE '%$ParamStatus%'  OR '' = '$ParamStatus') ";
+					$sql2 = mysqli_query($conn, $q2);
+					$row2 = mysqli_fetch_assoc($sql2);
+					$total_data = $row2['cnt'];
+					
+	                if ( $total_data > 0 ) {
+						while ($row = mysqli_fetch_assoc($sql)) {
+
+							$Id = $row['id'];
+							$KategoriCapil = $row['kategori_capil'];
+							$NomorUrut = $row['no_urut'];
+							$NamaCapil = $row['nama_capil'];
+							$JenisKelamin = $row['jenis_kelamin'];
+							$Dapil = $row['dapil'];
+							$Status = $row['status'];
+							if ($Status == "1") {
+								$vStatus = "Aktif";
+							} else {
+								$vStatus = "Non-Aktif";
+							}
+
+							echo "
+							<tr>
+								<td>$No</td>
+								<td>$KategoriCapil</td>
+								<td>$NomorUrut</td>
+								<td>$NamaCapil</td>
+								<td>$JenisKelamin</td>
+								<td>$Dapil</td>
+								<td>$vStatus</td>
+							</tr>
+							";
+
+							$No++;
 						}
 					} else {
-						$q = "SELECT id, kategori_capil, kode_partai, no_urut, nama_capil, jenis_kelamin, dapil, status FROM db_master_capil WHERE kategori_capil = 'DPD-RI' ORDER BY id ASC LIMIT $limit_start, $limit";
-						$sql = mysqli_query($conn, $q);
-					}
-
-					while ($row = mysqli_fetch_assoc($sql)) {
-
-						$Id = $row['id'];
-						$KategoriCapil = $row['kategori_capil'];
-						$KodePartai = $row['kode_partai'];
-						$NomorUrut = $row['no_urut'];
-						$NamaCapil = $row['nama_capil'];
-						$JenisKelamin = $row['jenis_kelamin'];
-						$Dapil = $row['dapil'];
-						$Status = $row['status'];
-
-						echo "
-						<tr>
-							<td>$No</td>
-							<td>$KategoriCapil</td>
-							<td>$KodePartai</td>
-							<td>$NomorUrut</td>
-							<td>$NamaCapil</td>
-							<td>$JenisKelamin</td>
-							<td>$Dapil</td>
-							<td>$Status</td>
-						</tr>
-						";
-
-						$No++;
+						?>	
+	                       <tr>
+								<td colspan="12">
+									<div class="alert alert-danger" role="alert" style="text-align: center;font-weight: bold;">Data Tidak Ditemukan !</div>
+								</td>
+							</tr>
+						<?php
 					}
 					?>
 				</tbody>
 			</table>
-
-			<?php
-			
-			$q = "SELECT COUNT(1) AS cnt FROM db_master_capil WHERE kategori_capil = 'DPD-RI' AND (kode_partai LIKE '%" . $cari . "%' OR nama_capil LIKE '%" . $cari . "%' OR dapil LIKE '%" . $cari . "%') ORDER BY id ASC";
-			$sql = mysqli_query($conn, $q);
-			$row = mysqli_fetch_assoc($sql);
-			$total_data = $row['cnt'];
-			
-			?>
 
 			<div style="font-weight: bold;color:red">Total Data : <?= $total_data ?></div>
 
@@ -141,24 +181,16 @@ require_once('koneksi.php');
 						echo "<li class='page-item disbled'><a class='page-link' href='#'>&laquo;</a></li>";
 					} else { // Jika page bukan page ke 1
 						$link_prev = ($page > 1) ? $page - 1 : 1;
-						echo "<li class='page-item'><a class='page-link' href='master-dpd-ri.php?page=1'>First</a></li>";
-						echo "<li class='page-item'><a class='page-link' href='master-dpd-ri.php?page=$link_prev&cari=$cari'>&laquo;</a></li>";
+						echo "<li class='page-item'><a class='page-link' href='master-dpd-ri.php?page=1&cari_no_urut=$ParamNoUrut&cari_nama_calon=$ParamNamaCalon&cari_jenis_kelamin=$ParamJenisKelamin&cari_status=$ParamStatus'>First</a></li>";
+						echo "<li class='page-item'><a class='page-link' href='master-dpd-ri.php?page=$link_prev&cari_no_urut=$ParamNoUrut&cari_nama_calon=$ParamNamaCalon&cari_jenis_kelamin=$ParamJenisKelamin&cari_status=$ParamStatus'>&laquo;</a></li>";
 					}
 
-					if (isset($_GET['cari'])) {
-						$cari = $_GET['cari'];
-
-						if ($cari == "") {
-							$q = "SELECT COUNT(1) AS cnt FROM db_master_capil WHERE kategori_capil = 'DPD-RI'";
-							$sql = mysqli_query($conn, $q);
-						} else {
-							$q = "SELECT COUNT(1) AS cnt FROM db_master_capil WHERE kategori_capil = 'DPD-RI' AND (kode_partai LIKE '%" . $cari . "%' OR nama_capil LIKE '%" . $cari . "%' OR dapil LIKE '%" . $cari . "%') ORDER BY id ASC";
-							$sql = mysqli_query($conn, $q);
-						}
-					} else {
-						$q = "SELECT COUNT(1) AS cnt FROM db_master_capil WHERE kategori_capil = 'DPD-RI'";
-						$sql = mysqli_query($conn, $q);
-					}
+					$q = "SELECT COUNT(1) AS cnt FROM db_master_capil 
+						WHERE kategori_capil = 'DPD-RI' 
+						AND (no_urut LIKE '%$ParamNoUrut%'  OR '' = '$ParamNoUrut')
+						AND (nama_capil LIKE '%$ParamNamaCalon%'  OR '' = '$ParamNamaCalon') 
+						AND (jenis_kelamin LIKE '%$ParamJenisKelamin%'  OR '' = '$ParamJenisKelamin')
+						AND (status LIKE '%$ParamStatus%'  OR '' = '$ParamStatus')";
 					$sql = mysqli_query($conn, $q);
 					$row = mysqli_fetch_assoc($sql);
 					$jumlah = $row['cnt'];
@@ -172,7 +204,7 @@ require_once('koneksi.php');
 
 						$link_active = ($page == $i) ? ' class="page-item active"' : '';
 
-						echo "<li$link_active><a class='page-link' href='master-dpd-ri.php?page=$i&cari=$cari'>$i</a></li>";
+						echo "<li$link_active><a class='page-link' href='master-dpd-ri.php?page=$i&cari_no_urut=$ParamNoUrut&cari_nama_calon=$ParamNamaCalon&cari_jenis_kelamin=$ParamJenisKelamin&cari_status=$ParamStatus'>$i</a></li>";
 					}
 
 					// LINK NEXT AND LAST
@@ -185,8 +217,8 @@ require_once('koneksi.php');
 					} else { // Jika Bukan page terakhir
 						$link_next = ($page < $jumlah_page) ? $page + 1 : $jumlah_page;
 
-						echo "<li class='page-item'><a class='page-link' href='master-dpd-ri.php?page=$link_next&cari=$cari'>&raquo;</a></li>";
-						echo "<li class='page-item'><a class='page-link' href='master-dpd-ri.php?page=$jumlah_page&cari=$cari'>Last</a></li>";
+						echo "<li class='page-item'><a class='page-link' href='master-dpd-ri.php?page=$link_next&cari_no_urut=$ParamNoUrut&cari_nama_calon=$ParamNamaCalon&cari_jenis_kelamin=$ParamJenisKelamin&cari_status=$ParamStatus'>&raquo;</a></li>";
+						echo "<li class='page-item'><a class='page-link' href='master-dpd-ri.php?page=$jumlah_page&cari_no_urut=$ParamNoUrut&cari_nama_calon=$ParamNamaCalon&cari_jenis_kelamin=$ParamJenisKelamin&cari_status=$ParamStatus'>Last</a></li>";
 					}
 
 					?>
@@ -205,5 +237,7 @@ require_once('koneksi.php');
 <?php
 
 require_once('footer.php');
+
+mysqli_close($conn);
 
 ?>
