@@ -18,7 +18,6 @@ require_once('sidebar.php');
 
 require_once('koneksi.php');
 
-
 $ParamNoUrut = isset($_GET['cari_no_urut']) ? $_GET['cari_no_urut'] : '';
 $ParamNama = isset($_GET['cari_nama']) ? $_GET['cari_nama'] : '';
 $ParamStatus = isset($_GET['cari_status']) ? $_GET['cari_status'] : '';
@@ -55,11 +54,11 @@ $ParamStatus = isset($_GET['cari_status']) ? $_GET['cari_status'] : '';
 									class="bi bi-arrow-clockwise"></i></a></th>
 						<form>
 							<th scope="col"><input type="text" class="form-control"
-									placeholder="Nama Partai..." aria-describedby="button-addon2"
+									placeholder="Nomor Urut..." aria-describedby="button-addon2"
 									name="cari_no_urut" value="<?= $ParamNoUrut ?>"></th>
 
 							<th scope="col"><input type="text" class="form-control"
-									placeholder="Tahun Partai..." aria-describedby="button-addon2"
+									placeholder="Nama..." aria-describedby="button-addon2"
 									name="cari_nama" value="<?= $ParamNama ?>"></th>
 						
 							<th scope="col">
