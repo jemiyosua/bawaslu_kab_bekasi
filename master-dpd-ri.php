@@ -18,6 +18,7 @@ require_once('sidebar.php');
 
 require_once('koneksi.php');
 
+
 $ParamNoUrut = isset($_GET['cari_no_urut']) ? $_GET['cari_no_urut'] : '';
 $ParamNamaCalon = isset($_GET['cari_nama_calon']) ? $_GET['cari_nama_calon'] : '';
 $ParamJenisKelamin = isset($_GET['cari_jenis_kelamin']) ? $_GET['cari_jenis_kelamin'] : '';
@@ -44,6 +45,7 @@ $ParamStatus = isset($_GET['cari_status']) ? $_GET['cari_status'] : '';
 				<div class="col-sm-6 mb-6 mb-sm-0">
 					<h5 class="card-title">Master DPD - RI</h5>
 				</div>
+
 			</div>
 			
 			<hr/>
@@ -169,6 +171,7 @@ $ParamStatus = isset($_GET['cari_status']) ? $_GET['cari_status'] : '';
 				</tbody>
 			</table>
 
+
 			<div style="font-weight: bold;color:red">Total Data : <?= $total_data ?></div>
 
 			<nav aria-label="Page navigation example" style="padding-top: 15px;">
@@ -185,12 +188,14 @@ $ParamStatus = isset($_GET['cari_status']) ? $_GET['cari_status'] : '';
 						echo "<li class='page-item'><a class='page-link' href='master-dpd-ri.php?page=$link_prev&cari_no_urut=$ParamNoUrut&cari_nama_calon=$ParamNamaCalon&cari_jenis_kelamin=$ParamJenisKelamin&cari_status=$ParamStatus'>&laquo;</a></li>";
 					}
 
+
 					$q = "SELECT COUNT(1) AS cnt FROM db_master_capil 
 						WHERE kategori_capil = 'DPD-RI' 
 						AND (no_urut LIKE '%$ParamNoUrut%'  OR '' = '$ParamNoUrut')
 						AND (nama_capil LIKE '%$ParamNamaCalon%'  OR '' = '$ParamNamaCalon') 
 						AND (jenis_kelamin LIKE '%$ParamJenisKelamin%'  OR '' = '$ParamJenisKelamin')
 						AND (status LIKE '%$ParamStatus%'  OR '' = '$ParamStatus')";
+
 					$sql = mysqli_query($conn, $q);
 					$row = mysqli_fetch_assoc($sql);
 					$jumlah = $row['cnt'];

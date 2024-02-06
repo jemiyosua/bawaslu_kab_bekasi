@@ -18,10 +18,12 @@ require_once('sidebar.php');
 
 require_once('koneksi.php');
 
+
 $ParamNamaPartai = isset($_GET['cari_nama_partai']) ? $_GET['cari_nama_partai'] : '';
 $ParamKodePartai = isset($_GET['cari_kode_partai']) ? $_GET['cari_kode_partai'] : '';
 $ParamTahunPartai = isset($_GET['cari_tahun_partai']) ? $_GET['cari_tahun_partai'] : '';
 $ParamStatus = isset($_GET['cari_status']) ? $_GET['cari_status'] : '';
+
 ?>
 
 <main id="main" class="main">

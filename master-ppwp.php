@@ -18,6 +18,7 @@ require_once('sidebar.php');
 
 require_once('koneksi.php');
 
+
 $ParamNoUrut = isset($_GET['cari_no_urut']) ? $_GET['cari_no_urut'] : '';
 $ParamNama = isset($_GET['cari_nama']) ? $_GET['cari_nama'] : '';
 $ParamStatus = isset($_GET['cari_status']) ? $_GET['cari_status'] : '';
