@@ -201,6 +201,8 @@ require_once('koneksi.php');
 
 require_once('footer.php');
 
+mysqli_close($conn);
+
 ?>
 
 <script type="text/javascript">
@@ -275,7 +277,7 @@ function getKelurahan() {
 		}
 	};
 
-	var URL = 'http://localhost/bawaslu_kab_bekasi/get-kelurahan.php?kecamatan=' + Kecamatan + '&kelurahan=' + pilKelurahan;
+	var URL = 'https://bawaslukabbekasi.com/get-kelurahan.php?kecamatan=' + Kecamatan + '&kelurahan=' + pilKelurahan;
 
 	console.log("URL : " + URL)
 	xhttp.open("GET", URL, true);
@@ -318,7 +320,7 @@ function validasiTPS() {
 		}
 	};
   
-	var URL = 'http://localhost/bawaslu_kab_bekasi/validasi-tps.php?kecamatan=' + Kecamatan + '&kelurahan=' + Kelurahan + '&nomor_tps=' + NomorTPS;
+	var URL = 'https://bawaslukabbekasi.com/validasi-tps.php?kecamatan=' + Kecamatan + '&kelurahan=' + Kelurahan + '&nomor_tps=' + NomorTPS;
 
 	console.log("URL : " + URL)
 	xhttp.open("GET", URL, true);
@@ -360,7 +362,7 @@ function validasiKTP() {
 		}
 	};
 
-	var URL = 'http://localhost/bawaslu_kab_bekasi/validasi-ktp.php?nomor_ktp=' + NomorKTP ;
+	var URL = 'https://bawaslukabbekasi.com/validasi-ktp.php?nomor_ktp=' + NomorKTP ;
 	console.log("URL : " + URL)
 	xhttp.open("GET", URL, true);
 	xhttp.send();

@@ -1,213 +1,223 @@
 <?php
+
 session_start();
 require_once('koneksi.php');
-header("Content-type: application/vnd-ms-excel");
-header("Content-Disposition: attachment; filename=Export File.xlsx");
 
-?>
+function filterData(&$str) { 
+    $str = preg_replace("/\t/", "\\t", $str); 
+    $str = preg_replace("/\r?\n/", "\\n", $str); 
+    if(strstr($str, '"')) $str = '"' . str_replace('"', '""', $str) . '"'; 
+}
 
-<main id="main" class="main">
-    <?php
-    $NavPage = $_SESSION['nav-page'];
+function isMobile() {
+    return preg_match('/\b(?:Mobile|Tablet)\b/i', $_SERVER['HTTP_USER_AGENT']);
+}
 
-    if ($NavPage == 'summary-tps') {
+$NavPage = $_SESSION['nav-page'];
 
-    ?>
-        <div>
+if ($NavPage == "summary-tps") {
 
-            <table>
-                <tr>
-                    <th>No</th>
-                    <th>Kecamatan</th>
-                    <th>Kelurahan</th>
-                    <th>No TPS</th>
-                    <th>Jumlah DPT(a)</th>
-                    <th>Jumlah DBTb(b)</th>
-                    <th>Jumlah DPK(c)</th>
-                    <th>Jumlah Pemilih(a+b+c)</th>
-                    <th>Jumlah Suara Sah(d)</th>
-                    <th>Jumlah Suara Tidak Sah(e)</th>
-                    <th>Jumlah Pengguna Hak Pilih(d+e)</th>
-                    <th>Tgl Input</th>
-                </tr>
-                <?php
-
-                $ParamKecamatan = $_SESSION['ParamKecamatan'];
-                $ParamKelurahan = $_SESSION['ParamKelurahan'];
-                $ParamTps = $_SESSION['ParamTps'];
-
-                $q = "SELECT dp.kecamatan, dp.kelurahan , dp.no_tps , dhrh.jumlah_dpt, dhrh.jumlah_dptb, dhrh.jumlah_dpk, dhrh.jumlah_pemilih,
-                                        dhrh.jumlah_suara_sah , dhrh.jumlah_suara_tidak_sah , dhrh.jumlah_pengguna_hak_pilih, dhrh.tgl_input
-                                        from db_hasil_rekap_hdr dhrh join db_ptps dp 
-                                        ON dhrh.no_ktp = dp.no_ktp
-                                        AND (dp.kecamatan LIKE '%$ParamKecamatan%'OR '' = '$ParamKecamatan') 
-                                        AND ( dp.kelurahan LIKE '%$ParamKelurahan%' OR '' = '$ParamKelurahan') 
-                                        AND (dp.no_tps LIKE '%$ParamTps%'OR '' = '$ParamTps')
-                                        AND jumlah_dpt > 0
-                                        ORDER BY kecamatan, kelurahan, no_tps";
-                $data = mysqli_query($conn, $q);
-                $no = 1;
-                while ($d = mysqli_fetch_array($data)) {
-                ?>
-                    <tr>
-                        <td><?php echo $no++; ?></td>
-                        <td><?php echo $d['kecamatan']; ?></td>
-                        <td><?php echo $d['kelurahan']; ?></td>
-                        <td><?php echo $d['no_tps']; ?></td>
-                        <td><?php echo $d['jumlah_dpt']; ?></td>
-                        <td><?php echo $d['jumlah_dptb']; ?></td>
-                        <td><?php echo $d['jumlah_dpk']; ?></td>
-                        <td><?php echo $d['jumlah_pemilih']; ?></td>
-                        <td><?php echo $d['jumlah_suara_sah']; ?></td>
-                        <td><?php echo $d['jumlah_suara_tidak_sah']; ?></td>
-                        <td><?php echo $d['jumlah_pengguna_hak_pilih']; ?></td>
-                        <td><?php echo $d['tgl_input']; ?></td>
-                    </tr>
-                <?php
-                }
-                ?>
-            </table>
-        </div>
-
-    <?php
-
-    } else if ($NavPage == 'hasil-rekap') {
-    ?>
-        <div>
-
-            <table>
-                <tr>
-                    <th scope="col">No</th>
-                    <th scope="col">Kecamatan</th>
-                    <th scope="col">Kelurahan</th>
-                    <th scope="col">No TPS</th>
-                    <th scope="col">Kategori</th>
-                    <th scope="col">Dapil</th>
-                    <th scope="col">Partai</th>
-                    <th scope="col">No Urut</th>
-                    <th scope="col">Nama</th>
-                    <th scope="col">Jumlah Suara</th>
-                    <th scope="col">Inputor(NIK)</th>
-                    <th scope="col">Tgl Input</th>
-                </tr>
-                <?php
-
-                $ParamKecamatan = $_SESSION['hasil-rekap-kecamatan'];
-                $ParamKelurahan = $_SESSION['hasil-rekap-kelurahan'];
-                $ParamTps = $_SESSION['hasil-rekap-tps'];
-                $ParamKategori = $_SESSION['hasil-rekap-kategori'];
-                $ParamKodePartai = $_SESSION['hasil-rekap-partai'];
-                $ParamKtp = $_SESSION['hasil-rekap-ktp'];
-                $ParamNama =  $_SESSION['hasil-rekap-nama'];
-                $ParamDapil = $_SESSION['hasil-rekap-dapil'];
-                $ParamNoUrut = $_SESSION['hasil-rekap-no-urut'];
-
-                $q = "SELECT * FROM v_rekap_final WHERE 
-                        (kategori_capil LIKE '%$ParamKategori%' 
-                        OR '' = '$ParamKategori') 
-                        AND (kecamatan LIKE '%$ParamKecamatan%'OR '' = '$ParamKecamatan') 
-                        AND ( kelurahan LIKE '%$ParamKelurahan%' OR '' = '$ParamKelurahan') 
-                        AND (no_ktp LIKE '%$ParamKtp%'OR '' = '$ParamKtp')
-                        AND (no_tps LIKE '%$ParamTps%'OR '' = '$ParamTps')
-                        AND (no_urut = '$ParamNoUrut' OR '' = '$ParamNoUrut' ) 
-                        AND (kode_partai LIKE '%$ParamKodePartai%' OR '' =  '$ParamKodePartai') 
-                        AND (nama_capil LIKE '%$ParamNama%' OR '' =  '$ParamNama') 
-                        AND (dapil LIKE '%$ParamDapil%' OR '' =  '$ParamDapil')
-                    order by 
-                        kecamatan, 
-                        kelurahan, 
-                        no_tps DESC, 
-                        kategori_capil, 
-                        dapil, 
-                        kode_partai, 
-                        no_urut";
-                $data = mysqli_query($conn, $q);
-                $no = 1;
-                while ($d = mysqli_fetch_array($data)) {
-                ?>
-                    <tr>
-                        <td><?php echo $no++; ?></td>
-                        <td><?php echo $d['kecamatan']; ?></td>
-                        <td><?php echo $d['kelurahan']; ?></td>
-                        <td><?php echo $d['no_tps']; ?></td>
-                        <td><?php echo $d['kategori_capil']; ?></td>
-                        <td><?php echo $d['dapil']; ?></td>
-                        <td><?php echo $d['kode_partai']; ?></td>
-                        <td><?php echo $d['no_urut']; ?></td>
-                        <td><?php echo $d['nama_capil']; ?></td>
-                        <td><?php echo $d['jumlah_suara']; ?></td>
-                        <td><?php echo "'" . $d['no_ktp']; ?></td>
-                        <td><?php echo $d['tgl_input']; ?></td>
-                    </tr>
-                <?php
-                }
-                ?>
-            </table>
-        </div>
-
-    <?php
-
-    } else if ($NavPage == 'hasil-rekap-partai') {
-    ?>
-        <div>
-
-            <table>
-                <tr>
-                    <th scope="col">No</th>
-                    <th scope="col">Kecamatan</th>
-                    <th scope="col">Kelurahan</th>
-                    <th scope="col">No TPS</th>
-                    <th scope="col">Kategori</th>
-                    <th scope="col">Partai</th>
-                    <th scope="col">Jumlah Suara</th>
-                    <th scope="col">Inputor(NIK)</th>
-                </tr>
-                <?php
-
-                $ParamKecamatan = $_SESSION['rekap-partai-kecamatan'];
-                $ParamKelurahan = $_SESSION['rekap-partai-kelurahan'];
-                $ParamTps = $_SESSION['rekap-partai-tps'];
-                $ParamKategori =  $_SESSION['rekap-partai-kategori'];
-                $ParamPartai = $_SESSION['rekap-partai-partai'];
-                $ParamKtp = $_SESSION['rekap-partai-ktp'];
-
-                $q = "SELECT x.* from(
-                    SELECT dp.kecamatan, dp.kelurahan, dp.no_tps ,dhrsp.kategori_capil ,dhrsp.kode_partai, 
-                    (SELECT id from db_master_partai dmp  WHERE dmp.kode_partai = dhrsp.kode_partai)no_partai,
-                    dhrsp.jumlah_suara, dhrsp.no_ktp
-                    from db_hasil_rekap_suara_partai dhrsp, 
-                    db_ptps dp
-                    WHERE dhrsp.no_ktp  = dp.no_ktp 
-                  )x WHERE (kecamatan LIKE '%$ParamKecamatan%'OR '' = '$ParamKecamatan')
-                  AND ( kelurahan LIKE '%$ParamKelurahan%' OR '' = '$ParamKelurahan') 
-                  AND (no_tps LIKE '%$ParamTps%'OR '' = '$ParamTps')
-                  AND (kategori_capil LIKE '%$ParamKategori%'OR '' = '$ParamKategori')
-                  AND (kode_partai LIKE '%$ParamPartai%'OR '' = '$ParamPartai')
-                  AND (no_ktp LIKE '%$ParamKtp%'OR '' = '$ParamKtp')
-                  ORDER BY kecamatan, kelurahan, no_tps, kategori_capil, no_partai";
-                $data = mysqli_query($conn, $q);
-                $no = 1;
-                while ($d = mysqli_fetch_array($data)) {
-                ?>
-                    <tr>
-                        <td><?php echo $no++; ?></td>
-                        <td><?php echo $d['kecamatan']; ?></td>
-                        <td><?php echo $d['kelurahan']; ?></td>
-                        <td><?php echo $d['no_tps']; ?></td>
-                        <td><?php echo $d['kategori_capil']; ?></td>
-                        <td><?php echo $d['kode_partai']; ?></td>
-                        <td><?php echo $d['jumlah_suara']; ?></td>
-                        <td><?php echo "'" . $d['no_ktp']; ?></td>
-                    </tr>
-                <?php
-                }
-                ?>
-            </table>
-        </div>
-
-    <?php
+    if (isMobile()) {
+        $fileName = $NavPage . "_" . date('Y-m-d') . ".xlsx";
+    } else {
+        $fileName = $NavPage . "_" . date('Y-m-d') . ".xls";
     }
-    ?>
 
+    $fields = array(
+        'NO', 
+        'KECAMATAN', 
+        'KELURAHAN', 
+        'NO. TPS', 
+        'JUMLAH DPT (a)', 
+        'JUMLAH DPTB (b)', 
+        'JUMLAH DPK (c)', 
+        'JUMLAH PEMILIH (a+b+c)',
+        'JUMLAH SUARA SAH (d)',
+        'JUMLAH SUARA TIDAK SAH (e)',
+        'JUMLAH PENGGUNA HAK PILIH (d+e)',
+    );
 
-</main>
+    $excelData = implode("\t", array_values($fields)) . "\n"; 
+
+    $ParamKecamatan = $_SESSION['summary-tps-kecamatan'];
+    $ParamKelurahan = $_SESSION['summary-tps-kelurahan'];
+    $ParamTps = $_SESSION['summary-tps-tps'];
+    $ParamKategoriCapil = $_SESSION['summary-tps-kategori-capil'];
+
+    $query = mysqli_query($conn, "SELECT dp.kecamatan, dp.kelurahan , dp.no_tps, dhrh.kategori_capil, dhrh.jumlah_dpt, dhrh.jumlah_dptb, dhrh.jumlah_dpk, dhrh.jumlah_pemilih,
+    dhrh.jumlah_suara_sah , dhrh.jumlah_suara_tidak_sah , dhrh.jumlah_pengguna_hak_pilih, dhrh.tgl_input
+    FROM db_hasil_rekap_hdr dhrh join db_ptps dp 
+    ON dhrh.no_ktp = dp.no_ktp
+    AND (dp.kecamatan LIKE '%$ParamKecamatan%'OR '' = '$ParamKecamatan') 
+    AND ( dp.kelurahan LIKE '%$ParamKelurahan%' OR '' = '$ParamKelurahan') 
+    AND (dp.no_tps LIKE '%$ParamTps%'OR '' = '$ParamTps')
+    AND (dhrh.kategori_capil LIKE '%$ParamKategoriCapil%' OR '' = '$ParamKategoriCapil')
+    ORDER BY kecamatan, kelurahan, no_tps");
+    $No = 1;
+    while($row = mysqli_fetch_assoc($query)) {
+
+        $JumlahPemilih = $row['jumlah_dpt'] + $row['jumlah_dptb'] + $row['jumlah_dpk'];
+        $JumlahPenggunaHakPilih =  $row['jumlah_suara_sah'] + $row['jumlah_suara_tidak_sah'];
+
+        $lineData = array(
+            $No++,
+            $row['kecamatan'],
+            $row['kelurahan'],
+            $row['no_tps'],
+            $row['kategori_capil'],
+            $row['jumlah_dpt'],
+            $row['jumlah_dptb'], 
+            $row['jumlah_dpk'], 
+            $JumlahPemilih,
+            $row['jumlah_suara_sah'], 
+            $row['jumlah_suara_tidak_sah'], 
+            $JumlahPenggunaHakPilih,
+        );
+
+        array_walk($lineData, 'filterData'); 
+        $excelData .= implode("\t", array_values($lineData)) . "\n"; 
+    } 
+} else if ($NavPage == "hasil-rekap") {
+
+    if (isMobile()) {
+        $fileName = $NavPage . "_" . date('Y-m-d') . ".xlsx";
+    } else {
+        $fileName = $NavPage . "_" . date('Y-m-d') . ".xls";
+    }
+
+    $fields = array(
+        'NO', 
+        'KECAMATAN', 
+        'KELURAHAN', 
+        'NO. TPS', 
+        'KATEGORI', 
+        'DAPIL', 
+        'PARTAI', 
+        'NO. URUT',
+        'NAMA',
+        'JUMLAH SUARA',
+        'INPUTOR (NIK)',
+    );
+
+    $excelData = implode("\t", array_values($fields)) . "\n"; 
+
+    $ParamKecamatan = $_SESSION['hasil-rekap-kecamatan'];
+    $ParamKelurahan = $_SESSION['hasil-rekap-kelurahan'];
+    $ParamTps = $_SESSION['hasil-rekap-tps'];
+    $ParamKategori = $_SESSION['hasil-rekap-kategori'];
+    $ParamKodePartai = $_SESSION['hasil-rekap-partai'];
+    $ParamKtp = $_SESSION['hasil-rekap-ktp'];
+    $ParamNama =  $_SESSION['hasil-rekap-nama'];
+    $ParamDapil = $_SESSION['hasil-rekap-dapil'];
+    $ParamNoUrut = $_SESSION['hasil-rekap-no-urut'];
+
+    $query = mysqli_query($conn, "SELECT * FROM v_rekap_final WHERE 
+            (kategori_capil LIKE '%$ParamKategori%' 
+            OR '' = '$ParamKategori') 
+            AND (kecamatan LIKE '%$ParamKecamatan%'OR '' = '$ParamKecamatan') 
+            AND ( kelurahan LIKE '%$ParamKelurahan%' OR '' = '$ParamKelurahan') 
+            AND (no_ktp LIKE '%$ParamKtp%'OR '' = '$ParamKtp')
+            AND (no_tps LIKE '%$ParamTps%'OR '' = '$ParamTps')
+            AND (no_urut = '$ParamNoUrut' OR '' = '$ParamNoUrut' ) 
+            AND (kode_partai LIKE '%$ParamKodePartai%' OR '' =  '$ParamKodePartai') 
+            AND (nama_capil LIKE '%$ParamNama%' OR '' =  '$ParamNama') 
+            AND (dapil LIKE '%$ParamDapil%' OR '' =  '$ParamDapil')
+        ORDER BY
+            kecamatan, 
+            kelurahan, 
+            no_tps DESC, 
+            kategori_capil, 
+            dapil, 
+            kode_partai, 
+            no_urut");
+            
+    $No = 1;
+    while($row = mysqli_fetch_assoc($query)) {
+
+        $lineData = array(
+            $No++,
+            $row['kecamatan'], 
+            $row['kelurahan'], 
+            $row['no_tps'], 
+            $row['kategori_capil'], 
+            $row['dapil'], 
+            $row['kode_partai'], 
+            $row['no_urut'], 
+            $row['nama_capil'], 
+            $row['jumlah_suara'], 
+            "'" . $row['no_ktp'],
+        );
+
+        array_walk($lineData, 'filterData'); 
+        $excelData .= implode("\t", array_values($lineData)) . "\n"; 
+    }
+} else if ($NavPage == "hasil-rekap-partai") {
+
+    if (isMobile()) {
+        $fileName = $NavPage . "_" . date('Y-m-d') . ".xlsx";
+    } else {
+        $fileName = $NavPage . "_" . date('Y-m-d') . ".xls";
+    }
+
+    $fields = array(
+        'NO', 
+        'KECAMATAN', 
+        'KELURAHAN', 
+        'NO. TPS', 
+        'KATEGORI',
+        'PARTAI',
+        'JUMLAH SUARA',
+        'INPUTOR (NIK)',
+    );
+
+    $excelData = implode("\t", array_values($fields)) . "\n"; 
+
+    $ParamKecamatan = $_SESSION['rekap-partai-kecamatan'];
+    $ParamKelurahan = $_SESSION['rekap-partai-kelurahan'];
+    $ParamTps = $_SESSION['rekap-partai-tps'];
+    $ParamKategori =  $_SESSION['rekap-partai-kategori'];
+    $ParamPartai = $_SESSION['rekap-partai-partai'];
+    $ParamKtp = $_SESSION['rekap-partai-ktp'];
+
+    $query = mysqli_query($conn, "SELECT x.* from(
+        SELECT dp.kecamatan, dp.kelurahan, dp.no_tps ,dhrsp.kategori_capil ,dhrsp.kode_partai, 
+        (SELECT id from db_master_partai dmp  WHERE dmp.kode_partai = dhrsp.kode_partai)no_partai,
+        dhrsp.jumlah_suara, dhrsp.no_ktp
+        from db_hasil_rekap_suara_partai dhrsp, 
+        db_ptps dp
+        WHERE dhrsp.no_ktp  = dp.no_ktp 
+      )x WHERE (kecamatan LIKE '%$ParamKecamatan%'OR '' = '$ParamKecamatan')
+      AND ( kelurahan LIKE '%$ParamKelurahan%' OR '' = '$ParamKelurahan') 
+      AND (no_tps LIKE '%$ParamTps%'OR '' = '$ParamTps')
+      AND (kategori_capil LIKE '%$ParamKategori%'OR '' = '$ParamKategori')
+      AND (kode_partai LIKE '%$ParamPartai%'OR '' = '$ParamPartai')
+      AND (no_ktp LIKE '%$ParamKtp%'OR '' = '$ParamKtp')
+      ORDER BY kecamatan, kelurahan, no_tps, kategori_capil, no_partai");
+    $No = 1;
+    while($row = mysqli_fetch_assoc($query)) {
+
+        $lineData = array(
+            $No++,
+            $row['kecamatan'], 
+            $row['kelurahan'], 
+            $row['no_tps'], 
+            $row['kategori_capil'],
+            $row['kode_partai'],
+            $row['jumlah_suara'], 
+            "'" . $row['no_ktp'],
+        );
+
+        array_walk($lineData, 'filterData'); 
+        $excelData .= implode("\t", array_values($lineData)) . "\n"; 
+    }
+}
+
+header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+header('Content-Disposition: attachment;filename="'.$fileName.'"');
+header('Cache-Control: max-age=0');
+ 
+echo $excelData; 
+ 
+mysqli_close($conn);
+
+exit;

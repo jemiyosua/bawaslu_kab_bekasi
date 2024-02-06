@@ -21,6 +21,7 @@ require_once('koneksi.php');
 $ParamKecamatan = isset($_GET['it_cari_kec']) ? $_GET['it_cari_kec'] : '';
 $ParamKelurahan = isset($_GET['it_cari_kel']) ? $_GET['it_cari_kel'] : '';
 $ParamTps = isset($_GET['it_cari_no_tps']) ? $_GET['it_cari_no_tps'] : '';
+$ParamKategoriCapil = isset($_GET['it_cari_kat_capil']) ? $_GET['it_cari_kat_capil'] : '';
 
 ?>
 
@@ -44,7 +45,7 @@ $ParamTps = isset($_GET['it_cari_no_tps']) ? $_GET['it_cari_no_tps'] : '';
 
                         <hr />
 
-                        <table class="table table-hover table-striped">
+                        <table class="table table-hover table-striped" style="display: block; overflow-x: auto;white-space: nowrap;">
                             <thead class="table-grey">
                                 <tr>
                                     <th scope="col"> <a class="btn btn-outline-secondary" href="summary-tps.php"><i class="bi bi-arrow-clockwise"></i></a></th>
@@ -56,6 +57,8 @@ $ParamTps = isset($_GET['it_cari_no_tps']) ? $_GET['it_cari_no_tps'] : '';
 
                                         <th scope="col"><input type="text" class="form-control" placeholder="No TPS..." aria-describedby="button-addon2" name="it_cari_no_tps" value="<?= $ParamTps ?>"></th>
 
+                                        <th scope="col"><input type="text" class="form-control" placeholder="Kategori Capil..." aria-describedby="button-addon2" name="it_cari_kat_capil" value="<?= $ParamKategoriCapil ?>"></th>
+
                                         <button type="submit" style="display: none;"></button>
                                     </form>
                                 </tr>
@@ -63,9 +66,8 @@ $ParamTps = isset($_GET['it_cari_no_tps']) ? $_GET['it_cari_no_tps'] : '';
                                     <th scope="col">No</th>
                                     <th scope="col">Kecamatan</th>
                                     <th scope="col">Kelurahan</th>
-                                    <th scope="col">Kategori Capil</th>
-                                    <th scope="col">Nomor KTP</th>
                                     <th scope="col">No TPS</th>
+                                    <th scope="col">Kategori Capil</th>
                                     <th scope="col">Jumlah DPT(a)</th>
                                     <th scope="col">Jumlah DBTb(b)</th>
                                     <th scope="col">Jumlah DPK(c)</th>
@@ -93,14 +95,16 @@ $ParamTps = isset($_GET['it_cari_no_tps']) ? $_GET['it_cari_no_tps'] : '';
                                 $_SESSION['summary-tps-kecamatan'] = $ParamKecamatan;
                                 $_SESSION['summary-tps-kelurahan'] = $ParamKelurahan;
                                 $_SESSION['summary-tps-tps'] = $ParamTps;
+                                $_SESSION['summary-tps-kategori-capil'] = $ParamKategoriCapil;
 
                                 $q = "SELECT dp.kecamatan, dp.kelurahan, dhrh.no_ktp, dhrh.kategori_capil , dp.no_tps , dhrh.jumlah_dpt, dhrh.jumlah_dptb, dhrh.jumlah_dpk, dhrh.jumlah_pemilih,
                                                 dhrh.jumlah_suara_sah , dhrh.jumlah_suara_tidak_sah , dhrh.jumlah_pengguna_hak_pilih, dhrh.tgl_input
                                                 FROM db_hasil_rekap_hdr dhrh join db_ptps dp 
                                                 ON dhrh.no_ktp = dp.no_ktp
                                                 AND (dp.kecamatan LIKE '%$ParamKecamatan%'OR '' = '$ParamKecamatan') 
-                                                AND ( dp.kelurahan LIKE '%$ParamKelurahan%' OR '' = '$ParamKelurahan') 
+                                                AND (dp.kelurahan LIKE '%$ParamKelurahan%' OR '' = '$ParamKelurahan') 
                                                 AND (dp.no_tps LIKE '%$ParamTps%'OR '' = '$ParamTps')
+                                                AND (dhrh.kategori_capil LIKE '%$ParamKategoriCapil%'OR '' = '$ParamKategoriCapil')
                                                 ORDER BY kecamatan, kelurahan, no_tps
                                                 LIMIT $limit_start, $limit";
 
@@ -111,7 +115,8 @@ $ParamTps = isset($_GET['it_cari_no_tps']) ? $_GET['it_cari_no_tps'] : '';
                                             ON dhrh.no_ktp = dp.no_ktp
                                             AND (kecamatan LIKE '%$ParamKecamatan%' OR '' = '$ParamKecamatan') 
                                             AND (kelurahan LIKE '%$ParamKelurahan%' OR '' = '$ParamKelurahan') 
-                                            AND (no_tps LIKE '%$ParamTps%' OR '' = '$ParamTps')";
+                                            AND (no_tps LIKE '%$ParamTps%' OR '' = '$ParamTps')
+                                            AND (dhrh.kategori_capil LIKE '%$ParamKategoriCapil%'OR '' = '$ParamKategoriCapil')";
                                 $sql2 = mysqli_query($conn, $q2);
                                 $row2 = mysqli_fetch_assoc($sql2);
                                 $total_data = $row2['cnt'];
@@ -119,8 +124,8 @@ $ParamTps = isset($_GET['it_cari_no_tps']) ? $_GET['it_cari_no_tps'] : '';
                                 if ($total_data > 0) {
                                     while ($row = mysqli_fetch_assoc($sql)) {
 
-                                        $Kecamatan = $row['kecamatan'];
-                                        $Kelurahan = $row['kelurahan'];
+                                        $Kecamatan = strtoupper($row['kecamatan']);
+                                        $Kelurahan = strtoupper($row['kelurahan']);
                                         $KategoriCapil = $row['kategori_capil'];
                                         $NomorKTP = $row['no_ktp'];
                                         $NoTPS = $row['no_tps'];
@@ -138,9 +143,8 @@ $ParamTps = isset($_GET['it_cari_no_tps']) ? $_GET['it_cari_no_tps'] : '';
                                                 <td>$No</td>
                                                 <td>$Kecamatan</td>
                                                 <td>$Kelurahan</td>
-                                                <td>$KategoriCapil</td>
-                                                <td>$NomorKTP</td>
                                                 <td>$NoTPS</td>
+                                                <td>$KategoriCapil</td>
                                                 <td>$JmlDpt</td>
                                                 <td>$JmlDptb</td>
                                                 <td>$JmlDpk</td>
@@ -194,8 +198,7 @@ $ParamTps = isset($_GET['it_cari_no_tps']) ? $_GET['it_cari_no_tps'] : '';
                                         AND (dp.kecamatan LIKE '%$ParamKecamatan%' OR '' = '$ParamKecamatan') 
                                         AND ( dp.kelurahan LIKE '%$ParamKelurahan%' OR '' = '$ParamKelurahan') 
                                         AND (dp.no_tps LIKE '%$ParamTps%' OR '' = '$ParamTps')
-                                        AND jumlah_dpt > 0
-                                        ORDER BY kecamatan, kelurahan, no_tps;";
+                                        AND (dhrh.kategori_capil LIKE '%$ParamKategoriCapil%'OR '' = '$ParamKategoriCapil')";
                                 $sql = mysqli_query($conn, $q);
                                 $row = mysqli_fetch_assoc($sql);
                                 $jumlah = $row['cnt'];
@@ -242,5 +245,7 @@ $ParamTps = isset($_GET['it_cari_no_tps']) ? $_GET['it_cari_no_tps'] : '';
 <?php
 
 require_once('footer.php');
+
+mysqli_close($conn);
 
 ?>

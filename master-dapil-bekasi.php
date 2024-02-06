@@ -210,4 +210,6 @@ if (isset($_GET['id'])) {
 
 require_once('footer.php');
 
+mysqli_close($conn);
+
 ?>

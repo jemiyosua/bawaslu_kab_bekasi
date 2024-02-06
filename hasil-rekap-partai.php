@@ -257,4 +257,6 @@ $ParamKtp = isset($_GET['it_cari_ktp']) ? $_GET['it_cari_ktp'] : '';
 
 require_once('footer.php');
 
+mysqli_close($conn);
+
 ?>

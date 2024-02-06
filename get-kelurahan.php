@@ -35,6 +35,8 @@ $Dapil = $row['dapil'];
 $DapilSplit = explode(" ", $Dapil);
 $DapilNumber = $DapilSplit[1];
 
+mysqli_close($conn);
+
 echo "<label class='form-label'>Daerah Pilihan (Pilihan Bekasi)</label>";
 echo "<input type='text' name='dapil' class='form-control' readonly value=".$DapilNumber."></input>";
 echo "//";

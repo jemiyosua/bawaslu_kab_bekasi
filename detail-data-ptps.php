@@ -1,10 +1,10 @@
 <?php
 
-session_start();
-
 require_once('header.php');
 
 require_once('koneksi.php');
+
+session_start();
 
 $Kecamatan = '';
 $Kelurahan = '';
@@ -29,14 +29,6 @@ if (isset($_SESSION['nomor_ktp'])) {
     $NIK = $NIKSubString . "**********";
 }
 
-function filterData(&$str) { 
-    $str = preg_replace("/\t/", "\\t", $str); 
-    $str = preg_replace("/\r?\n/", "\\n", $str); 
-    if(strstr($str, '"')) $str = '"' . str_replace('"', '""', $str) . '"'; 
-}
-
-$NavPage = $_SESSION['nav-page'];
-
 ?>
 
 <main>
@@ -49,8 +41,18 @@ $NavPage = $_SESSION['nav-page'];
 
                         <div class="card" style="width: 20rem;">
                             <div style="padding:10px;text-align:center;margin-top:20px">
-                                <img src="assets/img/bawaslu/verify.png" style="width: 75px;" class="card-img-top" alt="...">
+                                <div class="d-flex align-items-center justify-content-center">
+
+                                    <div class="col-sm-8 mb-8 mb-sm-0">
+                                        <img src="assets/img/bawaslu/logo_bawaslu_kab_bekasi.png" style="width: 100%;padding-top: 15px" />
+                                    </div>
+                                    <!-- <div class="col-sm-6 mb-6 mb-sm-0">
+                                        <img src="assets/img/bawaslu/verify.png" style="width: 75px;" class="card-img-top" alt="...">
+                                    </div> -->
+                                    
+                                </div>
                             </div>
+
                             <div class="card-body">
                                 <h5 class="card-title" style="text-align:center;font-size: 25px;"><?= $Nama ?></h5>
                                 <h5 style="text-align:center;font-size: 20px;"><?= $NIK ?></h5>
@@ -90,5 +92,7 @@ $NavPage = $_SESSION['nav-page'];
 <?php
 
 require_once('footer.php');
+
+mysqli_close($conn);
 
 ?>

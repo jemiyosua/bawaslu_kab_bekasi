@@ -203,4 +203,6 @@ $cari = $_GET['cari'];
 
 require_once('footer.php');
 
+mysqli_close($conn);
+
 ?>

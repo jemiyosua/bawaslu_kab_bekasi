@@ -118,25 +118,24 @@ $ParamNoUrut = isset($_GET['it_cari_no_urut']) ? $_GET['it_cari_no_urut'] : '';
                                 $_SESSION['hasil-rekap-dapil'] = $ParamDapil;
                                 $_SESSION['hasil-rekap-no-urut'] = $ParamNoUrut;
 
-                                $q = "SELECT * FROM v_rekap_final WHERE 
-                                        (kategori_capil LIKE '%$ParamKategori%' 
-                                        OR '' = '$ParamKategori') 
-                                        AND (kecamatan LIKE '%$ParamKecamatan%'OR '' = '$ParamKecamatan') 
-                                        AND ( kelurahan LIKE '%$ParamKelurahan%' OR '' = '$ParamKelurahan') 
-                                        AND (no_ktp LIKE '%$ParamKtp%'OR '' = '$ParamKtp')
-                                        AND (no_tps LIKE '%$ParamTps%'OR '' = '$ParamTps')
+                                $q = "SELECT * FROM v_rekap_final 
+                                        WHERE (kategori_capil LIKE '%$ParamKategori%' OR '' = '$ParamKategori') 
+                                        AND (kecamatan LIKE '%$ParamKecamatan%' OR '' = '$ParamKecamatan') 
+                                        AND (kelurahan LIKE '%$ParamKelurahan%' OR '' = '$ParamKelurahan') 
+                                        AND (no_ktp LIKE '%$ParamKtp%' OR '' = '$ParamKtp')
+                                        AND (no_tps LIKE '%$ParamTps%' OR '' = '$ParamTps')
                                         AND (no_urut = '$ParamNoUrut' OR '' = '$ParamNoUrut' ) 
                                         AND (kode_partai LIKE '%$ParamKodePartai%' OR '' =  '$ParamKodePartai') 
                                         AND (nama_capil LIKE '%$ParamNama%' OR '' =  '$ParamNama') 
                                         AND (dapil LIKE '%$ParamDapil%' OR '' =  '$ParamDapil')
-                                    order by 
-                                        kecamatan, 
-                                        kelurahan, 
-                                        no_tps DESC, 
-                                        kategori_capil, 
-                                        dapil, 
-                                        kode_partai, 
-                                        no_urut
+                                        ORDER BY
+                                            kecamatan,
+                                            kelurahan,
+                                            no_tps DESC,
+                                            kategori_capil,
+                                            dapil,
+                                            kode_partai,
+                                            no_urut
                                         LIMIT $limit_start, $limit ";
 
                                 $sql = mysqli_query($conn, $q);
@@ -279,5 +278,7 @@ $ParamNoUrut = isset($_GET['it_cari_no_urut']) ? $_GET['it_cari_no_urut'] : '';
 <?php
 
 require_once('footer.php');
+
+mysqli_close($conn);
 
 ?>
