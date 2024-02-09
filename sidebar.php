@@ -10,11 +10,30 @@ session_start();
     <ul class="sidebar-nav" id="sidebar-nav">
 
         <li class="nav-item">
-            <a class="nav-link " href="main.php">
+            <a class="nav-link <?= $_SESSION['nav'] == "dashboard" ? '' : 'collapsed' ?>" href="main.php">
                 <i class="bi bi-grid"></i>
                 <span>Dashboard</span>
             </a>
         </li>
+
+        <?php
+        
+        if ($_SESSION['access'] == "SUPER ADMINISTRATOR") {
+
+            ?>
+            
+            <li class="nav-item">
+                <a class="nav-link <?= $_SESSION['nav'] == "batch-kecamatan" ? '' : 'collapsed' ?>" href="batch-kecamatan.php">
+                    <i class="bi bi-toggles"></i>
+                    <span>Batch Kecamatan</span>
+                </a>
+            </li>
+
+            <?php
+
+        }
+        
+        ?>
 
         <li class="nav-item">
             <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
@@ -86,6 +105,7 @@ session_start();
                 <?php
             }
 
+            // mysqli_close($conn);
 
             ?>
 
@@ -119,6 +139,15 @@ session_start();
                     </a>
                 </li>
             </ul>
+
+            <ul id="rekap-suara-nav" class="nav-content collapse <?= $_SESSION['nav'] == "perhitungan-suara" ? 'show' : '' ?>" data-bs-parent="#sidebar-nav">
+                <li>
+                    <a href="master-image-tps.php" class="<?= $_SESSION['nav-page'] == "master-image-tps" ? 'active' : '' ?>">
+                        <i class="bi bi-circle"></i><span>Master Image TPS</span>
+                    </a>
+                </li>
+            </ul>
+
         </li>
             </a>
         </li>

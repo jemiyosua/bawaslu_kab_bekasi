@@ -6,6 +6,11 @@ require_once('koneksi.php');
 
 session_start();
 
+if (!isset($_SESSION['nomor_ktp'])) {
+
+    header('location:input-ktp.php');
+}
+
 $Kecamatan = '';
 $Kelurahan = '';
 $NomorTPS = '';

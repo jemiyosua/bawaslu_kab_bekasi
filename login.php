@@ -60,7 +60,13 @@ if (isset($_SESSION['username']) && (isset($_SESSION['password']))) {
 
                             <div class="card-body">
 
-                            <div class="pt-4 pb-2">
+                            <div class="d-flex align-items-center justify-content-center">
+                                <div class="col-sm-8 mb-8 mb-sm-0">
+                                    <img src="assets/img/bawaslu/logo_bawaslu_kab_bekasi.png" style="width: 100%;padding-top: 15px" />
+                                </div>
+                            </div>
+
+                            <div class="pb-2">
                                 <h5 class="card-title text-center pb-0 fs-4">BAWASLU Kab. Bekasi</h5>
                                 <p class="text-center small">Enter your username & password to login</p>
                             </div>

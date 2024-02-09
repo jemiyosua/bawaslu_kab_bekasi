@@ -44,11 +44,27 @@ $ParamNoUrut = isset($_GET['it_cari_no_urut']) ? $_GET['it_cari_no_urut'] : '';
 
                 <div class="card">
                     <div class="card-body">
-                        <div class="col-sm-3 mb-3 mb-sm-2 m-2">
-                            <a class="btn btn-outline-success" target="_blank" href="export-excel.php">Export Excel <i class="bi bi-file-earmark-spreadsheet"></i></a>
-                        </div>
-                        <hr />
-                        <table class="table table-hover table-striped" style="display: block; overflow-x: auto;white-space: nowrap;">
+
+                        <?php
+                        
+                        if ($_SESSION['access'] == "SUPER ADMINISTRATOR" || $_SESSION['access'] == "ADMINISTRATOR") {
+
+                            ?>
+                            
+                            <div class="col-sm-3 mb-3 mb-sm-2 m-2">
+                                <a class="btn btn-outline-success" target="_blank" href="export-excel.php">Export Excel <i class="bi bi-file-earmark-spreadsheet"></i></a>
+                            </div>
+
+                            <hr />
+
+                            <?php
+
+                        }
+                        
+                        ?>
+                        
+
+                        <table class="table table-hover table-striped mt-3" style="display: block; overflow-x: auto;white-space: nowrap;">
                             <thead>
                                 <tr>
                                     <th scope="col"> <a class="btn btn-outline-secondary" href="hasil-rekap.php"><i class="bi bi-arrow-clockwise"></i></a></th>

@@ -2,6 +2,11 @@
 
 session_start();
 
+if (!isset($_SESSION['nomor_ktp'])) {
+
+    header('location:input-ktp.php');
+}
+
 $_SESSION['kc'] = $_GET['kc'];
 $_SESSION['dapil'] = $_GET['dapil'];
 
@@ -12,6 +17,17 @@ require_once('navbar-form.php');
 require_once('sidebar-form.php');
 
 require_once('koneksi.php');
+
+require_once('validasi-batch.php');
+
+$KecamatanSession = strtoupper($_SESSION['kecamatan_session']);
+$Status = validasi_batch($conn, $KecamatanSession);
+if ($Status == "0") {
+    $_SESSION['nomor_ktp'] = '';
+    $_SESSION['pesanError'] = "Anda Belum Diperbolehkan Mengkases Pengisian Form!";
+    header('location: input-ktp.php');
+    exit;
+}
 
 $KategoriCapilPage = $_GET['kc'];
 $KodePartaiPage = $_GET['kp'];

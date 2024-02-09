@@ -195,8 +195,6 @@ $ParamStatus = isset($_GET['cari_status']) ? $_GET['cari_status'] : '';
 						echo "<li class='page-item'><a class='page-link' href='master-dpr-ri.php?page=1&cari_kode_partai=$ParamKodePartai&cari_no_urut=$ParamNoUrut&cari_nama_calon=$ParamNamaCalon&cari_jenis_kelamin=$ParamJenisKelamin&cari_status=$ParamStatus'>First</a></li>";
 						echo "<li class='page-item'><a class='page-link' href='master-dpr-ri.php?page=$link_prev&cari_kode_partai=$ParamKodePartai&cari_no_urut=$ParamNoUrut&cari_nama_calon=$ParamNamaCalon&cari_jenis_kelamin=$ParamJenisKelamin&cari_status=$ParamStatus'>&laquo;</a></li>";
 					}
-
-					
 					
 					$q = "SELECT COUNT(1) AS cnt FROM db_master_capil 
 						WHERE (kode_partai LIKE '%$ParamKodePartai%'  OR '' = '$ParamKodePartai')

@@ -4,6 +4,17 @@ session_start();
 
 require_once('koneksi.php');
 
+require_once('validasi-batch.php');
+
+$KecamatanSession = strtoupper($_SESSION['kecamatan_session']);
+$Status = validasi_batch($conn, $KecamatanSession);
+if ($Status == "0") {
+    $_SESSION['nomor_ktp'] = '';
+    $_SESSION['pesanError'] = "Anda Belum Diperbolehkan Mengkases Pengisian Form!";
+    header('location: input-ktp.php');
+    exit;
+}
+
 $NomorKTP = $_SESSION['nomor_ktp'];
 $KategoriCapil = $_SESSION['kc'];
 

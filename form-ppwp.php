@@ -2,6 +2,11 @@
 
 session_start();
 
+if (!isset($_SESSION['nomor_ktp'])) {
+
+    header('location:input-ktp.php');
+}
+
 $KategoriCapil = $_GET['kc'];
 $_SESSION['kc'] = $KategoriCapil;
 $_SESSION['page'] = "";
@@ -14,6 +19,17 @@ require_once('navbar-form.php');
 require_once('sidebar-form.php');
 
 require_once('koneksi.php');
+
+require_once('validasi-batch.php');
+
+$KecamatanSession = strtoupper($_SESSION['kecamatan_session']);
+$Status = validasi_batch($conn, $KecamatanSession);
+if ($Status == "0") {
+    $_SESSION['nomor_ktp'] = '';
+    $_SESSION['pesanError'] = "Anda Belum Diperbolehkan Mengkases Pengisian Form!";
+    header('location: input-ktp.php');
+    exit;
+}
 
 ?>
 
@@ -255,6 +271,9 @@ require_once('koneksi.php');
                                     <input type="hidden" class="form-control" name="imagebase64-1" id="imagebase64-1">
                                     <input type="hidden" class="form-control" name="imagebase64-2" id="imagebase64-2">
                                     <input type="hidden" class="form-control" name="imagebase64-3" id="imagebase64-3">
+                                    <input type="hidden" class="form-control" name="imagebase64FileName-1" id="imagebase64FileName-1">
+                                    <input type="hidden" class="form-control" name="imagebase64FileName-2" id="imagebase64FileName-2">
+                                    <input type="hidden" class="form-control" name="imagebase64FileName-3" id="imagebase64FileName-3">
                                     <input type="hidden" class="form-control" name="submit-form-ppwp" value="submit-form-ppwp">
 
                                     <div class="card-footer text-body-secondary">
@@ -393,13 +412,16 @@ mysqli_close($conn);
         if (stateImage == "1") {
             // var input = document.getElementById('foto-1');
             var imagebase64 = document.getElementById('imagebase64-1');
+            var imagebase64FileName = document.getElementById('imagebase64FileName-1');
+
             const input = event.target;
             const file = input.files[0];
             const maxSizeInBytes = 3000000; // 3Mb
 
-            // console.log()
-
             if (file) {
+                
+                imagebase64FileName.value = file.name;
+
                 if (file.size > maxSizeInBytes) {
                     // console.log("MORE THAN 3 MB")
                     const reader = new FileReader();
@@ -454,6 +476,8 @@ mysqli_close($conn);
         } else if (stateImage == "2") {
             // var input = document.getElementById('foto-1');
             var imagebase64 = document.getElementById('imagebase64-2');
+            var imagebase64FileName = document.getElementById('imagebase64FileName-2');
+
             const input = event.target;
             const file = input.files[0];
             const maxSizeInBytes = 3000000; // 3Mb
@@ -461,6 +485,9 @@ mysqli_close($conn);
             // console.log()
 
             if (file) {
+
+                imagebase64FileName.value = file.name;
+
                 if (file.size > maxSizeInBytes) {
                     // console.log("MORE THAN 3 MB")
                     const reader = new FileReader();
@@ -514,6 +541,8 @@ mysqli_close($conn);
         } else {
             // var input = document.getElementById('foto-1');
             var imagebase64 = document.getElementById('imagebase64-3');
+            var imagebase64FileName = document.getElementById('imagebase64FileName-3');
+
             const input = event.target;
             const file = input.files[0];
             const maxSizeInBytes = 3000000; // 3Mb
@@ -521,6 +550,9 @@ mysqli_close($conn);
             // console.log()
 
             if (file) {
+
+                imagebase64FileName.value = file.name;
+                
                 if (file.size > maxSizeInBytes) {
                     // console.log("MORE THAN 3 MB")
                     const reader = new FileReader();
@@ -561,6 +593,8 @@ mysqli_close($conn);
                     var reader = new FileReader();
 
                     reader.onload = function (e) {
+                        var base64Image = e.target.result;
+                        imagebase64.value = base64Image
                         // var base64Image = e.target.result;
                         // imagebase64.value = base64Image
                         // console.log('Base64 LESS THAN 3 MB : ', base64Image);

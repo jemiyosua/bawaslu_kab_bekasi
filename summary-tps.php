@@ -39,13 +39,26 @@ $ParamKategoriCapil = isset($_GET['it_cari_kat_capil']) ? $_GET['it_cari_kat_cap
 
                 <div class="card">
                     <div class="card-body">
-                        <div class="col-sm-3 mb-3 mb-sm-2 m-2">
-                            <a class="btn btn-outline-success" target="_blank" href="export-excel.php">Export Excel <i class="bi bi-file-earmark-spreadsheet"></i></a>
-                        </div>
 
-                        <hr />
+                        <?php
+                        
+                        if ($_SESSION['access'] == "SUPER ADMINISTRATOR" || $_SESSION['access'] == "ADMINISTRATOR") {
 
-                        <table class="table table-hover table-striped" style="display: block; overflow-x: auto;white-space: nowrap;">
+                            ?>
+                            
+                            <div class="col-sm-3 mb-3 mb-sm-2 m-2">
+                                <a class="btn btn-outline-success" target="_blank" href="export-excel.php">Export Excel <i class="bi bi-file-earmark-spreadsheet"></i></a>
+                            </div>
+
+                            <hr />
+
+                            <?php
+
+                        }
+                        
+                        ?>
+
+                        <table class="table table-hover table-striped mt-3" style="display: block; overflow-x: auto;white-space: nowrap;">
                             <thead class="table-grey">
                                 <tr>
                                     <th scope="col"> <a class="btn btn-outline-secondary" href="summary-tps.php"><i class="bi bi-arrow-clockwise"></i></a></th>

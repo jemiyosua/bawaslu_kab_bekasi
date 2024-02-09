@@ -9,10 +9,13 @@ if (isset($_POST['login-admin'])) {
     $Username = $_POST['username'];
     $Password = $_POST['password'];
 
-    $sql = mysqli_query($conn, "SELECT COUNT(*) AS cnt, flag_login FROM db_login WHERE username = '$Username' AND password = '$Password'");
+    $PasswordMd5 = md5($Password);
+
+    $sql = mysqli_query($conn, "SELECT COUNT(*) AS cnt, flag_login, access FROM db_login WHERE username = '$Username' AND password = '$PasswordMd5'");
     $row = mysqli_fetch_assoc($sql);
     $CountAdmin = $row["cnt"];
     $FlagLogin = $row["flag_login"];
+    $Access = $row["access"];
 
     if ($CountAdmin > 0) {
         if ($FlagLogin == 1) {
@@ -20,12 +23,14 @@ if (isset($_POST['login-admin'])) {
             // header('location: login.php');
             $_SESSION['username'] = $Username;
             $_SESSION['password'] = $Password;
+            $_SESSION['access'] = $Access;
             header('location: main.php');
         } else {
             // $sql = mysqli_query($conn, "UPDATE db_login SET flag_login = '1' WHERE username = '$Username' AND password = '$Password'");
     
             $_SESSION['username'] = $Username;
             $_SESSION['password'] = $Password;
+            $_SESSION['access'] = $Access;
             header('location: main.php');
         }
     } else {
@@ -36,15 +41,26 @@ if (isset($_POST['login-admin'])) {
 
     $NomorKTP = $_POST['no_ktp'];
 
-    $sql = mysqli_query($conn, "SELECT COUNT(*) AS cnt FROM db_ptps WHERE no_ktp = '$NomorKTP'");
+    $sql = mysqli_query($conn, "SELECT COUNT(*) AS cnt, kecamatan FROM db_ptps WHERE no_ktp = '$NomorKTP'");
     $row = mysqli_fetch_assoc($sql);
     $CountKTP = $row["cnt"];
+    $KecamatanPTPS = strtoupper($row["kecamatan"]);
 
     if ($CountKTP > 0) {
-        // $_SESSION['pesan'] = "Nomor KTP Anda Terdaftar!";
-        $_SESSION['nomor_ktp'] = $NomorKTP;
-        header('location: detail-data-ptps.php');
+        $sql2 = mysqli_query($conn, "SELECT status FROM db_batch_kecamatan WHERE kecamatan = '$KecamatanPTPS'");
+        $row2 = mysqli_fetch_assoc($sql2);
+        $Status = $row2["status"];
+        if ($Status == "1") {
+            $_SESSION['nomor_ktp'] = $NomorKTP;
+            $_SESSION['kecamatan_session'] = $KecamatanPTPS;
+            header('location: detail-data-ptps.php');
+        } else {
+            $_SESSION['nomor_ktp'] = '';
+            $_SESSION['pesanError'] = "Anda Belum Diperbolehkan Mengkases Pengisian Form!";
+            header('location: input-ktp.php');
+        }
     } else {
+        $_SESSION['nomor_ktp'] = '';
         $_SESSION['pesanError'] = "Nomor KTP Anda Tidak Terdaftar!";
         header('location: input-ktp.php');
     }
@@ -93,6 +109,7 @@ if (isset($_POST['login-admin'])) {
             header('location: form-ppwp.php');
         } else {
             $msNow = round(microtime(true)*1000);
+
             $imageId = $NomorKTP."_".$KategoriCapil."_".(String)$msNow;
             $sql = mysqli_query($conn, "insert into db_hasil_rekap_hdr(no_ktp,kategori_capil,jumlah_dpt,jumlah_dptb,jumlah_dpk,jumlah_pemilih,jumlah_suara_sah,jumlah_suara_tidak_sah,jumlah_pengguna_hak_pilih, image_id)
                                     values('$NomorKTP','$KategoriCapil','$jml_dpt_ppwp','$jml_dptb_ppwp','$jml_dpk_ppwp','$jml_pemilih','$jml_suara_sah_ppwp','$jml_suara_tdk_sah_ppwp','$jml_pgn_hak_pilih', '$imageId')");
@@ -252,31 +269,46 @@ if (isset($_POST['login-admin'])) {
         [
             "id_mst_capil" => 1,
             "jumlah_suara" => $_POST['jumlah_suara_1'],
-            "gambar" => $_POST['imagebase64-1']
+            "gambar" => $_POST['imagebase64-1'],
+            "file_name" => $_POST['imagebase64FileName-1']
         ],
         [
             "id_mst_capil" => 3,
             "jumlah_suara" => $_POST['jumlah_suara_3'],
-            "gambar" => $_POST['imagebase64-2']
+            "gambar" => $_POST['imagebase64-2'],
+            "file_name" => $_POST['imagebase64FileName-2']
         ],
         [
             "id_mst_capil" => 5,
             "jumlah_suara" => $_POST['jumlah_suara_5'],
-            "gambar" => $_POST['imagebase64-3']
+            "gambar" => $_POST['imagebase64-3'],
+            "file_name" => $_POST['imagebase64FileName-3']
         ]
     ];
 
     foreach ($arr_data_paslon as $data_paslon) {
         $id_mst_capil = $data_paslon['id_mst_capil'];
         $jumlah_suara = $data_paslon['jumlah_suara'];
+        $file_name = $data_paslon['file_name'];
 
-        $msNow = round(microtime(true)*1000);
-        $imageId = $NomorKTP."_".$KategoriCapil."_".(String)$msNow;
+        $FormatImage = "FORM-SUARA-PPWP";
+        // $msNow = round(microtime(true)*1000);
+        $newFilename = str_replace(" ", "", $file_name);
+
+        $imageId = $NomorKTP."_".$KategoriCapil."_".$FormatImage."_".$newFilename;
         $Gambar = $data_paslon['gambar'];
+        $newGambar = str_replace("data:image/png;base64,", "", $Gambar);
+
+        // echo $imageId;
+        // echo "<br>";
+        // echo $newFilename;
+        // echo "<br>";
+        // echo $newGambar;
+        // echo "<br>";
 
         $sql = mysqli_query($conn, "INSERT INTO db_hasil_rekap_dtl (no_ktp, kategori_capil, id_mst_capil, jumlah_suara, image_id) VALUES ('$NomorKTP', '$KategoriCapil', '$id_mst_capil', '$jumlah_suara', '$imageId')");
 
-        $sql3 = mysqli_query($conn, "INSERT INTO db_master_image (image_id, imagebase64) VALUES ('$imageId', '$Gambar')");
+        $sql3 = mysqli_query($conn, "INSERT INTO db_master_image (image_id, imagebase64) VALUES ('$imageId', '$newGambar')");
     }
 
     $sql2 = mysqli_query($conn, "INSERT INTO db_hasil_rekap_hdr (no_ktp, kategori_capil, jumlah_dpt, jumlah_dptb, jumlah_dpk, jumlah_suara_sah, jumlah_suara_tidak_sah, jumlah_pengguna_hak_pilih) VALUES ('$NomorKTP', '$KategoriCapil', '$JumlahSuaraDPT', '$JumlahSuaraDPTB', '$JumlahSuaraDPK', '$JumlahSuaraSah', '$JumlahSuaraTidakSah', '$JumlahPenggunaHakPilih')");
@@ -336,27 +368,32 @@ if (isset($_POST['login-admin'])) {
     $JumlahPenggunaHakPilih = $_POST['jumlah_pengguna_hak_pilih'];
 
     if ($KategoriCapil == "DPR-RI") {
-        $FormatImage = "FORM_SUARA_DPR_RI";
+        $FormatImage = "FORM-SUARA-DPR-RI";
     } else if ($KategoriCapil == "DPRD-PROV") { 
-        $FormatImage = "FORM_SUARA_DPRD_PROV";
+        $FormatImage = "FORM-SUARA-DPRD-PROV";
     } else if ($KategoriCapil == "DPRD-KAB") {
-        $FormatImage = "FORM_SUARA_DPRD_KAB";
+        $FormatImage = "FORM-SUARA-DPRD-KAB";
     } else if ($KategoriCapil == "DPD-RI") {
-        $FormatImage = "FORM_SUARA_DPD_RI";
+        $FormatImage = "FORM-SUARA-DPD-RI";
     }
 
     $sql = mysqli_query($conn, "INSERT INTO db_hasil_rekap_hdr (no_ktp, kategori_capil, jumlah_dpt, jumlah_dptb, jumlah_dpk, jumlah_suara_sah, jumlah_suara_tidak_sah, jumlah_pengguna_hak_pilih) VALUES ('$NomorKTP', '$KategoriCapil', '$JumlahSuaraDPT', '$JumlahSuaraDPTB', '$JumlahSuaraDPK', '$JumlahSuaraSah', '$JumlahSuaraTidakSah', '$JumlahPenggunaHakPilih')");
 
     if(isset($_FILES['images']) && !empty($_FILES['images']['name'][0])) {
-        $uploadedImages = $_FILES['images'];
-    
+        $uploadedImages = $_FILES['images'];        
+
         foreach($uploadedImages['name'] as $key => $imageName) {
             $tmpName = $uploadedImages['tmp_name'][$key];
+            $filename = $_FILES['images']['name'][$key];
+            $newFilename = str_replace(" ", "", $filename);
     
             $msNow = round(microtime(true)*1000);
-            $imageId = $NomorKTP . "_" . $KategoriCapil . "_" . $FormatImage . "_" . (String)$msNow;
+            $imageId = $NomorKTP . "_" . $KategoriCapil . "_" . $FormatImage . "_" . $newFilename;
+            // $imageId = $NomorKTP . "_" . $KategoriCapil . "_" . $FormatImage . "_" . (String)$msNow;
             $imageContent = file_get_contents($tmpName);
             $encodedImage = base64_encode($imageContent);
+
+            // echo $encodedImage;
     
             $sqlInsert = mysqli_query($conn, "INSERT INTO db_master_image (image_id, imagebase64) VALUES ('$imageId', '$encodedImage')");
         }
@@ -500,6 +537,79 @@ if (isset($_POST['login-admin'])) {
         } else {
             header('location: form-partai.php?kc='.$KategoriCapil.'&kp='.$KodePartai);
         }
+    }
+} else if (isset($_POST['submit-batch-kecamatan'])) {
+
+    $NomorBatch = $_POST['nomor_batch'];
+    $StatusBatch = $_POST['status_batch'];
+
+    $Status = "";
+    if ($StatusBatch == "1") {
+        $Status = "0";
+        $sql = mysqli_query($conn, "UPDATE db_batch_kecamatan SET status_all = '0' WHERE nomor_batch = '$NomorBatch'");
+    } else {
+        $Status = "1";
+        $sql = mysqli_query($conn, "UPDATE db_batch_kecamatan SET status_all = '1' WHERE nomor_batch = '$NomorBatch'");
+    }
+
+    $sql2 = mysqli_query($conn, "UPDATE db_batch_kecamatan SET status = '$Status' WHERE nomor_batch = '$NomorBatch'");
+
+    if ($sql && $sql2) {
+        $_SESSION['pesan'] = "Berhasil Update Data";
+        header('location: batch-kecamatan.php');
+    } else {
+        $_SESSION['pesanError'] = "Gagal Update Data";
+        header('location: batch-kecamatan.php');
+    }
+} else if (isset($_POST['submit-kecamatan'])) {
+
+    $Kecamatan = $_POST['kecamatan'];
+    $StatusKecamatan = $_POST['status_kecamatan'];
+    $NomorBatch = $_POST['nomor_batch'];
+    $TotalKecamatan = $_POST['total_kecamatan'];
+
+    $Status = "";
+    if ($StatusKecamatan == "1") {
+        // toggle aktif ke tidak aktif
+        $Status = "0";
+    } else {
+        // toggle tidak aktif ke aktif
+        $Status = "1";
+    }
+
+    $sql2 = mysqli_query($conn, "UPDATE db_batch_kecamatan SET status = '$Status' WHERE kecamatan = '$Kecamatan'");
+
+    $Status = "";
+    if ($StatusKecamatan == "1") {
+        // toggle aktif ke tidak aktif
+        $query = mysqli_query($conn, "SELECT COUNT(*) AS cnt FROM db_batch_kecamatan WHERE nomor_batch = '$NomorBatch' AND status = '0' ");
+        $row = mysqli_fetch_assoc($query);
+        $TotalkecamatanDB = $row['cnt'];
+
+        if ($TotalkecamatanDB == $TotalKecamatan) {
+            $sql = mysqli_query($conn, "UPDATE db_batch_kecamatan SET status_all = '0' WHERE nomor_batch = '$NomorBatch'");
+        } else {
+            $sql = mysqli_query($conn, "UPDATE db_batch_kecamatan SET status_all = '1' WHERE nomor_batch = '$NomorBatch'");
+        }
+    } else {
+        // toggle tidak aktif ke aktif
+        $query = mysqli_query($conn, "SELECT COUNT(*) AS cnt FROM db_batch_kecamatan WHERE nomor_batch = '$NomorBatch' AND status = '1' ");
+        $row = mysqli_fetch_assoc($query);
+        $TotalkecamatanDB = $row['cnt'];
+
+        if ($TotalkecamatanDB == $TotalKecamatan) {
+            $sql = mysqli_query($conn, "UPDATE db_batch_kecamatan SET status_all = '1' WHERE nomor_batch = '$NomorBatch'");
+        } else {
+            $sql = mysqli_query($conn, "UPDATE db_batch_kecamatan SET status_all = '0' WHERE nomor_batch = '$NomorBatch'");
+        }
+    } 
+
+    if ($sql && $sql2) {
+        $_SESSION['pesan'] = "Berhasil Update Data";
+        header('location: batch-kecamatan.php');
+    } else {
+        $_SESSION['pesanError'] = "Gagal Update Data";
+        header('location: batch-kecamatan.php');
     }
 }
 

@@ -4,9 +4,23 @@ require_once('header.php');
 
 require_once('koneksi.php');
 
-// require_once('function-get-data.php');
+include 'validasi-batch.php';
 
 session_start();
+
+if (!isset($_SESSION['nomor_ktp'])) {
+
+    header('location:input-ktp.php');
+}
+
+$KecamatanSession = strtoupper($_SESSION['kecamatan_session']);
+$Status = validasi_batch($conn, $KecamatanSession);
+if ($Status == "0") {
+    $_SESSION['nomor_ktp'] = '';
+    $_SESSION['pesanError'] = "Anda Belum Diperbolehkan Mengkases Pengisian Form!";
+    header('location: input-ktp.php');
+    exit;
+}
 
 $Kecamatan = '';
 $Kelurahan = '';

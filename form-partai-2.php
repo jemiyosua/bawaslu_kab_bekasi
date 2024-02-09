@@ -2,6 +2,11 @@
 
 session_start();
 
+if (!isset($_SESSION['nomor_ktp'])) {
+
+    header('location:input-ktp.php');
+}
+
 require_once('header.php');
 
 require_once('navbar-form.php');
@@ -9,6 +14,17 @@ require_once('navbar-form.php');
 require_once('sidebar-form.php');
 
 require_once('koneksi.php');
+
+require_once('validasi-batch.php');
+
+$KecamatanSession = strtoupper($_SESSION['kecamatan_session']);
+$Status = validasi_batch($conn, $KecamatanSession);
+if ($Status == "0") {
+    $_SESSION['nomor_ktp'] = '';
+    $_SESSION['pesanError'] = "Anda Belum Diperbolehkan Mengkases Pengisian Form!";
+    header('location: input-ktp.php');
+    exit;
+}
 
 $_SESSION['kc'] = $_GET['kc'];
 $KategoriCapilPage = $_GET['kc'];
@@ -280,7 +296,7 @@ function uploadImages() {
                 // base64Images.concat(base64Image);
                 // base64Images.push(base64Image)
                 ListImage = [...ListImage, ...base64Image]
-                console.log(ListImage)
+                // console.log(ListImage)
                 // Make an AJAX request to send the base64 images to the server
             //     var xhttp = new XMLHttpRequest();
             //     xhttp.onreadystatechange = function() {
