@@ -207,7 +207,7 @@ mysqli_close($conn);
 
 <script type="text/javascript">
 
-window.addEventListener("load",function(){
+window.addEventListener("load",function() {
     getKelurahan();
 },false);
 

@@ -196,7 +196,7 @@ $ParamDapil = isset($_GET['cari_dapil']) ? $_GET['cari_dapil'] : '';
 								<td><?= $NomorKTP ?></td>
 								<td><?= $Nama ?></td>
 								<td><?= $vDapil ?></td>
-								<?php if ($_SESSION['access'] == "SUPER ADMINISTRATOR" || $_SESSION['access'] == "ADMINISTRATOR") { ?> <td style='padding-right:0;margin-right:0;'><a class='btn btn-warning' href='form-master-ptps.php?ptps=update&id=$Id'> <i class='bi bi-pencil-square'></i></a></td> <?php } ?>
+								<?php if ($_SESSION['access'] == "SUPER ADMINISTRATOR" || $_SESSION['access'] == "ADMINISTRATOR") { ?> <td style='padding-right:0;margin-right:0;'><a class='btn btn-warning' href='form-master-ptps.php?ptps=update&id=<?=$Id?>'> <i class='bi bi-pencil-square'></i></a></td> <?php } ?>
 							</tr>
 
 							<?php
